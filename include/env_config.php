@@ -38,10 +38,40 @@ if (!function_exists('writeAppLog')) {
             mkdir($logDir, 0755, true);
             file_put_contents($logDir . '/.htaccess', "Deny from all\n");
         }
-        $logFile = $logDir . '/error.log';
-        $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'CLI';
-        $logMessage = sprintf("[%s] [%s] [%s] %s\n", date('Y-m-d H:i:s'), $type, $ip, $message);
-        error_log($logMessage, 3, $logFile);
+        
+        $logFile = $logDir . '/error.log.php';
+        $prefix = "<?php header('HTTP/1.0 403 Forbidden'); exit; ?>\n";
+        
+        // Log Rotation if size > 5MB
+        if (file_exists($logFile) && filesize($logFile) > 5 * 1024 * 1024) {
+            $archiveFile = $logDir . '/error-' . date('Ymd-His') . '.log.php';
+            @rename($logFile, $archiveFile);
+            
+            // Clean up old archives, keep only the latest 3
+            $archives = glob($logDir . '/error-*.log.php');
+            if (is_array($archives) && count($archives) > 3) {
+                sort($archives);
+                for ($i = 0; $i < count($archives) - 3; $i++) {
+                    @unlink($archives[$i]);
+                }
+            }
+        }
+        
+        $isNewFile = !file_exists($logFile);
+        $fp = fopen($logFile, 'ab');
+        if ($fp) {
+            if (flock($fp, LOCK_EX)) {
+                if ($isNewFile) {
+                    fwrite($fp, $prefix);
+                }
+                $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'CLI';
+                $logMessage = sprintf("[%s] [%s] [%s] %s\n", date('Y-m-d H:i:s'), $type, $ip, $message);
+                fwrite($fp, $logMessage);
+                fflush($fp);
+                flock($fp, LOCK_UN);
+            }
+            fclose($fp);
+        }
     }
 }
 

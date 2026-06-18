@@ -105,9 +105,13 @@ Jalankan perintah berikut di **New Terminal** Winbox MikroTik Anda:
 # Izinkan akses ke Web Server MikhTrans
 /ip hotspot walled-garden ip add dst-host=172.16.11.91 action=allow
 
-# Izinkan sistem pembayaran Midtrans
+# Izinkan sistem pembayaran Midtrans & E-Wallet (GoPay, ShopeePay, dll)
 /ip hotspot walled-garden add dst-host=*.midtrans.com action=allow
 /ip hotspot walled-garden add dst-host=*.sandbox.midtrans.com action=allow
+/ip hotspot walled-garden add dst-host=*.gopay.co.id action=allow
+/ip hotspot walled-garden add dst-host=*.go-pay.co.id action=allow
+/ip hotspot walled-garden add dst-host=*.gopayapi.com action=allow
+/ip hotspot walled-garden add dst-host=*.shopeepay.co.id action=allow
 
 # Izinkan WebSocket Pusher untuk deteksi real-time
 /ip hotspot walled-garden add dst-host=*.pusher.com action=allow
