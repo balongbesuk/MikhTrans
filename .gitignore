@@ -14,3 +14,5 @@ php_errors.log
 .DS_Store
 Thumbs.db
 *.log
+/logs/error.log.php
+/logs/error-*.log.php
