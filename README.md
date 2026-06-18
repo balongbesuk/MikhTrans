@@ -97,6 +97,45 @@ Gunakan header `X-API-Key` atau parameter query `api_key` untuk otentikasi.
     *   `profile=Profil_1Jam_2K` (Nama profil hotspot di MikroTik)
     *   `qty=1` (Jumlah voucher yang ingin dibuat)
 
+## 🔌 Integrasi Halaman Login MikroTik (login.html)
+
+Agar pelanggan dapat membeli voucher secara langsung saat terhubung ke Hotspot, Anda perlu menghubungkan halaman login bawaan MikroTik (`login.html`) dengan portal MikhTrans.
+
+### 1. Tambahkan Tombol Beli Voucher di `login.html`
+Edit berkas `login.html` di dalam folder `hotspot` MikroTik Anda (dapat diunduh via FTP atau menu Files di Winbox). Tambahkan kode tombol berikut:
+```html
+<a href="http://172.16.11.91/" style="display:block; background:#4f46e5; color:white; padding:12px; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-top:10px;">
+    Beli Voucher Otomatis (QRIS / E-Wallet)
+</a>
+```
+*Ganti `http://172.16.11.91/` dengan alamat IP atau Domain tempat Anda meng-host MikhTrans.*
+
+### 2. Konfigurasi Walled Garden MikroTik
+Karena pelanggan yang belum login diblokir akses internetnya oleh MikroTik, Anda wajib mendaftarkan alamat IP server MikhTrans dan domain Midtrans/Pusher ke **Walled Garden** agar dapat diakses secara gratis sebelum login.
+
+Jalankan perintah berikut di **New Terminal** Winbox MikroTik Anda:
+```routeros
+# Izinkan akses ke Web Server MikhTrans
+/ip hotspot walled-garden ip add dst-host=172.16.11.91 action=allow
+
+# Izinkan sistem pembayaran Midtrans
+/ip hotspot walled-garden add dst-host=*.midtrans.com action=allow
+/ip hotspot walled-garden add dst-host=*.sandbox.midtrans.com action=allow
+
+# Izinkan WebSocket Pusher untuk deteksi real-time
+/ip hotspot walled-garden add dst-host=*.pusher.com action=allow
+/ip hotspot walled-garden add dst-host=*.pusherapp.com action=allow
+
+# Izinkan font dan aset web CDN
+/ip hotspot walled-garden add dst-host=fonts.googleapis.com action=allow
+/ip hotspot walled-garden add dst-host=fonts.gstatic.com action=allow
+/ip hotspot walled-garden add dst-host=cdnjs.cloudflare.com action=allow
+```
+*Ganti `172.16.11.91` pada baris pertama dengan IP/Domain publik hosting portal MikhTrans Anda.*
+
+### 3. Login Otomatis (Auto-Login)
+Setelah pembayaran lunas, portal MikhTrans akan memunculkan tombol **"Hubungkan Sekarang"**. Tombol ini otomatis mengirimkan parameter login langsung ke MikroTik (`http://[dnsname]/login?username=[voucher]&password=[voucher]`) sehingga pengguna langsung terhubung ke internet tanpa perlu mengetik kode voucher secara manual.
+
 ---
 
 ## 📝 Changelog (Pembaruan Terbaru)
