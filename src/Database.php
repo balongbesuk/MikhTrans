@@ -19,8 +19,21 @@ class Database {
             file_put_contents($dbDir . '/.htaccess', "Deny from all\n");
         }
 
-        $this->dbFile = $dbDir . '/database.json';
-        $this->load();
+        $this->dbFile = $dbDir . '/database.php';
+        $oldDbFile = $dbDir . '/database.json';
+        
+        // Auto-migration from database.json to database.php
+        if (file_exists($oldDbFile) && !file_exists($this->dbFile)) {
+            $jsonContent = file_get_contents($oldDbFile);
+            $decoded = json_decode($jsonContent, true);
+            if (is_array($decoded)) {
+                $this->data = $decoded;
+                $this->saveAll();
+                @unlink($oldDbFile);
+            }
+        } else {
+            $this->load();
+        }
     }
 
     public static function getInstance() {
@@ -31,7 +44,7 @@ class Database {
     }
 
     /**
-     * Memuat data dari file JSON dengan penguncian berkas (shared lock)
+     * Memuat data dari file PHP/JSON dengan penguncian berkas (shared lock)
      */
     public function load() {
         if (!file_exists($this->dbFile)) {
@@ -55,7 +68,9 @@ class Database {
                     $content .= fread($fp, 8192);
                 }
                 flock($fp, LOCK_UN);
-                $decoded = json_decode($content, true);
+                // Strip the protective PHP opening header
+                $jsonContent = preg_replace('/^<\?php.*?\?>\s*/s', '', $content);
+                $decoded = json_decode($jsonContent, true);
                 if (is_array($decoded)) {
                     $this->data = $decoded;
                 }
@@ -65,14 +80,15 @@ class Database {
     }
 
     /**
-     * Menyimpan seluruh data ke file JSON dengan penguncian berkas (exclusive lock)
+     * Menyimpan seluruh data ke file PHP/JSON dengan penguncian berkas (exclusive lock)
      */
     public function saveAll() {
         $fp = fopen($this->dbFile, 'cb');
         if ($fp) {
             if (flock($fp, LOCK_EX)) {
                 ftruncate($fp, 0);
-                fwrite($fp, json_encode($this->data));
+                $prefix = "<?php header('HTTP/1.0 403 Forbidden'); exit; ?>\n";
+                fwrite($fp, $prefix . json_encode($this->data));
                 fflush($fp);
                 flock($fp, LOCK_UN);
             }
