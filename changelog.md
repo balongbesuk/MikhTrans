@@ -21,6 +21,7 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 
 ### Diperbaiki
 - **Eror Daftar Sesi (Router List)**: Memperbaiki kesalahan parsing naif di `sessions.php` yang sebelumnya membaca parameter konfigurasi eksternal sebagai sesi router aktif dengan merutekan manajemen sesi langsung via database model.
+- **Kerentanan Keamanan XSS/DOM Injection**: Memperbaiki alert code scanning GitHub Advanced Security pada [mikhmon.js](file:///d:/mikhmonv3ws/Mikhmon%20Server/mikhmon/js/mikhmon.js) dengan mengubah fungsi manipulasi DOM `.html(n)` menjadi `.text(n)` yang lebih aman dari potensi manipulasi HTML tak tepercaya.
 
 ## [MikhTrans v1.1] - 2026-06-18
 
