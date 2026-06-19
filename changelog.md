@@ -12,16 +12,22 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 - **Dark/Light Mode Toggle Switch**: Menambahkan tombol switch (sun & moon icon) di navbar kanan yang terintegrasi ke switch theme otomatis.
 - **Status Dot, Checkout Stepper, & Layout Switcher (Portal Pelanggan)**: Menambahkan indikator status online/offline berdenyut pada logo header, progress bar checkout stepper wizard (Pilih -> Bayar -> Hubungkan), dan tombol view switcher (Grid vs Carousel) dengan CSS Scroll Snap dan penyimpanan state di `localStorage`.
 - **Sparkline Canvas & Badge Log Berwarna (Admin Dashboard)**: Grafik sparkline real-time berbasis HTML5 Canvas untuk melacak penggunaan CPU & Memory secara visual saat polling data, serta pewarnaan badge otomatis (`getLogBadge()`) untuk memetakan level log hotspot (Info, Warning, Error, System, User, Login/Logout) dengan badge tag berwarna.
+- **Anti-Crawler/Anti-Indexing (SEO)**: Menambahkan robots.txt global, meta tag noindex pada halaman depan dan admin, serta pengaturan header X-Robots-Tag pada `.htaccess` untuk mencegah perayapan dan pengindeksan oleh search engine.
+- **Proteksi Keamanan (.htaccess Root)**: Menambahkan berkas `.htaccess` utama untuk memblokir akses HTTP langsung ke berkas `.env`, `.git`, dan `.gitignore` di server Apache.
 
 ### Diubah
 - **De-obfuscation Total Kode JavaScript**: Refaktor dan konversi seluruh script inline yang sebelumnya disamarkan (obfuscated) dengan array hex menjadi kode JavaScript/jQuery modern yang bersih, efisien, dan mudah dipelihara.
 - **Penghapusan Proteksi DRM Logo/Brand**: Menghapus script validasi paksa innerHTML `#brand` (`You destroy MIKHMON`) agar visual dashboard dapat disesuaikan secara bebas untuk branding modern MikhTrans.
 - **Card-Based Log Feed**: Mengubah layout log hotspot dashboard dari tabel kaku menjadi daftar log card modern dengan shadow, margin lembut, dan transisi hover.
 - **Floating Labels (Settings & Sessions)**: Form input settings dan sessions admin menggunakan pola floating label modern yang bergerak halus ke atas disertai focus-ring.
+- **Penghapusan Data Sensitif Pribadi**: Mengganti data email, nomor WhatsApp, dan alamat kantor riil dalam berkas `frontpage.php` dan `composer.json` dengan data dummy demi menjaga privasi di repositori publik.
+- **Pelacakan Berkas config.php**: Mengeluarkan `/include/config.php` dari daftar `.gitignore` dan menyertakannya di git agar sistem langsung dapat membaca database sesaat setelah dideploy tanpa manual rename berkas `.example`.
 
 ### Diperbaiki
 - **Eror Daftar Sesi (Router List)**: Memperbaiki kesalahan parsing naif di `sessions.php` yang sebelumnya membaca parameter konfigurasi eksternal sebagai sesi router aktif dengan merutekan manajemen sesi langsung via database model.
-- **Kerentanan Keamanan XSS/DOM Injection**: Memperbaiki alert code scanning GitHub Advanced Security pada [mikhmon.js](file:///d:/mikhmonv3ws/Mikhmon%20Server/mikhmon/js/mikhmon.js) dengan mengubah fungsi manipulasi DOM `.html(n)` menjadi `.text(n)` yang lebih aman dari potensi manipulasi HTML tak tepercaya.
+- **Kerentanan Keamanan XSS/DOM Injection**: Memperbaiki alert code scanning GitHub Advanced Security pada [mikhmon.js](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/js/mikhmon.js) dengan mengubah fungsi manipulasi DOM `.html(n)` menjadi `.text(n)` yang lebih aman dari potensi manipulasi HTML tak tepercaya.
+- **Kompatibilitas putenv() Nonaktif**: Penyesuaian pemuatan berkas `.env` di `env_config.php` dan `config.php.example` dengan mengecek ketersediaan fungsi `putenv()` serta membuat fungsi pembantu `mikhmonEnv()` sebagai fallback ke `$_ENV`/`$_SERVER` agar kompatibel di semua VPS.
+- **Infinite Redirect Loop (Settings)**: Memperbaiki loop redirect tanpa henti di `settings/settings.php` dengan menambahkan fungsi `exit;` setelah redirect JavaScript serta menetapkan nilai mata uang default jika kosong.
 
 ## [MikhTrans v1.1] - 2026-06-18
 
