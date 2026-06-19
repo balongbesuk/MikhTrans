@@ -39,6 +39,7 @@ if (!isset($_SESSION["mikhmon"])) {
       'live_report' => 'disable'
     ));
     echo "<script>window.location='./admin.php?id=settings&session=" . $router . "'</script>";
+    exit;
   }
 
   if (isset($_POST['save'])) {
@@ -84,9 +85,10 @@ if (!isset($_SESSION["mikhmon"])) {
     
     $_SESSION["connect"] = "";
     echo "<script>window.location='./admin.php?id=settings&session=" . $sesname . "'</script>";
+    exit;
   }
   if ($currency == "") {
-    echo "<script>window.location='./admin.php?id=settings&session=" . $session . "'</script>";
+    $currency = "Rp";
   }
 }
 ?>
