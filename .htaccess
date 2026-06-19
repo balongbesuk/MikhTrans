@@ -1,0 +1,13 @@
+# Prevent directory listing
+Options -Indexes
+
+# Protect sensitive environment and git files
+<FilesMatch "^\.(env|git|gitignore)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
