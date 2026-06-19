@@ -154,6 +154,35 @@ Gunakan header `X-API-Key` atau parameter query `api_key` untuk otentikasi.
 
 ---
 
+## 🛠️ Pemecahan Masalah (Troubleshooting)
+
+Berikut adalah beberapa kendala umum yang sering terjadi saat melakukan deploy MikhTrans ke VPS dan cara mengatasinya:
+
+### 1. Error: `Call to undefined function putenv()`
+*   **Penyebab**: Panel VPS (seperti aaPanel) menonaktifkan fungsi `putenv()` demi alasan keamanan melalui direktif `disable_functions` di file `php.ini`.
+*   **Solusi Kode**: Pada versi 2.0+, MikhTrans sudah dibekali helper `mikhmonEnv()` yang aman dan kompatibel tanpa bergantung pada `putenv()`. Jika Anda masih menemui kendala ini, pastikan Anda menggunakan berkas `include/env_config.php` terbaru.
+*   **Solusi Server (aaPanel)**: Jika ingin mengaktifkannya kembali di server:
+    1. Buka **aaPanel** -> **App Store** -> Pilih **PHP Settings** (versi PHP yang Anda gunakan).
+    2. Masuk ke tab **Disabled functions**.
+    3. Cari **`putenv`** di dalam daftar, lalu klik **Del** (Hapus).
+    4. Masuk ke tab **Service** lalu klik **Restart**.
+
+### 2. Kolom Input Kosong Kembali setelah Klik "Save" / Ping Host Kosong
+*   **Penyebab**: Web server (user `www` atau `www-data`) tidak memiliki hak akses menulis (*write permission*) pada folder `/data`. Hal ini terjadi jika Anda melakukan clone/pull git menggunakan user `root`.
+*   **Solusi**: Ubah kepemilikan owner folder `data/` menjadi `www` lewat File Manager aaPanel (klik kanan folder `data` -> **Permission** -> Ubah Owner ke **`www`** dengan permission **`755`** / **`775`** dan centang **Apply to subdir**).
+*   **Perintah Terminal SSH**:
+    ```bash
+    chown -R www:www /www/wwwroot/vc.test/data
+    chmod -R 755 /www/wwwroot/vc.test/data
+    ```
+
+### 3. Jangan Menimpa `config.php` dengan `config.php.example`
+*   **Penyebab**: Pengguna lama Mikhmon terbiasa mengubah nama berkas `.example` ke `.php`. Pada MikhTrans v2.0+, berkas `include/config.php` sudah disertakan langsung di repositori untuk menjembatani sesi router ke database.
+*   **Solusi**: Biarkan `include/config.php` bawaan apa adanya. Anda hanya perlu menyalin `.env.example` ke `.env` di root folder dan menyesuaikan API Key Midtrans Anda di sana.
+
+---
+
 ## 📝 Changelog & Riwayat Perubahan
 
-Riwayat pembaruan sistem dan log perbaikan versi lengkap dapat Anda akses secara detail di berkas **[changelog.md](file:///d:/mikhmonv3ws/Mikhmon%20Server/mikhmon/changelog.md)**.
+Riwayat pembaruan sistem dan log perbaikan versi lengkap dapat Anda akses secara detail di berkas **[changelog.md](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/changelog.md)**.
+
