@@ -21,9 +21,6 @@ error_reporting(0);
 if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
 } else {
-// array color
-  $color = array('1' => 'bg-blue', 'bg-indigo', 'bg-purple', 'bg-pink', 'bg-red', 'bg-yellow', 'bg-green', 'bg-teal', 'bg-cyan', 'bg-grey', 'bg-light-blue');
-
   ?>
 <div class="row">
 <div class="col-12">
@@ -32,32 +29,34 @@ if (!isset($_SESSION["mikhmon"])) {
 	<h3><i class=" fa fa-users"></i> <?= $_vouchers ?> &nbsp;&nbsp; | &nbsp;&nbsp;<i onclick="location.reload();" class="fa fa-refresh pointer" title="Reload data"></i></h3>
 </div>
 <div class="card-body">
-<div class="overflow" style="max-height: 80vh">	
-<div class="row">	
-      <div class="col-4">
-        <div class="box bmh-75 box-bordered <?= $color[rand(1, 11)]; ?>">
+<div class="overflow" style="max-height: 80vh; padding: 12px;">	
+<div class="row" style="display: flex; flex-wrap: wrap; gap: 0;">	
+      <div class="col-4" style="margin-bottom: 20px;">
+        <div class="box bmh-75 box-bordered voucher-card">
           <div class="box-group">
-            <div class="box-group-icon">
-              <a title='Open User by profile <?= $pname; ?>'  href='./?hotspot=users&profile=all&session=<?= $session; ?>'>
+            <div class="box-group-icon icon-voucher">
+              <a title='Open User by profile all' href='./?hotspot=users&profile=all&session=<?= $session; ?>'>
               <i class="fa fa-ticket"></i></a>
             </div>
-              <div class="box-group-area">
-                <h3 >Profile : all<br>
+            <div class="box-group-area">
+              <div class="voucher-profile-title">Profile: all</div>
+              <div class="voucher-profile-count">
                 <?php $countuser = $API->comm("/ip/hotspot/user/print", array("count-only" => ""));
                 if ($countuser < 2) {
                   echo $countuser . " Item";
                 } elseif ($countuser > 1) {
                   echo $countuser . " Items";
                 }
-                ?></h3>
-
-              <a title="Open User by profile all" href="./?hotspot=users&profile=all&session=<?= $session; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></a>&nbsp;
-              <a title="Generate User by profile <?= $pname; ?>" href="./?hotspot-user=generate&session=<?= $session; ?>"><i class="fa fa-users"></i> <?= $_generate ?></a>&nbsp;
+                ?>
+              </div>
+              <div class="voucher-profile-actions">
+                <a title="Open User by profile all" href="./?hotspot=users&profile=all&session=<?= $session; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></a>
+                <a title="Generate User by profile all" href="./?hotspot-user=generate&session=<?= $session; ?>"><i class="fa fa-users"></i> <?= $_generate ?></a>
               </div>
             </div>
-            
           </div>
         </div>
+      </div>
 <?php
 // get user profile
 $getprofile = $API->comm("/ip/hotspot/user/profile/print");
@@ -66,33 +65,35 @@ for ($i = 0; $i < $TotalReg; $i++) {
   $profiledetalis = $getprofile[$i];
   $pname = $profiledetalis['name'];
   ?>
-	     <div class="col-4">
-        <div class="box bmh-75 box-bordered <?= $color[rand(1, 11)]; ?>">
+	     <div class="col-4" style="margin-bottom: 20px;">
+        <div class="box bmh-75 box-bordered voucher-card">
           <div class="box-group">
-            <div class="box-group-icon">
-              <a title='Open User by profile <?= $pname; ?>'  href='./?hotspot=users&profile=<?= $pname; ?>&session=<?= $session; ?>'>
+            <div class="box-group-icon icon-voucher">
+              <a title='Open User by profile <?= $pname; ?>' href='./?hotspot=users&profile=<?= $pname; ?>&session=<?= $session; ?>'>
             	<i class="fa fa-ticket"></i></a>
             </div>
-              <div class="box-group-area">
-                <h3 >Profile : <?= $pname; ?><br>
+            <div class="box-group-area">
+              <div class="voucher-profile-title">Profile: <?= htmlspecialchars($pname); ?></div>
+              <div class="voucher-profile-count">
                 <?php	$countuser = $API->comm("/ip/hotspot/user/print", array("count-only" => "", "?profile" => "$pname", ));
                 if ($countuser < 2) {
                   echo $countuser . " Item";
                 } elseif ($countuser > 1) {
                   echo $countuser . " Items";
                 }
-                ?></h3>
-
-              <a title="Open User by profile <?= $pname; ?>" href="./?hotspot=users&profile=<?= $pname; ?>&session=<?= $session; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></a>&nbsp;
-              <a title="Generate User by profile <?= $pname; ?>" href="./?hotspot-user=generate&genprof=<?= $pname; ?>&session=<?= $session; ?>"><i class="fa fa-users"></i> <?= $_generate ?></a>&nbsp;
+                ?>
+              </div>
+              <div class="voucher-profile-actions">
+                <a title="Open User by profile <?= $pname; ?>" href="./?hotspot=users&profile=<?= $pname; ?>&session=<?= $session; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></a>
+                <a title="Generate User by profile <?= $pname; ?>" href="./?hotspot-user=generate&genprof=<?= $pname; ?>&session=<?= $session; ?>"><i class="fa fa-users"></i> <?= $_generate ?></a>
               </div>
             </div>
-            
           </div>
         </div>
-        <?php 
-      }
-    } ?>
+      </div>
+      <?php 
+    }
+  } ?>
       </div>
     </div>
 </div>

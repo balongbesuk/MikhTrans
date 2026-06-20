@@ -100,34 +100,41 @@ include('../lang/'.$langid.'.php');
   }
 }
 ?>
-
-            <div id="r_4" class="row">
-              <div <?= $lreport; ?> class="box bmh-75 box-bordered">
+            <div id="r_4" class="col-3" <?= $lreport; ?>>
+              <div class="box bmh-75 box-bordered" style="height: 100%;">
                 <div class="box-group">
-                  <div class="box-group-icon"><i class="fa fa-money"></i></div>
-                    <div class="box-group-area">
-                      <span >
-                        <div id="reloadLreport">
-                        <?php 
-                          if ($currency == in_array($currency, $cekindo['indo'])) {
-                            $dincome = number_format((float)$tHr, 0, ",", ".");
-                            $mincome = number_format((float)$tBl, 0, ",", ".");
-                            $_SESSION[$session.'dincome'] = $dincome;
-                            $_SESSION[$session.'mincome'] = $mincome;
-                          }else{
-                            $dincome = number_format((float)$tHr, 2);
-                            $mincome = number_format((float)$tBl, 2);
-                            $_SESSION[$session.'dincome'] = $dincome;
-                            $_SESSION[$session.'mincome'] = $mincome;
-                          }
-                            echo $_income."<br/>" . "
-                          ".$_today." " . $TotalRHr . "vcr : " . $currency . " " . $dincome . "<br/>
-                          ".$_this_month." " . $TotalRBl . "vcr : " . $currency . " " . $mincome;
-                          ?>
+                  <div class="box-group-icon icon-emerald" style="background: rgba(16, 185, 129, 0.12) !important; color: #10b981 !important;"><i class="fa fa-money"></i></div>
+                  <div class="box-group-area" style="width: 100%;">
+                    <div class="stat-title"><?= $_income ?></div>
+                    <div id="reloadLreport">
+                      <?php 
+                        if ($currency == in_array($currency, $cekindo['indo'])) {
+                          $dincome = number_format((float)$tHr, 0, ",", ".");
+                          $mincome = number_format((float)$tBl, 0, ",", ".");
+                          $_SESSION[$session.'dincome'] = $dincome;
+                          $_SESSION[$session.'mincome'] = $mincome;
+                        }else{
+                          $dincome = number_format((float)$tHr, 2);
+                          $mincome = number_format((float)$tBl, 2);
+                          $_SESSION[$session.'dincome'] = $dincome;
+                          $_SESSION[$session.'mincome'] = $mincome;
+                        }
+                      ?>
+                      <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+                        <!-- Today -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">
+                          <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);"><?= $_today ?></span>
+                          <span style="font-size: 12px; font-weight: 700; color: var(--text-bright);"><?= $currency ?> <?= $dincome ?> <span style="font-size: 10px; font-weight: 600; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 1px 5px; border-radius: 10px; margin-left: 4px;"><?= $TotalRHr ?> vcr</span></span>
                         </div>
-                    </span>
+                        <!-- This Month -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 2px;">
+                          <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);"><?= $_this_month ?></span>
+                          <span style="font-size: 12px; font-weight: 700; color: var(--primary);"><?= $currency ?> <?= $mincome ?> <span style="font-size: 10px; font-weight: 600; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 1px 5px; border-radius: 10px; margin-left: 4px;"><?= $TotalRBl ?> vcr</span></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
             </div>
             

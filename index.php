@@ -550,13 +550,13 @@ if ($hotspot == "dashboard" || substr(end(explode("/", $url)), 0, 8) == "?sessio
             var cpuVal = parseFloat(cpuEl.getAttribute("data-val") || 0);
             window.cpuHistory.push(cpuVal);
             if (window.cpuHistory.length > 15) window.cpuHistory.shift();
-            drawSparkline("cpuSparkline", window.cpuHistory, "#008BC9");
+            drawSparkline("cpuSparkline", window.cpuHistory, "#818cf8");
         }
         if (memEl) {
             var memVal = parseFloat(memEl.getAttribute("data-val") || 0);
             window.memHistory.push(memVal);
             if (window.memHistory.length > 15) window.memHistory.shift();
-            drawSparkline("memorySparkline", window.memHistory, "#4dbd74");
+            drawSparkline("memorySparkline", window.memHistory, "#34d399");
         }
     }
 

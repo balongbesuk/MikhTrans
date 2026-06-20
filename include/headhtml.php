@@ -43,9 +43,10 @@ error_reporting(0);
 		<link href="css/pace.<?= $theme; ?>.css" rel="stylesheet" />
 		<script src="js/pace.min.js"></script>
 
-		
+		<!-- Modern CSS Overrides (Dynamic Dark/Light Mode) -->
+		<link rel="stylesheet" href="css/modern-override.css?t=<?= time() ?>">
 	</head>
-	<body>
+	<body class="theme-<?= $theme; ?>">
 		<div class="wrapper">
 
 			

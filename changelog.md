@@ -2,9 +2,10 @@
 
 Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen ini.
 
-## [MikhTrans v2.0] - 2026-06-19
+## [MikhTrans v2.0] - 2026-06-20
 
 ### Ditambahkan
+- **Tema Overrides Dark Mode Global**: Menambahkan stylesheet kustom `css/modern-override.css` yang secara paksa menerapkan desain bertema gelap (Dark Mode Only) yang modern, premium, dan konsisten di seluruh halaman admin panel Mikhmon (sidebar, navbar, tabel, form, input, tombol, font).
 - **Penyimpanan Database JSON Terstruktur**: Mengganti penyimpanan `config.php` yang rentan rusak dengan file database JSON terenkripsi/terlindungi (`data/database.json`) menggunakan mekanisme lock file (`flock`) untuk mencegah korupsi data saat akses simultan.
 - **Arsitektur MVC & Autoloading**: Implementasi model OOP (`RouterSession` dan `AppSettings` di bawah namespace `App\Models`) dengan PSR-4 autoloader internal di `include/autoload.php`.
 - **Skeleton Loading & Sukses Payment (Portal Pelanggan)**: Skeleton loading `.skeleton-card` glassmorphic shimmer animation saat menunggu status transaksi, notifikasi copy toast `#copyToast` dengan CSS transition, dan pulse animation pada CTA button.
@@ -14,8 +15,11 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 - **Sparkline Canvas & Badge Log Berwarna (Admin Dashboard)**: Grafik sparkline real-time berbasis HTML5 Canvas untuk melacak penggunaan CPU & Memory secara visual saat polling data, serta pewarnaan badge otomatis (`getLogBadge()`) untuk memetakan level log hotspot (Info, Warning, Error, System, User, Login/Logout) dengan badge tag berwarna.
 - **Anti-Crawler/Anti-Indexing (SEO)**: Menambahkan robots.txt global, meta tag noindex pada halaman depan dan admin, serta pengaturan header X-Robots-Tag pada `.htaccess` untuk mencegah perayapan dan pengindeksan oleh search engine.
 - **Proteksi Keamanan (.htaccess Root)**: Menambahkan berkas `.htaccess` utama untuk memblokir akses HTTP langsung ke berkas `.env`, `.git`, dan `.gitignore` di server Apache.
+- **Diagram Pendapatan Bulanan (12 Bulan)**: Menambahkan diagram batang interaktif kustom berbasis Highcharts pada dashboard admin (`home.php`) yang menyajikan total pendapatan dan volume voucher terjual secara historis selama 12 bulan terakhir melalui pemrosesan transaksi yang dimuat secara asinkron dari API endpoint `dashboard/income_chart.php`.
 
 ### Diubah
+- **Desain Premium Dashboard & Layout Admin (Dark Mode Only)**: Mengubah total layout visual panel admin dengan gaya gelap premium, font Plus Jakarta Sans, card bergaya glassmorphism, spasi baris tabel yang renggang, tombol minimalis bershadow, input field bulat dengan focus-ring, serta menyembunyikan tombol pemilih tema agar tampilan konsisten gelap.
+- **Desain Premium Dashboard Admin**: Merombak tampilan dashboard admin ([home.php](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/dashboard/home.php)) dengan desain card modern, border tipis, bayangan lembut, font Plus Jakarta Sans, ikon bergaya lingkaran minimalis, serta penyesuaian otomatis warna background, border, dan teks yang beradaptasi secara dinamis ke tema aktif (Dark, Light, dll.) menggunakan CSS Variables.
 - **Desain Premium 2-Panel Login (Admin)**: Merombak total tampilan login panel admin ([login.php](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/include/login.php)) menggunakan struktur 2-panel modern (panel visual info/branding di sisi kiri dengan efek blob & panel form interaktif di sisi kanan), font premium Plus Jakarta Sans, tombol input minimalis dengan ikon, eye-toggle untuk visibilitas password, serta layout responsive-collapse di mobile.
 - **De-obfuscation Total Kode JavaScript**: Refaktor dan konversi seluruh script inline yang sebelumnya disamarkan (obfuscated) dengan array hex menjadi kode JavaScript/jQuery modern yang bersih, efisien, dan mudah dipelihara.
 - **Penghapusan Proteksi DRM Logo/Brand**: Menghapus script validasi paksa innerHTML `#brand` (`You destroy MIKHMON`) agar visual dashboard dapat disesuaikan secara bebas untuk branding modern MikhTrans.
@@ -23,14 +27,19 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 - **Floating Labels (Settings & Sessions)**: Form input settings dan sessions admin menggunakan pola floating label modern yang bergerak halus ke atas disertai focus-ring.
 - **Penghapusan Data Sensitif Pribadi**: Mengganti data email, nomor WhatsApp, dan alamat kantor riil dalam berkas `frontpage.php` dan `composer.json` dengan data dummy demi menjaga privasi di repositori publik.
 - **Pelacakan Berkas config.php**: Mengeluarkan `/include/config.php` dari daftar `.gitignore` dan menyertakannya di git agar sistem langsung dapat membaca database sesaat setelah dideploy tanpa manual rename berkas `.example`.
+- **Rombak Tampilan Hotspot Log**: Merombak total daftar log hotspot dari tampilan bergaya card kaku menjadi daftar linier bertema *activity feed* yang bersih, borderless, dan hemat ruang. Mengubah tampilan waktu secara bertumpuk (Stacked Date & Time) dan mengelompokkan detail pengguna serta alamat IP secara vertikal agar tidak terpotong pada layar kecil.
+- **Standardisasi Kartu Profil Voucher**: Merombak tampilan menu Vouchers (`userbyprofile.php`) dari warna latar belakang acak (*random color flash*) yang mengganggu menjadi kartu-kartu premium yang seragam menggunakan CSS Variable, lengkap dengan transisi hover bersinar (*primary glow*) dan ikon tiket modern yang disesuaikan secara dinamis di semua variasi tema.
 
 ### Diperbaiki
+- **Visual Flicker Polling Dashboard**: Sinkronisasi template markup AJAX `dashboard/aload.php` untuk widget status resource (`#r_1`) dan overview hotspot (`#r_2`) agar identik dengan `dashboard/home.php`, sehingga mencegah kedipan (flicker) visual ke template lama saat polling data otomatis berjalan.
 - **Akses Forbidden Cetak/Lihat Voucher**: Memperbaiki masalah `403 Forbidden` saat mencoba mengakses cetak/lihat voucher hotspot ([print.php](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/voucher/print.php) & [vpreview.php](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/voucher/vpreview.php)) di halaman settings, dengan memperbarui aturan keamanan di [voucher/.htaccess](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/voucher/.htaccess) agar hanya memblokir file transaksi `*.json` dan tetap mengizinkan eksekusi file PHP.
 - **Eror Dropdown Sesi (Voucher Hotspot)**: Memperbaiki error pada dropdown pemilih sesi di navbar ([menu.php](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/include/menu.php)) yang menampilkan variabel internal PHP dari file `config.php` alih-alih nama sesi router yang terdaftar, dengan mengalihkan loop untuk langsung membaca key dari array `$data` hasil query database.
 - **Eror Daftar Sesi (Router List)**: Memperbaiki kesalahan parsing naif di `sessions.php` yang sebelumnya membaca parameter konfigurasi eksternal sebagai sesi router aktif dengan merutekan manajemen sesi langsung via database model.
 - **Kerentanan Keamanan XSS/DOM Injection**: Memperbaiki alert code scanning GitHub Advanced Security pada [mikhmon.js](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/js/mikhmon.js) dengan mengubah fungsi manipulasi DOM `.html(n)` menjadi `.text(n)` yang lebih aman dari potensi manipulasi HTML tak tepercaya.
-- **Kompatibilitas putenv() Nonaktif**: Penyesuaian pemuatan berkas `.env` di `env_config.php` dan `config.php.example` dengan mengecek ketersediaan fungsi `putenv()` serta membuat fungsi pembantu `mikhmonEnv()` sebagai fallback ke `$_ENV`/`$_SERVER` agar kompatibel di semua VPS.
+- **Kompatibilitas putenv() Nonaktif**: Penyesuaian pemuatan berkas `.env` di `env_config.php` and `config.php.example` dengan mengecek ketersediaan fungsi `putenv()` serta membuat fungsi pembantu `mikhmonEnv()` sebagai fallback ke `$_ENV`/`$_SERVER` agar kompatibel di semua VPS.
 - **Infinite Redirect Loop (Settings)**: Memperbaiki loop redirect tanpa henti di `settings/settings.php` dengan menambahkan fungsi `exit;` setelah redirect JavaScript serta menetapkan nilai mata uang default jika kosong.
+- **Disappearing Income Card Bug**: Menyelesaikan bug di mana kartu pendapatan atas (Income card) mendadak hilang dari layar setiap 10 detik saat AJAX polling system resource terpicu. Solusi dilakukan dengan memisahkan penampung target update `#r_1` menggunakan CSS `display: contents;` sehingga kartu Pendapatan (`#r_4`) tetap menjadi sibling sejajar tanpa ikut terhapus atau tertimpa oleh response `aload.php`.
+- **Theme Toggle Skewed Background Bug**: Memperbaiki distorsi latar belakang miring (jajaran genjang) pada tombol pemilih tema di navbar saat kursor diarahkan (hover), dengan mengisolasi transformasi rotasi 15 derajat secara khusus pada elemen ikon `<i>` alih-alih seluruh kontainer tombol `<a>`.
 
 
 
