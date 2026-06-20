@@ -8,148 +8,149 @@
 /* ─── Theme Variables ─── */
 /* Default variables (Dark Mode) */
 :root {
-    --bg-body: #0a0f1a;
-    --bg-card: #111827;
-    --bg-card-hover: #161f32;
-    --border-color: rgba(255, 255, 255, 0.06);
-    --border-hover: rgba(99, 102, 241, 0.3);
-    --text-main: #e5e7eb;
-    --text-muted: #6b7280;
-    --text-bright: #f9fafb;
-    --primary: #818cf8;
-    --primary-dim: #6366f1;
-    --primary-glow: rgba(99, 102, 241, 0.12);
-    --primary-hover: #6366f1;
-    --sidebar-bg: #0f1524;
-    --navbar-bg: rgba(15, 21, 36, 0.88);
-    --table-header-bg: rgba(255, 255, 255, 0.03);
-    --input-bg: #1a2236;
-    --input-border: rgba(255, 255, 255, 0.08);
-    --success: #34d399;
-    --danger: #f87171;
-    --warning: #fbbf24;
-    --info: #38bdf8;
-    --radius: 14px;
+    --bg-body: #1a222c;
+    --bg-card: #24303f;
+    --bg-card-hover: #2c3a4f;
+    --border-color: #2e3a47;
+    --border-hover: rgba(60, 80, 224, 0.4);
+    --text-main: #eff4f8;
+    --text-muted: #8a99ad;
+    --text-bright: #ffffff;
+    --primary: #3c50e0;
+    --primary-dim: #3c50e0;
+    --primary-glow: rgba(60, 80, 224, 0.12);
+    --primary-hover: #3142c5;
+    --sidebar-bg: #1c2434;
+    --navbar-bg: rgba(28, 36, 52, 0.95);
+    --table-header-bg: rgba(255, 255, 255, 0.02);
+    --input-bg: #1d2a3a;
+    --input-border: #2e3a47;
+    --success: #219653;
+    --danger: #d34053;
+    --warning: #ffa70b;
+    --info: #3c50e0;
+    --radius: 8px;
 
     /* Dynamic hovers and elements that change opacity directions in light/dark modes */
-    --hover-bg: rgba(255, 255, 255, 0.03);
-    --hover-bg-intense: rgba(255, 255, 255, 0.05);
-    --navbar-hover-bg: rgba(255, 255, 255, 0.04);
-    --bg-light-el: rgba(255, 255, 255, 0.04);
-    --bg-white-el: rgba(255, 255, 255, 0.06);
+    --hover-bg: rgba(255, 255, 255, 0.02);
+    --hover-bg-intense: rgba(255, 255, 255, 0.04);
+    --navbar-hover-bg: rgba(255, 255, 255, 0.03);
+    --bg-light-el: rgba(255, 255, 255, 0.03);
+    --bg-white-el: rgba(255, 255, 255, 0.05);
 
     /* Session Settings / Admin settings inputs compatibility */
     --card-bg: var(--bg-card);
     --background-alt: var(--sidebar-bg);
 
     /* Mode-dependent layout properties */
-    --primary-hover-text: #a5b4fc;
-    --dropdown-bg: rgba(0, 0, 0, 0.15);
-    --table-border: rgba(255, 255, 255, 0.03);
-    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.25);
-    --welcome-bg: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
+    --primary-hover-text: #80caee;
+    --dropdown-bg: rgba(0, 0, 0, 0.2);
+    --table-border: #2e3a47;
+    --shadow-card: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    --welcome-bg: linear-gradient(135deg, #1c2434 0%, #24303f 100%);
 }
 
 /* Explicit Dark Mode */
 body.theme-dark {
-    --bg-body: #0a0f1a;
-    --bg-card: #111827;
-    --bg-card-hover: #161f32;
-    --border-color: rgba(255, 255, 255, 0.06);
-    --border-hover: rgba(99, 102, 241, 0.3);
-    --text-main: #e5e7eb;
-    --text-muted: #6b7280;
-    --text-bright: #f9fafb;
-    --primary: #818cf8;
-    --primary-dim: #6366f1;
-    --primary-glow: rgba(99, 102, 241, 0.12);
-    --primary-hover: #6366f1;
-    --sidebar-bg: #0f1524;
-    --navbar-bg: rgba(15, 21, 36, 0.88);
-    --table-header-bg: rgba(255, 255, 255, 0.03);
-    --input-bg: #1a2236;
-    --input-border: rgba(255, 255, 255, 0.08);
-    --success: #34d399;
-    --danger: #f87171;
-    --warning: #fbbf24;
-    --info: #38bdf8;
+    --bg-body: #1a222c;
+    --bg-card: #24303f;
+    --bg-card-hover: #2c3a4f;
+    --border-color: #2e3a47;
+    --border-hover: rgba(60, 80, 224, 0.4);
+    --text-main: #eff4f8;
+    --text-muted: #8a99ad;
+    --text-bright: #ffffff;
+    --primary: #3c50e0;
+    --primary-dim: #3c50e0;
+    --primary-glow: rgba(60, 80, 224, 0.12);
+    --primary-hover: #3142c5;
+    --sidebar-bg: #1c2434;
+    --navbar-bg: rgba(28, 36, 52, 0.95);
+    --table-header-bg: rgba(255, 255, 255, 0.02);
+    --input-bg: #1d2a3a;
+    --input-border: #2e3a47;
+    --success: #219653;
+    --danger: #d34053;
+    --warning: #ffa70b;
+    --info: #3c50e0;
 
-    --hover-bg: rgba(255, 255, 255, 0.03);
-    --hover-bg-intense: rgba(255, 255, 255, 0.05);
-    --navbar-hover-bg: rgba(255, 255, 255, 0.04);
-    --bg-light-el: rgba(255, 255, 255, 0.04);
-    --bg-white-el: rgba(255, 255, 255, 0.06);
+    --hover-bg: rgba(255, 255, 255, 0.02);
+    --hover-bg-intense: rgba(255, 255, 255, 0.04);
+    --navbar-hover-bg: rgba(255, 255, 255, 0.03);
+    --bg-light-el: rgba(255, 255, 255, 0.03);
+    --bg-white-el: rgba(255, 255, 255, 0.05);
 
     --card-bg: var(--bg-card);
     --background-alt: var(--sidebar-bg);
 
-    --primary-hover-text: #a5b4fc;
-    --dropdown-bg: rgba(0, 0, 0, 0.15);
-    --table-border: rgba(255, 255, 255, 0.03);
-    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.25);
-    --welcome-bg: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
+    --primary-hover-text: #80caee;
+    --dropdown-bg: rgba(0, 0, 0, 0.2);
+    --table-border: #2e3a47;
+    --shadow-card: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    --welcome-bg: linear-gradient(135deg, #1c2434 0%, #24303f 100%);
 }
 
 /* Light / Color Mode Themes */
 body.theme-light, body.theme-blue, body.theme-green, body.theme-pink {
-    --bg-body: #f3f4f6; /* premium cool-grey */
+    --bg-body: #f1f5f9;
     --bg-card: #ffffff;
-    --bg-card-hover: #f9fafb;
-    --border-color: rgba(0, 0, 0, 0.08);
-    --border-hover: rgba(99, 102, 241, 0.2);
-    --text-main: #374151; /* gray-700 */
-    --text-muted: #9ca3af; /* gray-400 */
-    --text-bright: #111827; /* gray-900 */
+    --bg-card-hover: #f8fafc;
+    --border-color: #e2e8f0;
+    --border-hover: rgba(60, 80, 224, 0.2);
+    --text-main: #1c2434;
+    --text-muted: #64748b;
+    --text-bright: #1c2434;
     
     --sidebar-bg: #ffffff;
-    --navbar-bg: rgba(255, 255, 255, 0.85);
-    --table-header-bg: rgba(0, 0, 0, 0.02);
-    --input-bg: #f9fafb;
-    --input-border: rgba(0, 0, 0, 0.12);
-    --success: #10b981;
-    --danger: #ef4444;
-    --warning: #f59e0b;
-    --info: #06b6d4;
+    --navbar-bg: rgba(255, 255, 255, 0.95);
+    --table-header-bg: #f8fafc;
+    --input-bg: #ffffff;
+    --input-border: #e2e8f0;
+    --success: #219653;
+    --danger: #d34053;
+    --warning: #ffa70b;
+    --info: #3c50e0;
 
-    --hover-bg: rgba(0, 0, 0, 0.025);
-    --hover-bg-intense: rgba(0, 0, 0, 0.045);
-    --navbar-hover-bg: rgba(0, 0, 0, 0.035);
-    --bg-light-el: rgba(0, 0, 0, 0.03);
-    --bg-white-el: rgba(0, 0, 0, 0.04);
+    --hover-bg: rgba(0, 0, 0, 0.015);
+    --hover-bg-intense: rgba(0, 0, 0, 0.03);
+    --navbar-hover-bg: rgba(0, 0, 0, 0.02);
+    --bg-light-el: rgba(0, 0, 0, 0.02);
+    --bg-white-el: rgba(0, 0, 0, 0.03);
 
     --card-bg: var(--bg-card);
-    --background-alt: #e5e7eb;
+    --background-alt: #e2e8f0;
 
     --dropdown-bg: rgba(0, 0, 0, 0.03);
-    --table-border: rgba(0, 0, 0, 0.04);
-    --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+    --table-border: #e2e8f0;
+    --shadow-card: 0px 8px 16px rgba(0, 0, 0, 0.03);
+    --welcome-bg: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
 }
 
 /* Specific Accent Colors for Light Themes */
 body.theme-light, body.theme-blue {
-    --primary: #3b82f6; /* royal blue */
-    --primary-dim: #2563eb;
-    --primary-glow: rgba(59, 130, 246, 0.12);
-    --primary-hover: #1d4ed8;
-    --primary-hover-text: #1d4ed8;
-    --welcome-bg: linear-gradient(135deg, #3b82f6 0%, #2563eb 40%, #1d4ed8 100%);
+    --primary: #3c50e0;
+    --primary-dim: #3c50e0;
+    --primary-glow: rgba(60, 80, 224, 0.1);
+    --primary-hover: #3142c5;
+    --primary-hover-text: #3c50e0;
+    --welcome-bg: linear-gradient(135deg, #3c50e0 0%, #4f63ec 100%);
 }
 
 body.theme-green {
-    --primary: #10b981; /* emerald green */
-    --primary-dim: #059669;
-    --primary-glow: rgba(16, 185, 129, 0.12);
-    --primary-hover: #047857;
-    --primary-hover-text: #047857;
-    --welcome-bg: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    --primary: #10b981;
+    --primary-dim: #10b981;
+    --primary-glow: rgba(16, 185, 129, 0.1);
+    --primary-hover: #059669;
+    --primary-hover-text: #10b981;
+    --welcome-bg: linear-gradient(135deg, #10b981 0%, #34d399 100%);
 }
 
 body.theme-pink {
-    --primary: #ec4899; /* hot pink */
-    --primary-dim: #db2777;
-    --primary-glow: rgba(236, 72, 153, 0.12);
-    --primary-hover: #be185d;
-    --primary-hover-text: #be185d;
+    --primary: #ec4899;
+    --primary-dim: #ec4899;
+    --primary-glow: rgba(236, 72, 153, 0.1);
+    --primary-hover: #db2777;
+    --primary-hover-text: #ec4899;
     --welcome-bg: linear-gradient(135deg, #db2777 0%, #ec4899 100%);
 }
 
@@ -210,6 +211,18 @@ body {
         border-right: none !important;
         opacity: 0;
         overflow: hidden;
+    }
+
+    /* Prevent flex items (resource & income cards) from shrinking or layout collapsing */
+    #r_1 .col-4, #r_4.col-4 {
+        flex: 0 0 33.333% !important;
+        max-width: 33.333% !important;
+        width: 33.333% !important;
+    }
+    #r_1 .col-6 {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+        width: 50% !important;
     }
 }
 
@@ -556,7 +569,7 @@ body {
 .overflow {
     border: 1px solid var(--border-color) !important;
     border-radius: 12px !important;
-    overflow: hidden auto !important;
+    overflow: auto !important;
     background-color: var(--bg-card) !important;
 }
 
@@ -1236,5 +1249,189 @@ span, p, div, label, small, b, strong, i, em {
 }
 .voucher-profile-actions a:hover {
     color: var(--primary-hover-text) !important;
+}
+
+/* ─── Mobile-First Improvements ─── */
+
+/* 1. Header and Navbar Layout Overflow Fix */
+@media (max-width: 750px) {
+    #brand, #cpage {
+        display: none !important;
+    }
+    #logout {
+        font-size: 0 !important;
+        padding: 0 12px !important;
+    }
+    #logout i {
+        font-size: 16px !important;
+        margin: 0 !important;
+    }
+    .navbar-right select.connect, 
+    .navbar-right select.slang, 
+    .ses {
+        max-width: 100px !important;
+    }
+}
+
+/* 2. Input Group and Filter Row Stacking */
+@media (max-width: 600px) {
+    .input-group {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    .input-group > [class*="col-box-"],
+    .input-group > [class*="input-group-"] {
+        width: 100% !important;
+        float: none !important;
+    }
+    .group-item-l, 
+    .group-item-m, 
+    .group-item-r {
+        border-radius: 10px !important;
+    }
+}
+
+/* 3. Form-Layout Stacking (Tables inside form cards) */
+@media (max-width: 500px) {
+    .card .table td, 
+    .card-body .table td {
+        display: block !important;
+        width: 100% !important;
+        border-bottom: none !important;
+        box-sizing: border-box !important;
+    }
+    .card .table tr {
+        display: block !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        padding-bottom: 8px !important;
+    }
+    .card .table td:first-child {
+        width: 100% !important;
+        padding-bottom: 4px !important;
+        padding-top: 8px !important;
+        font-weight: 700 !important;
+    }
+    .card .table td:last-child {
+        padding-top: 0 !important;
+    }
+}
+
+/* 4. Dashboard Card Ordering (Mobile) */
+@media (max-width: 750px) {
+    #reloadHome {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    #reloadHome > .row,
+    #reloadHome > .row > .col-8,
+    #reloadHome > .row > .col-4:not(#r_4) {
+        display: contents !important;
+    }
+    #r_2 {
+        order: 1 !important;
+    }
+    .dash-welcome {
+        order: 2 !important;
+    }
+    #r_1 > div:nth-child(1) {
+        order: 3 !important;
+    }
+    #r_1 > div:nth-child(2) {
+        order: 4 !important;
+    }
+    #r_4 {
+        order: 5 !important;
+    }
+    #trafficCard {
+        order: 6 !important;
+    }
+    #salesCard {
+        order: 7 !important;
+    }
+    #r_3 {
+        order: 8 !important;
+    }
+}
+
+/* 5. Dropdown Styling (.dropd) */
+select.dropd {
+    background-color: var(--input-bg) !important;
+    border: 1px solid var(--input-border) !important;
+    color: var(--text-main) !important;
+    border-radius: var(--radius) !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    outline: none !important;
+    min-width: 150px;
+    height: 36px !important;
+    cursor: pointer !important;
+    box-shadow: var(--shadow-card) !important;
+    transition: all 0.2s ease !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a99ad' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 14px;
+    padding-right: 32px !important;
+}
+
+select.dropd:hover {
+    border-color: var(--primary) !important;
+}
+
+/* 6. Sync Status Indicator */
+.sync-status {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 3px 10px !important;
+    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    transition: all 0.3s ease !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.sync-status.connected {
+    color: #10b981 !important;
+}
+.sync-status.syncing {
+    color: #fbbf24 !important;
+}
+.sync-status.offline {
+    color: #f87171 !important;
+}
+
+.status-dot {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    display: inline-block !important;
+    transition: all 0.3s ease !important;
+}
+.status-dot.connected {
+    background: #10b981 !important;
+    box-shadow: 0 0 6px #10b981 !important;
+}
+.status-dot.syncing {
+    background: #fbbf24 !important;
+    box-shadow: 0 0 6px #fbbf24 !important;
+    animation: pulse-syncing 1.2s infinite ease-in-out;
+}
+.status-dot.offline {
+    background: #f87171 !important;
+    box-shadow: 0 0 6px #f87171 !important;
+}
+
+@keyframes pulse-syncing {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.8); opacity: 0.5; }
 }
 

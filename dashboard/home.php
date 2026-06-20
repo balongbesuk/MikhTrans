@@ -22,57 +22,75 @@ if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
 } else {
 
-
-// get MikroTik system clock
+  // get MikroTik system clock
   $getclock = $API->comm("/system/clock/print");
-  $clock = $getclock[0];
-  $timezone = $getclock[0]['time-zone-name'];
-  $_SESSION['timezone'] = $timezone;
-  date_default_timezone_set($timezone);
-  $_SESSION[$session.'sdate'] = $clock['date'];
+  $clock = is_array($getclock) ? $getclock[0] : null;
+  $timezone = isset($clock['time-zone-name']) ? $clock['time-zone-name'] : (isset($_SESSION['timezone']) ? $_SESSION['timezone'] : '');
+  if (!empty($timezone)) {
+    $_SESSION['timezone'] = $timezone;
+    date_default_timezone_set($timezone);
+  }
+  $_SESSION[$session.'sdate'] = isset($clock['date']) ? $clock['date'] : '';
 
-// get system resource MikroTik
+  // get system resource MikroTik
   $getresource = $API->comm("/system/resource/print");
-  $resource = $getresource[0];
+  $resource = is_array($getresource) ? $getresource[0] : null;
 
-// get routeboard info
+  // get routeboard info
   $getrouterboard = $API->comm("/system/routerboard/print");
-  $routerboard = $getrouterboard[0];
+  $routerboard = is_array($getrouterboard) ? $getrouterboard[0] : null;
 
-// get & counting hotspot users
+  // get & counting hotspot users
   $countallusers = $API->comm("/ip/hotspot/user/print", array("count-only" => ""));
-  if ($countallusers < 2) {
+  if (!is_numeric($countallusers)) {
+    $countallusers = '-';
+    $uunit = "items";
+  } elseif ($countallusers < 2) {
     $uunit = "item";
-  } elseif ($countallusers > 1) {
+  } else {
     $uunit = "items";
   }
 
-// get & counting hotspot active
+  // get & counting hotspot active
   $counthotspotactive = $API->comm("/ip/hotspot/active/print", array("count-only" => ""));
-  if ($counthotspotactive < 2) {
+  if (!is_numeric($counthotspotactive)) {
+    $counthotspotactive = '-';
+    $hunit = "items";
+  } elseif ($counthotspotactive < 2) {
     $hunit = "item";
-  } elseif ($counthotspotactive > 1) {
+  } else {
     $hunit = "items";
   }
 
   if ($livereport == "disable") {
     $logh = "457px";
     $lreport = "style='display:none;'";
-    $col_class = "col-4";
+    $col_class = "col-6";
   } else {
     $logh = "350px";
     $lreport = "style='display:block;'";
-    $col_class = "col-3";
+    $col_class = "col-4";
   }
 
-  // Calculate resource percentages
+  // Calculate resource percentages & define UI variables
+  $board_name = isset($resource['board-name']) ? $resource['board-name'] : '-';
+  $model = isset($routerboard['model']) ? $routerboard['model'] : '-';
+  $version = isset($resource['version']) ? $resource['version'] : '-';
+  $uptime = (isset($resource['uptime']) && !empty($resource['uptime'])) ? formatDTM($resource['uptime']) : '-';
+  $time = isset($clock['time']) ? $clock['time'] : '-';
+  $date = isset($clock['date']) ? $clock['date'] : '-';
+
+  $cpu_load = (isset($resource['cpu-load']) && is_numeric($resource['cpu-load'])) ? $resource['cpu-load'] : '-';
+
   $total_mem = isset($resource['total-memory']) ? $resource['total-memory'] : 1;
   if ($total_mem <= 0) $total_mem = 1;
-  $mem_pct = round((($total_mem - $resource['free-memory']) / $total_mem) * 100);
+  $mem_pct = (isset($resource['free-memory']) && isset($resource['total-memory'])) ? round((($total_mem - $resource['free-memory']) / $total_mem) * 100) : '-';
+  $free_mem_bytes = isset($resource['free-memory']) ? formatBytes($resource['free-memory'], 1) : '-';
   
   $total_hdd = isset($resource['total-hdd-space']) ? $resource['total-hdd-space'] : 1;
   if ($total_hdd <= 0) $total_hdd = 1;
-  $hdd_pct = round((($total_hdd - $resource['free-hdd-space']) / $total_hdd) * 100);
+  $hdd_pct = (isset($resource['free-hdd-space']) && isset($resource['total-hdd-space'])) ? round((($total_hdd - $resource['free-hdd-space']) / $total_hdd) * 100) : '-';
+  $free_hdd_bytes = isset($resource['free-hdd-space']) ? formatBytes($resource['free-hdd-space'], 1) : '-';
 }
 ?>
     
@@ -166,8 +184,8 @@ if (!isset($_SESSION["mikhmon"])) {
 #r_1 .box.box-bordered {
     background: var(--bg-card) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 16px !important;
-    padding: 20px !important;
+    border-radius: var(--radius) !important;
+    padding: 24px !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     box-sizing: border-box;
     height: 100% !important;
@@ -176,8 +194,8 @@ if (!isset($_SESSION["mikhmon"])) {
 }
 #r_1 .box.box-bordered:hover {
     border-color: var(--border-hover) !important;
-    box-shadow: 0 8px 32px var(--primary-glow) !important;
-    transform: translateY(-2px);
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.05) !important;
+    transform: translateY(-1px);
 }
 
 #r_1 .box-group {
@@ -189,9 +207,9 @@ if (!isset($_SESSION["mikhmon"])) {
 
 #r_1 .box-group-icon {
     font-size: 18px !important;
-    width: 42px !important;
-    height: 42px !important;
-    border-radius: 12px !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -200,9 +218,9 @@ if (!isset($_SESSION["mikhmon"])) {
     float: none !important;
     transition: all 0.3s ease;
 }
-.icon-indigo { background: rgba(99, 102, 241, 0.12) !important; color: #818cf8 !important; }
-.icon-cyan { background: rgba(6, 182, 212, 0.12) !important; color: #22d3ee !important; }
-.icon-violet { background: rgba(139, 92, 246, 0.12) !important; color: #a78bfa !important; }
+.icon-indigo { background: rgba(60, 80, 224, 0.1) !important; color: var(--primary) !important; }
+.icon-cyan { background: rgba(33, 150, 83, 0.1) !important; color: #219653 !important; }
+.icon-violet { background: rgba(245, 158, 11, 0.1) !important; color: #ffa70b !important; }
 
 #r_1 .box-group-area {
     flex: 1;
@@ -269,7 +287,7 @@ if (!isset($_SESSION["mikhmon"])) {
 .card-hotspot-panel {
     background: var(--bg-card) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 16px !important;
+    border-radius: var(--radius) !important;
     box-shadow: var(--shadow-card) !important;
     margin-bottom: 24px !important;
     overflow: hidden !important;
@@ -294,8 +312,8 @@ if (!isset($_SESSION["mikhmon"])) {
 
 /* Action cards inside hotspot panel */
 #r_2 .box {
-    border-radius: 14px !important;
-    padding: 20px 14px !important;
+    border-radius: var(--radius) !important;
+    padding: 24px 14px !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     border: 1px solid transparent !important;
     overflow: hidden;
@@ -347,7 +365,7 @@ if (!isset($_SESSION["mikhmon"])) {
 .card {
     background: var(--bg-card) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 16px !important;
+    border-radius: var(--radius) !important;
     box-shadow: var(--shadow-card) !important;
     margin-bottom: 24px !important;
     overflow: hidden;
@@ -375,7 +393,7 @@ if (!isset($_SESSION["mikhmon"])) {
 
 /* Traffic chart */
 #trafficMonitor {
-    border-radius: 12px; overflow: hidden;
+    border-radius: var(--radius) !important; overflow: hidden;
     background: transparent !important;
 }
 .highcharts-background { fill: transparent !important; }
@@ -392,23 +410,23 @@ if (!isset($_SESSION["mikhmon"])) {
 #r_4 .box.box-bordered {
     background: var(--bg-card) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 16px !important;
+    border-radius: var(--radius) !important;
     box-shadow: var(--shadow-card) !important;
-    padding: 20px !important;
+    padding: 24px !important;
     transition: all 0.3s ease;
 }
 #r_4 .box.box-bordered:hover {
-    border-color: rgba(16, 185, 129, 0.3) !important;
-    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.08) !important;
-    transform: translateY(-2px);
+    border-color: rgba(33, 150, 83, 0.3) !important;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.05) !important;
+    transform: translateY(-1px);
 }
 #r_4 .box-group { display: flex !important; align-items: center !important; }
 #r_4 .box-group-icon {
     font-size: 18px !important;
-    color: #34d399 !important;
+    color: #10b981 !important;
     background: rgba(16, 185, 129, 0.12) !important;
-    width: 42px !important; height: 42px !important;
-    border-radius: 12px !important;
+    width: 44px !important; height: 44px !important;
+    border-radius: 50% !important;
     display: flex !important; align-items: center !important; justify-content: center !important;
     float: none !important; margin-right: 14px !important; flex-shrink: 0;
 }
@@ -523,17 +541,20 @@ if (!isset($_SESSION["mikhmon"])) {
     <div class="dash-welcome">
       <div class="dash-welcome-content">
         <div>
-          <div class="dash-welcome-tag">Active Connection</div>
-          <h2><?= $resource['board-name'] ?></h2>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+            <div class="dash-welcome-tag" style="margin-bottom: 0 !important;">Active Connection</div>
+            <div id="sync-status-badge" class="sync-status connected"><span class="status-dot connected"></span> Connected</div>
+          </div>
+          <h2><?= $board_name ?></h2>
           <div class="dash-welcome-badges">
-            <span class="welcome-badge"><i class="fa fa-microchip"></i> <?= $routerboard['model'] ?></span>
-            <span class="welcome-badge"><i class="fa fa-code-fork"></i> v<?= $resource['version'] ?></span>
-            <span class="welcome-badge"><i class="fa fa-clock-o"></i> <?= formatDTM($resource['uptime']) ?></span>
+            <span class="welcome-badge"><i class="fa fa-microchip"></i> <?= $model ?></span>
+            <span class="welcome-badge"><i class="fa fa-code-fork"></i> v<?= $version ?></span>
+            <span class="welcome-badge"><i class="fa fa-clock-o"></i> <?= $uptime ?></span>
           </div>
         </div>
         <div class="dash-welcome-time">
-          <div class="time-big"><?= $clock['time'] ?></div>
-          <div class="time-date"><i class="fa fa-calendar"></i> <?= ucfirst($clock['date']) ?> &bull; <?= $timezone ?></div>
+          <div class="time-big"><?= $time ?></div>
+          <div class="time-date"><i class="fa fa-calendar"></i> <?= ucfirst($date) ?> &bull; <?= $timezone ?></div>
         </div>
       </div>
     </div>
@@ -550,17 +571,17 @@ if (!isset($_SESSION["mikhmon"])) {
                 <div class="stat-title">System Resources</div>
                 <div class="sys-metric">
                   <div class="metric-info">
-                    <span>CPU <strong id="cpuVal" data-val="<?= $resource['cpu-load'] ?>"><?= $resource['cpu-load'] ?>%</strong></span>
+                    <span>CPU <strong id="cpuVal" data-val="<?= $cpu_load ?>"><?= $cpu_load ?><?= is_numeric($cpu_load) ? '%' : '' ?></strong></span>
                     <canvas id="cpuSparkline" width="60" height="14"></canvas>
                   </div>
-                  <div class="metric-bar"><div class="metric-bar-fill" style="width: <?= $resource['cpu-load'] ?>%;"></div></div>
+                  <div class="metric-bar"><div class="metric-bar-fill" style="width: <?= is_numeric($cpu_load) ? $cpu_load : 0 ?>%;"></div></div>
                 </div>
                 <div class="sys-metric" style="margin-top: 8px;">
                   <div class="metric-info">
-                    <span>RAM <strong id="memVal" data-val="<?= $mem_pct ?>"><?= $mem_pct ?>%</strong></span>
+                    <span>RAM <strong id="memVal" data-val="<?= $mem_pct ?>"><?= $mem_pct ?><?= is_numeric($mem_pct) ? '%' : '' ?></strong></span>
                     <canvas id="memorySparkline" width="60" height="14"></canvas>
                   </div>
-                  <div class="metric-bar"><div class="metric-bar-fill bg-emerald" style="width: <?= $mem_pct ?>%;"></div></div>
+                  <div class="metric-bar"><div class="metric-bar-fill bg-emerald" style="width: <?= is_numeric($mem_pct) ? $mem_pct : 0 ?>%;"></div></div>
                 </div>
               </div>
             </div>
@@ -573,37 +594,24 @@ if (!isset($_SESSION["mikhmon"])) {
               <div class="box-group-icon icon-violet"><i class="fa fa-hdd-o"></i></div>
               <div class="box-group-area">
                 <div class="stat-title">Storage & Memory</div>
-                <div class="stat-main-val"><?= formatBytes($resource['free-memory'], 1) ?> <span style="font-size:12px;color:#6b7280;font-weight:600;">free RAM</span></div>
+                <div class="stat-main-val"><?= $free_mem_bytes ?> <span style="font-size:12px;color:#6b7280;font-weight:600;">free RAM</span></div>
                 <div class="sys-metric" style="margin-top: 6px;">
                   <div class="metric-info">
-                    <span>HDD <?= $hdd_pct ?>%</span>
-                    <span style="color:#6b7280;"><?= formatBytes($resource['free-hdd-space'], 1) ?> free</span>
+                    <span>HDD <?= $hdd_pct ?><?= is_numeric($hdd_pct) ? '%' : '' ?></span>
+                    <span style="color:#6b7280;"><?= $free_hdd_bytes ?> free</span>
                   </div>
-                  <div class="metric-bar"><div class="metric-bar-fill bg-amber" style="width: <?= $hdd_pct ?>%;"></div></div>
+                  <div class="metric-bar"><div class="metric-bar-fill bg-amber" style="width: <?= is_numeric($hdd_pct) ? $hdd_pct : 0 ?>%;"></div></div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Card 3: System Date & Time (Moved to the Right) -->
-        <div class="<?= $col_class ?>">
-          <div class="box bmh-75 box-bordered">
-            <div class="box-group">
-              <div class="box-group-icon icon-indigo"><i class="fa fa-calendar"></i></div>
-              <div class="box-group-area">
-                <div class="stat-title"><?= $_system_date_time ?></div>
-                <div class="stat-main-val"><?= $clock['time'] ?></div>
-                <div class="stat-sub-val"><?= ucfirst($clock['date']) ?> &bull; Uptime: <?= formatDTM($resource['uptime']) ?></div>
               </div>
             </div>
           </div>
         </div>
       </div>
       <!-- Card 4: Income (Moved from Sidebar) -->
-      <div id="r_4" class="col-3" <?= $lreport; ?>>
+      <div id="r_4" class="<?= $col_class ?>" <?= $lreport; ?>>
         <div class="box bmh-75 box-bordered" style="height: 100%;">
           <div class="box-group">
-            <div class="box-group-icon icon-emerald" style="background: rgba(16, 185, 129, 0.12) !important; color: #10b981 !important;"><i class="fa fa-money"></i></div>
+            <div class="box-group-icon icon-emerald"><i class="fa fa-money"></i></div>
             <div class="box-group-area" style="width: 100%;">
               <div class="stat-title"><?= $_income ?></div>
               <div id="reloadLreport">
@@ -685,7 +693,7 @@ if (!isset($_SESSION["mikhmon"])) {
         </div>
 
         <!-- Traffic Monitor -->
-        <div class="card">
+        <div class="card" id="trafficCard">
           <div class="card-header"><h3><i class="fa fa-area-chart"></i> <?= $_traffic ?></h3></div>
           <div class="card-body">
               <?php $getinterface = $API->comm("/interface/print");
@@ -697,6 +705,7 @@ if (!isset($_SESSION["mikhmon"])) {
                 var interface = "<?= $interface ?>";
                 var n = 3000;
                 function requestDatta(session,iface) {
+                  if (document.hidden) return; // Pause traffic requests when tab is hidden
                   $.ajax({
                     url: './traffic/traffic.php?session='+session+'&iface='+iface,
                     datatype: "json",
@@ -824,7 +833,7 @@ if (!isset($_SESSION["mikhmon"])) {
         </div>
 
         <!-- Monthly Sales Performance Chart -->
-        <div class="card">
+        <div class="card" id="salesCard">
           <div class="card-header">
             <h3><i class="fa fa-line-chart"></i> Monthly Sales Performance (12 Months)</h3>
           </div>
@@ -883,6 +892,8 @@ if (!isset($_SESSION["mikhmon"])) {
                   type: 'column',
                   backgroundColor: 'transparent',
                   height: 300,
+                  spacingLeft: window.innerWidth < 500 ? 5 : 10,
+                  spacingRight: window.innerWidth < 500 ? 5 : 10,
                   style: {
                     fontFamily: "'Plus Jakarta Sans', sans-serif"
                   }
@@ -903,14 +914,23 @@ if (!isset($_SESSION["mikhmon"])) {
                 },
                 yAxis: [{
                   title: {
-                    text: 'Total Income',
+                    text: window.innerWidth < 500 ? null : 'Total Income',
                     style: {
                       color: 'var(--text-muted)'
                     }
                   },
                   labels: {
                     formatter: function() {
-                      return 'Rp ' + Highcharts.numberFormat(this.value, 0, ',', '.');
+                      var val = this.value;
+                      if (window.innerWidth < 500) {
+                        if (val >= 1000000) {
+                          return 'Rp ' + (val / 1000000).toFixed(1).replace('.0', '') + 'M';
+                        } else if (val >= 1000) {
+                          return 'Rp ' + (val / 1000) + 'k';
+                        }
+                        return 'Rp ' + val;
+                      }
+                      return 'Rp ' + Highcharts.numberFormat(val, 0, ',', '.');
                     },
                     style: {
                       color: 'var(--text-muted)'
@@ -919,7 +939,7 @@ if (!isset($_SESSION["mikhmon"])) {
                   gridLineColor: 'var(--border-color)'
                 }, {
                   title: {
-                    text: 'Vouchers Sold',
+                    text: window.innerWidth < 500 ? null : 'Vouchers Sold',
                     style: {
                       color: 'var(--text-muted)'
                     }

@@ -55,7 +55,8 @@ $API->debug = false;
       $rows2['data'][] = $frx;
       
   }else{
-		echo "<font color='#ff0000'>Connection Failed!!</font>";
+      $rows = array('name' => 'Tx', 'data' => array(0));
+      $rows2 = array('name' => 'Rx', 'data' => array(0));
   }
   
   $API->disconnect();

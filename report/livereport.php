@@ -40,14 +40,21 @@ include('../lang/'.$langid.'.php');
   include_once('../lib/formatbytesbites.php');
   $API = new RouterosAPI();
   $API->debug = false;
-  $API->connect($iphost, $userhost, decrypt($passwdhost));
+  $connected = $API->connect($iphost, $userhost, decrypt($passwdhost));
+  
+  // If connection failed, exit silently — safeLoad() will skip the empty response
+  if (!$connected) {
+    exit;
+  }
 
   if ($livereport == "disable") {
     $logh = "457px";
     $lreport = "style='display:none;'";
+    $col_class = "col-6";
   } else {
     $logh = "350px";
     $lreport = "style='display:block;'";
+    $col_class = "col-4";
 // get selling report
     $thisD = date("d");
     $thisM = strtolower(date("M"));
@@ -100,10 +107,10 @@ include('../lang/'.$langid.'.php');
   }
 }
 ?>
-            <div id="r_4" class="col-3" <?= $lreport; ?>>
+            <div id="r_4_inner" style="height: 100%;">
               <div class="box bmh-75 box-bordered" style="height: 100%;">
                 <div class="box-group">
-                  <div class="box-group-icon icon-emerald" style="background: rgba(16, 185, 129, 0.12) !important; color: #10b981 !important;"><i class="fa fa-money"></i></div>
+                  <div class="box-group-icon icon-emerald"><i class="fa fa-money"></i></div>
                   <div class="box-group-area" style="width: 100%;">
                     <div class="stat-title"><?= $_income ?></div>
                     <div id="reloadLreport">

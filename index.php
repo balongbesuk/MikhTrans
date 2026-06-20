@@ -560,45 +560,149 @@ if ($hotspot == "dashboard" || substr(end(explode("/", $url)), 0, 8) == "?sessio
         }
     }
 
-    $("#r_3").load("./dashboard/aload.php?session=' . $session . '&load=logs #r_3");
-    setTimeout(updateSparklines, 500);
+    function setSyncStatus(status) {
+        var $badge = $("#sync-status-badge");
+        if (!$badge.length) return;
+        if (status === "connected") {
+            $badge.html("<span class=\"status-dot connected\"></span> Connected").attr("class", "sync-status connected");
+        } else if (status === "syncing") {
+            $badge.html("<span class=\"status-dot syncing\"></span> Syncing...").attr("class", "sync-status syncing");
+        } else if (status === "offline") {
+            $badge.html("<span class=\"status-dot offline\"></span> Offline").attr("class", "sync-status offline");
+        }
+    }
+
+    // Safe AJAX loader: only update DOM when response is valid & non-empty
+    function safeLoad(targetSel, url, fragmentSel, callback) {
+        setSyncStatus("syncing");
+        $.ajax({
+            url: url,
+            dataType: "html",
+            timeout: 15000,
+            success: function(data) {
+                if (!data || $.trim(data).length === 0) {
+                    setSyncStatus("offline");
+                    return; // skip empty
+                }
+                var $resp;
+                if (fragmentSel) {
+                    $resp = $("<div>").append($.parseHTML(data)).find(fragmentSel);
+                    if ($resp.length === 0) {
+                        setSyncStatus("offline");
+                        return; // fragment not found, skip
+                    }
+                    $(targetSel).html($resp.html());
+                } else {
+                    $(targetSel).html(data);
+                }
+                if (typeof callback === "function") callback();
+                setSyncStatus("connected");
+            },
+            error: function() {
+                setSyncStatus("offline");
+            }
+        });
+    }
+
 
     var interval1 = "' . ($areload * 1000) . '";
-    var dashboard = setInterval(function() {
-      
-    $("#r_1").load("./dashboard/aload.php?session=' . $session . '&load=sysresource #r_1", function() {
-        updateSparklines();
-    }); 
-    $("#r_2").load("./dashboard/aload.php?session=' . $session . '&load=hotspot #r_2"); 
-    $("#r_3").load("./dashboard/aload.php?session=' . $session . '&load=logs #r_3"); 
-    
-  }, interval1);
+    var interval2 = "65432";
+    var dashboard = null;
+    var livereport = null;
+
+    function loadDashboardData() {
+        setSyncStatus("syncing");
+        $.ajax({
+            url: "./dashboard/aload.php?session=' . $session . '&load=all&_t=" + new Date().getTime(),
+            dataType: "html",
+            timeout: 15000,
+            success: function(data) {
+                if (!data || $.trim(data).length === 0) {
+                    setSyncStatus("offline");
+                    return;
+                }
+                
+                var $html = $("<div>").append($.parseHTML(data));
+                
+                var $r1 = $html.find("#r_1_inner");
+                if ($r1.length > 0) {
+                    $("#r_1").html($r1.html());
+                }
+                
+                var $r2 = $html.find("#r_2");
+                if ($r2.length > 0) {
+                    $("#r_2").html($r2.html());
+                }
+                
+                var $r3 = $html.find("#r_3");
+                if ($r3.length > 0) {
+                    $("#r_3").html($r3.html());
+                }
+                
+                updateSparklines();
+                setSyncStatus("connected");
+            },
+            error: function() {
+                setSyncStatus("offline");
+            }
+        });
+    }
+
+    function startIntervals() {
+        if (!dashboard) {
+            dashboard = setInterval(loadDashboardData, interval1);
+        }
+        ';
+        if ($livereport == "enable" || $livereport == "") {
+            echo '
+            if (!livereport) {
+                livereport = setInterval(function() {
+                    safeLoad("#r_4", "./report/livereport.php?session=' . $session . '&_t=" + new Date().getTime(), "#r_4_inner"); 
+                }, interval2);
+            }';
+        }
+    echo '
+    }
+
+    function stopIntervals() {
+        if (dashboard) { clearInterval(dashboard); dashboard = null; }
+        if (livereport) { clearInterval(livereport); livereport = null; }
+    }
+
+    // Initial load and start
+    loadDashboardData();
+    startIntervals();
+
+    // Visibility Listener: pause when backgrounded
+    document.addEventListener("visibilitychange", function() {
+        if (document.hidden) {
+            stopIntervals();
+        } else {
+            loadDashboardData();
+            ';
+            if ($livereport == "enable" || $livereport == "") {
+                echo 'safeLoad("#r_4", "./report/livereport.php?session=' . $session . '&_t=" + new Date().getTime(), "#r_4_inner");';
+            }
+            echo '
+            startIntervals();
+        }
+    });
 
 ';
 if ($livereport == "enable" || $livereport == "") {
   if($_SESSION[$session.'sdate'] != $_SESSION[$session.'idhr']){
     $_SESSION[$session.'totalHr'] = "0";
-    echo '$("#r_4").load("./report/livereport.php?session=' . $session . ' #r_4");';
+    echo 'safeLoad("#r_4", "./report/livereport.php?session=' . $session . '&_t=" + new Date().getTime(), "#r_4_inner");';
     }else if ($_SESSION[$session.'sdate'] == $_SESSION[$session.'idhr']){  
     }else{
-      echo '$("#r_4").load("./report/livereport.php?session=' . $session . ' #r_4");';
+      echo 'safeLoad("#r_4", "./report/livereport.php?session=' . $session . '&_t=" + new Date().getTime(), "#r_4_inner");';
     }
-  echo  '
-    var interval2 = "65432";
-    var livereport = setInterval(function() {
-    $("#r_4").load("./report/livereport.php?session=' . $session . ' #r_4"); 
-  }, interval2);
- ';}
-  echo ' 
+}
+echo ' 
   function cancelPage(){
     window.stop();
-    clearInterval(dashboard);';
-    if ($livereport == "enable" || $livereport == "") {
-    echo '
-    clearInterval(livereport);';
-    }
-  echo '
-    }
+    stopIntervals();
+  }
 </script>';
 
 } elseif ($hotspot == "active" && $serveractive != "") {
@@ -606,7 +710,7 @@ if ($livereport == "enable" || $livereport == "") {
   $(document).ready(function(){
     var interval = "' . ($areload * 1000) . '";
     setInterval(function() {
-    $("#reloadHotspotActive").load("./hotspot/hotspotactive.php?server=' . $serveractive . '&session=' . $session . '"); }, interval);})
+    safeLoad("#reloadHotspotActive", "./hotspot/hotspotactive.php?server=' . $serveractive . '&session=' . $session . '&_t=" + new Date().getTime(), "#reloadHotspotActive"); }, interval);})
 </script>
 ';
 } elseif ($hotspot == "active" && $serveractive == "") {
@@ -614,7 +718,7 @@ if ($livereport == "enable" || $livereport == "") {
   $(document).ready(function(){
     var interval = "' . ($areload * 1000) . '";
     setInterval(function() {
-    $("#reloadHotspotActive").load("./hotspot/hotspotactive.php?session=' . $session . '"); }, interval);})
+    safeLoad("#reloadHotspotActive", "./hotspot/hotspotactive.php?session=' . $session . '&_t=" + new Date().getTime(), "#reloadHotspotActive"); }, interval);})
 </script>
 ';
 } elseif ($userprofile == "add" || substr($userprofile, 0, 1) == "*" || $userprofile != "") {

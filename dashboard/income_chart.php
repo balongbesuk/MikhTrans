@@ -43,18 +43,17 @@ for ($i = 11; $i >= 0; $i--) {
   ];
 }
 
-// Fetch scripts for each month code
-foreach ($months as $mCode => &$data) {
-  $getSR = $API->comm("/system/script/print", array(
-    "?owner" => "$mCode",
-  ));
-  
-  if (is_array($getSR)) {
-    foreach ($getSR as $row) {
+// Fetch all scripts once and categorize in PHP (reduces API roundtrips from 12 to 1)
+$getSR = $API->comm("/system/script/print");
+
+if (is_array($getSR)) {
+  foreach ($getSR as $row) {
+    $owner = strtolower($row['owner']);
+    if (isset($months[$owner])) {
       $parts = explode("-|-", $row['name']);
       if (count($parts) > 3) {
-        $data['income'] += (int)$parts[3];
-        $data['vouchers']++;
+        $months[$owner]['income'] += (int)$parts[3];
+        $months[$owner]['vouchers']++;
       }
     }
   }

@@ -87,6 +87,38 @@ if (!isset($_SESSION["mikhmon"])) {
                       });
                     }	
 
+                    var trafficInterval = null;
+                    function startTrafficInterval() {
+                      if (!trafficInterval) {
+                        trafficInterval = setInterval(function () {
+                          var sesIface = "Interface_" + document.getElementById("MikhmonSession").value;
+                          var interface = sessionStorage.getItem(sesIface);
+                          requestDatta(sessiondata,interface);
+                          if (chart && chart.setTitle) {
+                            chart.setTitle({ text: '<?= $_interface ?> ' + interface });
+                          }
+                        }, 3000);
+                      }
+                    }
+
+                    function stopTrafficInterval() {
+                      if (trafficInterval) {
+                        clearInterval(trafficInterval);
+                        trafficInterval = null;
+                      }
+                    }
+
+                    document.addEventListener("visibilitychange", function() {
+                      if (document.hidden) {
+                        stopTrafficInterval();
+                      } else {
+                        var sesIface = "Interface_" + document.getElementById("MikhmonSession").value;
+                        var interface = sessionStorage.getItem(sesIface);
+                        requestDatta(sessiondata,interface);
+                        startTrafficInterval();
+                      }
+                    });
+ 
                     $(document).ready(function() {
                         Highcharts.setOptions({
                           global: {
@@ -94,20 +126,20 @@ if (!isset($_SESSION["mikhmon"])) {
                           },
                           chart: {
                             height: 500,
-
+ 
                           },
                         });
-
+ 
                         Highcharts.addEvent(Highcharts.Series, 'afterInit', function () {
-	                        this.symbolUnicode = {
-    	                    circle: '●',
-                          diamond: '♦',
-                          square: '■',
-                          triangle: '▲',
-                          'triangle-down': '▼'
-                          }[this.symbol] || '●';
+ 	                        this.symbolUnicode = {
+     	                    circle: '●',
+                           diamond: '♦',
+                           square: '■',
+                           triangle: '▲',
+                           'triangle-down': '▼'
+                           }[this.symbol] || '●';
                         });
-
+ 
                           chart = new Highcharts.Chart({
                           chart: {
                           renderTo: 'trafficMonitor',
@@ -115,12 +147,7 @@ if (!isset($_SESSION["mikhmon"])) {
                           type: 'areaspline',
                           events: {
                             load: function () {
-                              setInterval(function () {
-                                var sesIface = "Interface_" + document.getElementById("MikhmonSession").value;
-                                var interface = sessionStorage.getItem(sesIface);
-                                requestDatta(sessiondata,interface);
-                                chart.setTitle({ text: '<?= $_interface ?> ' + interface });
-                              }, 3000);
+                              startTrafficInterval();
                             }				
                           }
                         },

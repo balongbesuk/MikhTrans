@@ -78,7 +78,7 @@ if (!isset($_SESSION["mikhmon"])) {
                 $value = $sessionData['session_name'];
                 ?>
                     <div class="col-12">
-                        <div class="box bmh-75 box-bordered <?= $color[rand(1, 11)]; ?>">
+                        <div class="box box-bordered">
                                 <div class="box-group">
                                   
                                   <div class="box-group-icon">
@@ -174,6 +174,74 @@ if (!isset($_SESSION["mikhmon"])) {
             }
             .btn-modern-save:hover {
                 background: var(--primary-hover, #007bb0) !important;
+            }
+            .box.box-bordered {
+                background: var(--bg-card) !important;
+                border: 1px solid var(--border-color) !important;
+                border-radius: 12px !important;
+                padding: 18px 20px !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                box-shadow: var(--shadow-card) !important;
+                height: auto !important;
+                box-sizing: border-box;
+                margin: 8px 0 !important;
+            }
+            .box.box-bordered:hover {
+                border-color: var(--border-hover) !important;
+                box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08) !important;
+                transform: translateY(-2px);
+            }
+            .box-group {
+                display: flex !important;
+                align-items: center !important;
+                gap: 16px !important;
+                height: 100% !important;
+            }
+            .box-group-icon {
+                font-size: 16px !important;
+                width: 40px !important;
+                height: 40px !important;
+                border-radius: 50% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                flex-shrink: 0 !important;
+                margin: 0 !important;
+                float: none !important;
+                background: var(--primary-glow) !important;
+                color: var(--primary) !important;
+                transition: all 0.3s ease;
+            }
+            .box-group-icon span {
+                color: inherit !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 100%;
+                height: 100%;
+            }
+            .box-group-area {
+                flex: 1;
+                padding: 0 !important;
+                margin: 0 !important;
+                text-align: left !important;
+                font-size: 13px !important;
+                color: var(--text-main) !important;
+            }
+            .box-group-area span {
+                color: inherit !important;
+            }
+            .box-group-area a, .box-group-area .connect {
+                font-size: 12px !important;
+                font-weight: 600 !important;
+                color: var(--primary) !important;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                margin-top: 6px;
+            }
+            .box-group-area a:hover, .box-group-area .connect:hover {
+                color: var(--primary-hover-text) !important;
             }
             </style>
             <div style="padding: 10px 0;">

@@ -39,23 +39,20 @@ if (!isset($_SESSION["mikhmon"])) {
 	include_once('../lib/formatbytesbites.php');
 	$API = new RouterosAPI();
 	$API->debug = false;
-	$API->connect($iphost, $userhost, decrypt($passwdhost));
+	$connected = $API->connect($iphost, $userhost, decrypt($passwdhost));
+	if (!$connected) exit; // safeLoad() will skip empty response
+
+	$proplist = array(".proplist" => ".id,server,user,address,mac-address,uptime,session-time-left,bytes-in,bytes-out,login-by,comment");
 
 	if ($serveractive != "") {
-		$gethotspotactive = $API->comm("/ip/hotspot/active/print", array("?server" => "" . $serveractive . ""));
+		$gethotspotactive = $API->comm("/ip/hotspot/active/print", array_merge(array("?server" => "" . $serveractive . ""), $proplist));
 		$TotalReg = count($gethotspotactive);
-
-		$counthotspotactive = $API->comm("/ip/hotspot/active/print", array(
-			"count-only" => "", "?server" => "" . $serveractive . ""
-		));
+		$counthotspotactive = $TotalReg;
 
 	} else {
-		$gethotspotactive = $API->comm("/ip/hotspot/active/print");
+		$gethotspotactive = $API->comm("/ip/hotspot/active/print", $proplist);
 		$TotalReg = count($gethotspotactive);
-
-		$counthotspotactive = $API->comm("/ip/hotspot/active/print", array(
-			"count-only" => "",
-		));
+		$counthotspotactive = $TotalReg;
 	}
 }
 ?>
