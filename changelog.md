@@ -40,6 +40,7 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 - **Infinite Redirect Loop (Settings)**: Memperbaiki loop redirect tanpa henti di `settings/settings.php` dengan menambahkan fungsi `exit;` setelah redirect JavaScript serta menetapkan nilai mata uang default jika kosong.
 - **Disappearing Income Card Bug**: Menyelesaikan bug di mana kartu pendapatan atas (Income card) mendadak hilang dari layar setiap 10 detik saat AJAX polling system resource terpicu. Solusi dilakukan dengan memisahkan penampung target update `#r_1` menggunakan CSS `display: contents;` sehingga kartu Pendapatan (`#r_4`) tetap menjadi sibling sejajar tanpa ikut terhapus atau tertimpa oleh response `aload.php`.
 - **Theme Toggle Skewed Background Bug**: Memperbaiki distorsi latar belakang miring (jajaran genjang) pada tombol pemilih tema di navbar saat kursor diarahkan (hover), dengan mengisolasi transformasi rotasi 15 derajat secara khusus pada elemen ikon `<i>` alih-alih seluruh kontainer tombol `<a>`.
+- **Teks Input & Ikon Mata Tumpang Tindih (Login Page)**: Memperbaiki masalah di mana ikon pengguna/gembok bertumpang tindih dengan teks placeholder akibat konflik spesifisitas CSS padding, serta menengahkan posisi ikon mata kata sandi secara vertikal (`top: 50%`, `transform: translateY(-50%)`) agar sejajar simetris di sisi kanan input.
 
 
 

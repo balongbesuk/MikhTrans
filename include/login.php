@@ -278,7 +278,7 @@ body.login-page {
     transition: color 0.3s ease;
 }
 
-.login-input {
+body.login-page input.login-input {
     width: 100% !important;
     height: 54px !important;
     padding: 0 16px 0 52px !important;
@@ -310,6 +310,8 @@ body.login-page {
 .password-toggle-icon {
     position: absolute;
     right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
     left: auto !important;
     cursor: pointer;
     color: #475569;
