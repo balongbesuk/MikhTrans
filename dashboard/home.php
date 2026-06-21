@@ -477,6 +477,7 @@ if (!isset($_SESSION["mikhmon"])) {
 }
 #r_3 .card-table-modern td {
     display: block !important;
+    width: auto !important;
     border: none !important;
     padding: 0 !important;
     background: transparent !important;

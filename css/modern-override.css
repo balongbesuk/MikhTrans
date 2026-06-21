@@ -1139,6 +1139,7 @@ span, p, div, label, small, b, strong, i, em {
 }
 #r_3 .card-table-modern td {
     display: block !important;
+    width: auto !important;
     border: none !important;
     padding: 0 !important;
     background: transparent !important;
