@@ -2,6 +2,16 @@
 
 Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen ini.
 
+## [MikhTrans v2.2] - 2026-06-21
+
+### Diubah
+- **Pembersihan Kode Native PHP 8.2 (Depresiasi PHP 5.4)**: Menghapus seluruh polyfill kompatibilitas PHP versi lama (`hash_equals`, `password_hash`, `password_verify`) dan memfaktorkan ulang kode pada `include/csrf.php` serta `lib/routeros_api.class.php` agar memanfaatkan fungsi bawaan PHP 8.2+ secara langsung (seperti `random_bytes` untuk generate IV dan token CSRF).
+
+### Dihapus
+- **Binary PHP 5.4 Lama**: Menghapus folder cadangan `php_backup/` (PHP 5.4.17) secara permanen dari disk lokal untuk menyelesaikan migrasi penuh ke arsitektur PHP 8.2 modern.
+
+---
+
 ## [MikhTrans v2.1] - 2026-06-21
 
 ### Ditambahkan

@@ -450,24 +450,12 @@ function get_mikhmon_encryption_key($default = "128") {
 
 function encrypt($string, $key="128") {
     $key = get_mikhmon_encryption_key($key);
-    if (function_exists('openssl_encrypt')) {
-        $method = 'AES-256-CBC';
-        $strong_key = hash('sha256', $key, true);
-        $iv_length = openssl_cipher_iv_length($method);
-        $iv = openssl_random_pseudo_bytes($iv_length);
-        $encrypted = openssl_encrypt($string, $method, $strong_key, OPENSSL_RAW_DATA, $iv);
-        return 'aes:' . base64_encode($iv . $encrypted);
-    }
-    
-    // Fallback to legacy XOR
-    $result = '';
-    for($i=0, $k= strlen($string); $i<$k; $i++) {
-        $char = substr($string, $i, 1);
-        $keychar = substr($key, ($i % strlen($key))-1, 1);
-        $char = chr(ord($char)+ord($keychar));
-        $result .= $char;
-    }
-    return base64_encode($result);
+    $method = 'AES-256-CBC';
+    $strong_key = hash('sha256', $key, true);
+    $iv_length = openssl_cipher_iv_length($method);
+    $iv = random_bytes($iv_length);
+    $encrypted = openssl_encrypt($string, $method, $strong_key, OPENSSL_RAW_DATA, $iv);
+    return 'aes:' . base64_encode($iv . $encrypted);
 }
 
 function decrypt($string, $key="128") {
@@ -475,18 +463,16 @@ function decrypt($string, $key="128") {
     
     // Check if the ciphertext is in AES format (prefixed with 'aes:')
     if (substr($string, 0, 4) === 'aes:') {
-        if (function_exists('openssl_decrypt')) {
-            $method = 'AES-256-CBC';
-            $strong_key = hash('sha256', $resolved_key, true);
-            $raw = base64_decode(substr($string, 4));
-            $iv_length = openssl_cipher_iv_length($method);
-            if (strlen($raw) > $iv_length) {
-                $iv = substr($raw, 0, $iv_length);
-                $ciphertext = substr($raw, $iv_length);
-                $decrypted = openssl_decrypt($ciphertext, $method, $strong_key, OPENSSL_RAW_DATA, $iv);
-                if ($decrypted !== false) {
-                    return $decrypted;
-                }
+        $method = 'AES-256-CBC';
+        $strong_key = hash('sha256', $resolved_key, true);
+        $raw = base64_decode(substr($string, 4));
+        $iv_length = openssl_cipher_iv_length($method);
+        if ($raw !== false && strlen($raw) > $iv_length) {
+            $iv = substr($raw, 0, $iv_length);
+            $ciphertext = substr($raw, $iv_length);
+            $decrypted = openssl_decrypt($ciphertext, $method, $strong_key, OPENSSL_RAW_DATA, $iv);
+            if ($decrypted !== false) {
+                return $decrypted;
             }
         }
     }
