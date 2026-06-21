@@ -15,7 +15,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start([
+        'cookie_httponly' => true,
+        'cookie_secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+        'cookie_samesite' => 'Lax',
+        'use_only_cookies' => true
+    ]);
+}
 // hide all error
 error_reporting(0);
 
@@ -86,36 +93,106 @@ include_once('./lib/formatbytesbites.php');
 <?php
 if ($id == "login" || substr($url, -1) == "p") {
 
+  // Brute-force rate limiting check
+  $ipAddress = isset($_SERVER['HTTP_CLIENT_IP']) 
+      ? $_SERVER['HTTP_CLIENT_IP'] 
+      : (isset($_SERVER['HTTP_X_FORWARDED_FOR']) 
+          ? explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0] 
+          : $_SERVER['REMOTE_ADDR']);
+  
+  $loginLimitFile = __DIR__ . '/data/login_rate_limit.json';
+  $loginMaxAttempts = 5;
+  $loginCooldownPeriod = 600; // 10 minutes
+  
+  $loginBlocked = false;
+  $cooldownRemaining = 0;
+  $now = time();
+  
+  if (file_exists($loginLimitFile)) {
+      $loginData = json_decode(@file_get_contents($loginLimitFile), true);
+      if (is_array($loginData) && isset($loginData[$ipAddress])) {
+          $attempt = $loginData[$ipAddress];
+          if ($attempt['count'] >= $loginMaxAttempts && $attempt['reset_time'] > $now) {
+              $loginBlocked = true;
+              $cooldownRemaining = $attempt['reset_time'] - $now;
+          }
+      }
+  }
+
   if (isset($_POST['login'])) {
     csrf_verify();
-    $user = $_POST['user'];
-    $pass = $_POST['pass'];
     
-    // Verifikasi password: support bcrypt hash, legacy base64+XOR, dan plaintext fallback
-    $password_valid = false;
-    if ($user == $useradm) {
-      // Cek apakah hash sudah bcrypt (dimulai dengan $2y$ atau $2a$)
-      if (substr($passadm, 0, 4) === '$2y$' || substr($passadm, 0, 4) === '$2a$') {
-        $password_valid = password_verify($pass, $passadm);
-      } else {
-        // Legacy: password disimpan sebagai base64-encoded XOR ciphertext
-        $password_valid = ($pass == decrypt($passadm));
-        
-        // Auto-upgrade ke bcrypt jika login berhasil
-        if ($password_valid) {
-          $bcrypt_hash = password_hash($pass, PASSWORD_BCRYPT);
-          $dbSettings = new \App\Models\AppSettings();
-          $dbSettings->saveAdminCredentials($useradm, $bcrypt_hash);
-        }
-      }
-    }
-    
-    if ($password_valid) {
-      $_SESSION["mikhmon"] = $user;
-      $_SESSION['last_activity'] = time();
-      echo "<script>window.location='./admin.php?id=sessions'</script>";
+    if ($loginBlocked) {
+        $minutesLeft = ceil($cooldownRemaining / 60);
+        $error = '<div style="width: 100%; padding:5px 0px 5px 0px; border-radius:5px;" class="bg-danger"><i class="fa fa-ban"></i> Alert!<br>IP Anda diblokir sementara. Silakan tunggu ' . $minutesLeft . ' menit lagi.</div>';
     } else {
-      $error = '<div style="width: 100%; padding:5px 0px 5px 0px; border-radius:5px;" class="bg-danger"><i class="fa fa-ban"></i> Alert!<br>Invalid username or password.</div>';
+        $user = $_POST['user'];
+        $pass = $_POST['pass'];
+        
+        // Verifikasi password: support bcrypt hash, legacy base64+XOR, dan plaintext fallback
+        $password_valid = false;
+        if ($user == $useradm) {
+          // Cek apakah hash sudah bcrypt (dimulai dengan $2y$ atau $2a$)
+          if (substr($passadm, 0, 4) === '$2y$' || substr($passadm, 0, 4) === '$2a$') {
+            $password_valid = password_verify($pass, $passadm);
+          } else {
+            // Legacy: password disimpan sebagai base64-encoded XOR ciphertext
+            $password_valid = ($pass == decrypt($passadm));
+            
+            // Auto-upgrade ke bcrypt jika login berhasil
+            if ($password_valid) {
+              $bcrypt_hash = password_hash($pass, PASSWORD_BCRYPT);
+              $dbSettings = new \App\Models\AppSettings();
+              $dbSettings->saveAdminCredentials($useradm, $bcrypt_hash);
+            }
+          }
+        }
+        
+        if ($password_valid) {
+          // Clear login attempts on success
+          if (file_exists($loginLimitFile)) {
+              $loginData = json_decode(@file_get_contents($loginLimitFile), true);
+              if (is_array($loginData) && isset($loginData[$ipAddress])) {
+                  unset($loginData[$ipAddress]);
+                  @file_put_contents($loginLimitFile, json_encode($loginData));
+              }
+          }
+          session_regenerate_id(true);
+          $_SESSION["mikhmon"] = $user;
+          $_SESSION['last_activity'] = time();
+          echo "<script>window.location='./admin.php?id=sessions'</script>";
+        } else {
+          // Record/Increment login attempt on failure
+          $loginData = [];
+          if (file_exists($loginLimitFile)) {
+              $loginData = json_decode(@file_get_contents($loginLimitFile), true);
+          }
+          if (!is_array($loginData)) $loginData = [];
+          
+          if (isset($loginData[$ipAddress])) {
+              if ($loginData[$ipAddress]['reset_time'] > $now) {
+                  $loginData[$ipAddress]['count']++;
+              } else {
+                  $loginData[$ipAddress] = [
+                      'count' => 1,
+                      'reset_time' => $now + $loginCooldownPeriod
+                  ];
+              }
+          } else {
+              $loginData[$ipAddress] = [
+                  'count' => 1,
+                  'reset_time' => $now + $loginCooldownPeriod
+              ];
+          }
+          @file_put_contents($loginLimitFile, json_encode($loginData));
+          
+          $attemptsLeft = $loginMaxAttempts - $loginData[$ipAddress]['count'];
+          if ($attemptsLeft > 0) {
+              $error = '<div style="width: 100%; padding:5px 0px 5px 0px; border-radius:5px;" class="bg-danger"><i class="fa fa-ban"></i> Alert!<br>Invalid username or password. Sisa percobaan: ' . $attemptsLeft . ' kali.</div>';
+          } else {
+              $error = '<div style="width: 100%; padding:5px 0px 5px 0px; border-radius:5px;" class="bg-danger"><i class="fa fa-ban"></i> Alert!<br>IP Anda diblokir sementara karena terlalu banyak percobaan masuk. Silakan coba lagi dalam 10 menit.</div>';
+          }
+        }
     }
   }
   
@@ -193,7 +270,12 @@ if ($id == "login" || substr($url, -1) == "p") {
   include_once('./include/menu.php');
   echo "<b class='cl-w'><i class='fa fa-circle-o-notch fa-spin' style='font-size:24px'></i> Logout...</b>";
   session_destroy();
-  echo "<script>window.location='./admin.php?id=login'</script>";
+  echo "<script>
+    sessionStorage.clear();
+    localStorage.removeItem('active_order_id');
+    localStorage.removeItem('active_snap_token');
+    window.location='./admin.php?id=login';
+  </script>";
 } elseif ($id == "remove-logo" && $logo != ""  && !empty($session)) {
   include_once('./include/menu.php');
   $logopath = "./img/";

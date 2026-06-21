@@ -1211,3 +1211,190 @@ nav.menu-links {
     z-index: 1;
 }
 
+/* Purchase History Styles */
+.history-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--shadow-primary);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.history-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.01);
+}
+.history-card-header h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-clear-history {
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity 0.2s;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+.btn-clear-history:hover {
+    opacity: 0.8;
+    background: rgba(239, 68, 68, 0.05);
+}
+.history-card-body {
+    padding: 8px 20px;
+}
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-color);
+    gap: 16px;
+}
+.history-item:last-child {
+    border-bottom: none;
+}
+.history-item-info {
+    flex: 1;
+    min-width: 180px;
+}
+.history-item-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.history-item-profile {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-main);
+}
+.history-badge-validity {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--primary-glow);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.history-item-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+.history-monospace {
+    font-family: monospace;
+    font-weight: 600;
+}
+.history-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.history-item-code {
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--text-main);
+    background: var(--background-alt);
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+    min-width: 90px;
+    text-align: center;
+}
+.history-btn-copy, .history-btn-connect {
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border-color);
+    background: white;
+    color: var(--text-muted);
+}
+.history-btn-copy:hover {
+    color: var(--text-main);
+    border-color: var(--text-muted);
+}
+.history-btn-connect {
+    background: var(--primary);
+    color: white;
+    border: 1px solid var(--primary);
+}
+.history-btn-connect:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    box-shadow: var(--shadow-primary);
+}
+
+/* Responsive History */
+@media (max-width: 600px) {
+    .history-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .history-item-actions {
+        justify-content: flex-start;
+    }
+    .history-item-code {
+        flex: 1;
+    }
+    .history-btn-copy, .history-btn-connect {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+/* WhatsApp Support Button */
+.btn-wa-support {
+    background: #25D366;
+    color: white;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+}
+.btn-wa-support:hover {
+    background: #20BA5A;
+    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3);
+    transform: translateY(-1px);
+}
+.btn-wa-support:active {
+    transform: translateY(0);
+}
+
+/* Buy button disabled loading state */
+.btn-buy-voucher:disabled {
+    background: var(--border-color) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+

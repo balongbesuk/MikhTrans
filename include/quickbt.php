@@ -1,1 +1,1 @@
-<?php $qrbt="disable";?>
+<?php $qrbt="enable";?>

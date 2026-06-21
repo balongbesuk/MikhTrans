@@ -1,11 +1,105 @@
-// Copy voucher code to clipboard
+// Helper to copy text to clipboard with fallback (HTTP compatible)
+function copyTextToClipboard(text, successCb, errorCb) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(successCb, function() {
+            fallbackCopyTextToClipboard(text, successCb, errorCb);
+        });
+    } else {
+        fallbackCopyTextToClipboard(text, successCb, errorCb);
+    }
+}
+
+function fallbackCopyTextToClipboard(text, successCb, errorCb) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        var successful = document.execCommand('copy');
+        if (successful) {
+            successCb();
+        } else {
+            errorCb();
+        }
+    } catch (err) {
+        errorCb();
+    }
+    document.body.removeChild(textArea);
+}
+
+// Copy voucher code to clipboard (global fallback)
 function copyVoucherCode() {
-    var codeText = document.getElementById("voucherCode").innerText;
-    navigator.clipboard.writeText(codeText).then(function() {
+    var codeText = document.getElementById("voucherCode").innerText.trim();
+    copyTextToClipboard(codeText, function() {
         alert("Kode voucher berhasil disalin!");
-    }, function(err) {
-        alert("Gagal menyalin kode. Silakan salin secara manual.");
+    }, function() {
+        alert("Kode voucher: " + codeText + "\n(Silakan salin secara manual)");
     });
+}
+
+// Copy pending order ID to clipboard
+function copyPendingOrderId() {
+    var el = document.getElementById("pendingOrderId");
+    if (!el) return;
+    var orderId = el.innerText.replace(/\s+/g, '').trim();
+    copyTextToClipboard(orderId, function() {
+        var toast = document.getElementById("copyToastPending");
+        if (toast) {
+            toast.classList.add("show");
+            setTimeout(function() {
+                toast.classList.remove("show");
+            }, 3000);
+        } else {
+            alert("Order ID berhasil disalin: " + orderId);
+        }
+    }, function() {
+        alert("Order ID: " + orderId + "\n(Silakan salin secara manual)");
+    });
+}
+
+// Clear voucher history
+function clearVoucherHistory() {
+    if (confirm("Apakah Anda yakin ingin menghapus seluruh riwayat pembelian voucher di HP ini?")) {
+        localStorage.removeItem('mikhtrans_purchase_history');
+        var container = document.getElementById("voucherHistoryContainer");
+        if (container) {
+            container.style.display = 'none';
+        }
+    }
+}
+
+// Copy voucher from history list with button visual feedback
+function copyHistoryCode(code, btn) {
+    copyTextToClipboard(code, function() {
+        var originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fa fa-check" style="color: #219653;"></i> Tersalin';
+        btn.style.borderColor = '#219653';
+        btn.style.color = '#219653';
+        setTimeout(function() {
+            btn.innerHTML = originalHTML;
+            btn.style.borderColor = '';
+            btn.style.color = '';
+        }, 2000);
+    }, function() {
+        alert("Gagal menyalin. Kode voucher: " + code);
+    });
+}
+
+// Prevent double clicks and show loading state on checkout
+function handleCheckoutSubmit(form) {
+    var btn = form.querySelector('.btn-buy-voucher');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Memproses...';
+        btn.style.opacity = '0.7';
+        btn.style.cursor = 'not-allowed';
+    }
+    return true;
 }
 
 // Tab switching logic for compliance policies
@@ -253,5 +347,50 @@ document.addEventListener("DOMContentLoaded", function() {
             localStorage.removeItem('active_snap_token');
             banner.remove();
         });
+    }
+
+    // 3. Render Purchase History from localStorage if available
+    var historyListEl = document.getElementById("voucherHistoryList");
+    var historyContainerEl = document.getElementById("voucherHistoryContainer");
+    if (historyListEl && historyContainerEl) {
+        var purchaseHistory = [];
+        try {
+            purchaseHistory = JSON.parse(localStorage.getItem('mikhtrans_purchase_history') || '[]');
+        } catch (e) {
+            console.error('Error reading purchase history:', e);
+        }
+        
+        var isSuccessScreen = document.querySelector('.receipt-card');
+        if (purchaseHistory.length > 0 && !isSuccessScreen) {
+            var html = '';
+            purchaseHistory.forEach(function(item) {
+                var loginButton = '';
+                if (item.login_url) {
+                    loginButton = `<a href="${item.login_url}" class="history-btn-connect" style="text-decoration: none;"><i class="fa fa-wifi"></i> Hubungkan</a>`;
+                }
+                html += `
+                <div class="history-item">
+                    <div class="history-item-info">
+                        <div class="history-item-title">
+                            <span class="history-item-profile">Paket ${item.profile}</span>
+                            <span class="history-badge-validity">${item.validity}</span>
+                        </div>
+                        <div class="history-item-meta">
+                            ID: <span class="history-monospace">${item.order_id}</span> · ${item.date}
+                        </div>
+                    </div>
+                    <div class="history-item-actions">
+                        <div class="history-item-code">${item.username}</div>
+                        <button type="button" class="history-btn-copy" onclick="copyHistoryCode('${item.username}', this)">
+                            <i class="fa-regular fa-copy"></i> Salin
+                        </button>
+                        ${loginButton}
+                    </div>
+                </div>
+                `;
+            });
+            historyListEl.innerHTML = html;
+            historyContainerEl.style.display = 'block';
+        }
     }
 });

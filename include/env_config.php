@@ -8,7 +8,8 @@ if (!function_exists('loadMikhmonEnv')) {
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($lines as $line) {
             $line = trim($line);
-            if (empty($line) || strpos($line, '#') === 0) {
+            // Skip comments, empty lines, and PHP execution protection tags
+            if (empty($line) || strpos($line, '#') === 0 || strpos($line, '<?php') === 0 || strpos($line, 'exit;') !== false || strpos($line, '?>') !== false) {
                 continue;
             }
             if (strpos($line, '=') !== false) {
@@ -43,8 +44,12 @@ if (!function_exists('mikhmonEnv')) {
     }
 }
 
-// Load .env configuration from root
-loadMikhmonEnv(__DIR__ . '/../.env');
+// Load .env configuration from root (prefer secure .env.php)
+if (file_exists(__DIR__ . '/../.env.php')) {
+    loadMikhmonEnv(__DIR__ . '/../.env.php');
+} else {
+    loadMikhmonEnv(__DIR__ . '/../.env');
+}
 
 // Helper function for structured logging
 if (!function_exists('writeAppLog')) {

@@ -6,7 +6,12 @@
  */
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    session_start([
+        'cookie_httponly' => true,
+        'cookie_secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+        'cookie_samesite' => 'Lax',
+        'use_only_cookies' => true
+    ]);
 }
 
 /**

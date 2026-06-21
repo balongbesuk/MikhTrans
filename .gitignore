@@ -1,8 +1,11 @@
 # Ignore local server configurations containing MikroTik and Midtrans credentials
 .env
+.env.php
 /data/database.json
 /data/database.php
 /data/rate_limit.json
+/data/profile_cache_*.json
+/data/login_rate_limit.json
 
 
 # Ignore customer transaction log files

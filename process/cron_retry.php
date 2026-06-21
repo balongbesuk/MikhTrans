@@ -17,8 +17,11 @@ require_once dirname(__FILE__) . '/../lib/formatbytesbites.php';
 // Security check for HTTP/Web requests
 if (php_sapi_name() !== 'cli') {
     header('Content-Type: application/json');
-    $apiKey = isset($_GET['api_key']) ? $_GET['api_key'] : '';
-    if (empty($apiKey) || $apiKey !== $mikhmon_api_key) {
+    $headers = function_exists('getallheaders') ? getallheaders() : [];
+    // Support X-API-Key in HTTP headers with fallback to query parameter
+    $apiKey = isset($headers['X-API-Key']) ? $headers['X-API-Key'] : (isset($headers['x-api-key']) ? $headers['x-api-key'] : (isset($_GET['api_key']) ? $_GET['api_key'] : ''));
+    
+    if (empty($mikhmon_api_key) || $apiKey !== $mikhmon_api_key) {
         http_response_code(403);
         echo json_encode(['status' => 'error', 'message' => 'Forbidden. Invalid API Key.']);
         exit;

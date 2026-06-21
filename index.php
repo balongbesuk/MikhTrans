@@ -15,7 +15,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start([
+        'cookie_httponly' => true,
+        'cookie_secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+        'cookie_samesite' => 'Lax',
+        'use_only_cookies' => true
+    ]);
+}
 // hide all error
 error_reporting(0);
 // check url

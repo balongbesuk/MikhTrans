@@ -2,6 +2,37 @@
 
 Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen ini.
 
+## [MikhTrans v1.8] - 2026-06-21
+
+### Keamanan / Pengerasan Sistem
+- **Proteksi Brute-Force Login Admin**: Membatasi kegagalan percobaan login administrator maksimal 5 kali dalam waktu 10 menit per alamat IP di `admin.php` menggunakan database rate-limit terisolasi untuk melindungi sistem dari serangan menebak kata sandi.
+- **Konfigurasi Lingkungan Aman `.env.php`**: Mengamankan penyimpanan variabel lingkungan dengan memigrasikan `.env` ke `.env.php` lengkap dengan tag PHP penolak akses (`exit;`), sehingga melindungi kunci rahasia dari kebocoran teks polos pada web server non-Apache (seperti Nginx, IIS, dan Caddy).
+- **Verifikasi Status Ganda Midtrans**: Webhook handler (`notification.php`) kini melakukan verifikasi ganda (Dual-Check Verification) dengan menanyakan langsung status transaksi secara *asynchronous server-to-server* ke API Midtrans sebelum memproses pembuatan voucher di MikroTik.
+- **Pembersihan Cache Logout**: Menambahkan pembersihan total cache peramban (`localStorage` & `sessionStorage` terkait data transaksi dan sesi) saat administrator menekan tombol logout.
+
+---
+
+## [MikhTrans v1.7] - 2026-06-21
+
+### Keamanan / Pengerasan Sistem
+- **Session Fixation Protection**: Mengintegrasikan `session_regenerate_id(true)` secara dinamis pada saat login admin berhasil untuk mencegah pembajakan sesi.
+- **Session Cookie Hardening**: Mengamankan parameter `session_start()` di semua entry point (`admin.php`, `frontpage.php`, `index.php`, `include/csrf.php`) dengan mengonfigurasi `HttpOnly`, `SameSite=Lax`, `use_only_cookies`, dan `Secure` dinamis yang menyesuaikan diri otomatis pada server lokal (HTTP non-SSL).
+- **Otentikasi Header API Key**: Menambahkan dukungan otentikasi via header HTTP `X-API-Key` dan `x-api-key` pada modul cron web (`process/cron_retry.php`) dengan tetap menyediakan fallback aman ke query parameter `api_key` untuk kompatibilitas ke belakang.
+- **Webhook Rate Limiting**: Menerapkan rate limiter tangguh (maksimal 60 request per menit per alamat IP) menggunakan pencatatan terenkripsi dengan *file locking* (`flock`) pada Midtrans webhook handler (`notification.php`) guna menangkal serangan Denial of Service (DoS).
+
+---
+
+## [MikhTrans v1.6] - 2026-06-21
+
+### Ditambahkan
+- **Riwayat Pembelian Lokal (localStorage)**: Menambahkan kontainer riwayat voucher pembelian terakhir pelanggan yang terintegrasi di atas daftar paket produk, lengkap dengan tombol salin andal, status paket, dan tombol auto-connect.
+- **Tombol Hubungi WhatsApp Admin**: Tombol bantuan berwarna hijau khas WhatsApp dengan pesan template otomatis terisi Order ID dan detail transaksi ketika pelanggan mengalami kendala router offline selama pembayaran.
+- **Keandalan Tombol Salin Fallback**: Menyediakan fungsi salin teks fallback menggunakan elemen temporary textarea di frontpage untuk menjamin tombol salin 100% berfungsi di in-app browser HP pelanggan di bawah protokol non-HTTPS (HTTP).
+- **Checkout Loading State (Spinner)**: Memberikan umpan balik loading dan melumpuhkan (disable) tombol beli seketika setelah formulir disubmit untuk mencegah checkout ganda.
+- **Panduan QR Code Sukses**: Keterangan instruksi berbahasa Indonesia untuk scan QR Code di halaman sukses.
+
+---
+
 ## [MikhTrans v1.5] - 2026-06-21
 
 ### Ditambahkan

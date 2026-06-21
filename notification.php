@@ -9,6 +9,72 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0); // Matikan display_errors di produksi untuk keamanan
 date_default_timezone_set('Asia/Jakarta');
 
+// Rate Limiting (Maksimum 60 request per menit per IP untuk webhook)
+$ipAddress = isset($_SERVER['HTTP_CLIENT_IP']) 
+    ? $_SERVER['HTTP_CLIENT_IP'] 
+    : (isset($_SERVER['HTTP_X_FORWARDED_FOR']) 
+        ? explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0] 
+        : $_SERVER['REMOTE_ADDR']);
+
+$rateLimitFile = __DIR__ . '/data/rate_limit.json';
+$limit = 60; // request
+$period = 60; // seconds
+
+$allowed = true;
+$now = time();
+
+if (file_exists($rateLimitFile) || is_writable(dirname($rateLimitFile))) {
+    $fp = fopen($rateLimitFile, 'c+');
+    if ($fp) {
+        if (flock($fp, LOCK_EX)) {
+            $size = @filesize($rateLimitFile);
+            $data = $size > 0 ? json_decode(fread($fp, $size), true) : [];
+            if (!is_array($data)) $data = [];
+            
+            // Clean up expired records
+            foreach ($data as $ip => $record) {
+                if (isset($record['reset_time']) && $record['reset_time'] < $now) {
+                    unset($data[$ip]);
+                }
+            }
+            
+            if (isset($data[$ipAddress])) {
+                $record = $data[$ipAddress];
+                if (isset($record['reset_time']) && $record['reset_time'] > $now) {
+                    if (isset($record['count']) && $record['count'] >= $limit) {
+                        $allowed = false;
+                    } else {
+                        $data[$ipAddress]['count'] = isset($data[$ipAddress]['count']) ? $data[$ipAddress]['count'] + 1 : 1;
+                    }
+                } else {
+                    $data[$ipAddress] = [
+                        'count' => 1,
+                        'reset_time' => $now + $period
+                    ];
+                }
+            } else {
+                $data[$ipAddress] = [
+                    'count' => 1,
+                    'reset_time' => $now + $period
+                ];
+            }
+            
+            ftruncate($fp, 0);
+            rewind($fp);
+            fwrite($fp, json_encode($data));
+            fflush($fp);
+        }
+        flock($fp, LOCK_UN);
+        fclose($fp);
+    }
+}
+
+if (!$allowed) {
+    http_response_code(429);
+    echo "Too Many Requests. Webhook rate limit exceeded.";
+    exit;
+}
+
 // Load config
 if (!file_exists(__DIR__ . '/include/config.php')) {
     http_response_code(500);
@@ -132,6 +198,48 @@ if ($transaction_status === 'settlement' || $transaction_status === 'capture') {
         writeAppLog("WEBHOOK_INFO", "Respon idempoten: Order ID " . $order_id . " sudah lunas sebelumnya.");
         http_response_code(200);
         echo json_encode(['status' => 'already_processed']);
+        exit;
+    }
+
+    // Verifikasi Ganda: tanyakan langsung ke API Midtrans
+    $statusUrl = $midtrans_is_production 
+        ? "https://api.midtrans.com/v2/{$order_id}/status" 
+        : "https://api.sandbox.midtrans.com/v2/{$order_id}/status";
+        
+    $auth = base64_encode($midtrans_server_key . ":");
+    
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'GET',
+            'header' => "Accept: application/json\r\n" .
+                        "Authorization: Basic $auth\r\n",
+            'timeout' => 10,
+            'ignore_errors' => true
+        ],
+        'ssl' => [
+            'verify_peer' => true,
+            'verify_peer_name' => true
+        ]
+    ]);
+    
+    $statusResponse = @file_get_contents($statusUrl, false, $context);
+    $statusData = $statusResponse ? json_decode($statusResponse, true) : null;
+    
+    if (!$statusData || !isset($statusData['transaction_status']) || !in_array($statusData['transaction_status'], ['settlement', 'capture'])) {
+        writeAppLog("SECURITY_WARNING", "Verifikasi ganda gagal! Status transaksi di Midtrans tidak valid untuk Order ID: " . $order_id);
+        http_response_code(400);
+        echo "Failed double check transaction verification.";
+        exit;
+    }
+    
+    // Cocokkan nominal pembayaran
+    $apiAmount = isset($statusData['gross_amount']) ? (float)$statusData['gross_amount'] : 0.0;
+    $localAmount = isset($trans['price']) ? (float)$trans['price'] : 0.0;
+    
+    if (abs($apiAmount - $localAmount) > 0.01) {
+        writeAppLog("SECURITY_WARNING", "Verifikasi ganda gagal! Nominal tidak cocok. Midtrans: {$apiAmount}, Lokal: {$localAmount} untuk Order ID: " . $order_id);
+        http_response_code(400);
+        echo "Transaction amount mismatch.";
         exit;
     }
 

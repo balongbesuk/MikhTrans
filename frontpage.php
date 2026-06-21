@@ -11,7 +11,12 @@ date_default_timezone_set('Asia/Jakarta');
 
 // Start session safely if not already started
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    session_start([
+        'cookie_httponly' => true,
+        'cookie_secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+        'cookie_samesite' => 'Lax',
+        'use_only_cookies' => true
+    ]);
 }
 
 // HTTP Security Headers
@@ -533,6 +538,19 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
             </div>
         <?php endif; ?>
 
+        <!-- Container Riwayat Pembelian (Dinamis via JS) -->
+        <div id="voucherHistoryContainer" class="history-card" style="display: none; margin-bottom: 24px;">
+            <div class="history-card-header">
+                <h3><i class="fa fa-history"></i> Voucher Terakhir Anda</h3>
+                <button type="button" onclick="clearVoucherHistory()" class="btn-clear-history">
+                    <i class="fa fa-trash-can"></i> Hapus Riwayat
+                </button>
+            </div>
+            <div class="history-card-body" id="voucherHistoryList">
+                <!-- Diisi secara dinamis via JavaScript -->
+            </div>
+        </div>
+
         <?php if ($success_voucher): ?>
             <?php
             $login_url = "";
@@ -558,7 +576,7 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                     </div>
                     <div class="voucher-qrcode-container" style="display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; margin: 0 auto;">
                         <canvas id="voucherQrCanvas" style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 6px; width: 120px; height: 120px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);"></canvas>
-                        <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Scan to Connect</span>
+                        <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">Pindai QR untuk Masuk Otomatis</span>
                     </div>
                 </div>
 
@@ -611,6 +629,41 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                 localStorage.removeItem('active_order_id');
                 localStorage.removeItem('active_snap_token');
 
+                // Simpan transaksi sukses ke riwayat pembelian lokal
+                (function() {
+                    try {
+                        var history = JSON.parse(localStorage.getItem('mikhtrans_purchase_history') || '[]');
+                        var orderId = <?= json_encode($show_voucher_id) ?>;
+                        var username = <?= json_encode($success_voucher['username']) ?>;
+                        var password = <?= json_encode($success_voucher['password']) ?>;
+                        var profile = <?= json_encode($success_voucher['profile']) ?>;
+                        var price = <?= json_encode($success_voucher['price']) ?>;
+                        var validity = <?= json_encode($success_voucher['validity']) ?>;
+                        var loginUrl = <?= json_encode($login_url) ?>;
+                        var dateStr = new Date().toLocaleString('id-ID');
+                        
+                        var exists = history.some(function(item) { return item.order_id === orderId; });
+                        if (!exists && orderId && username) {
+                            history.unshift({
+                                order_id: orderId,
+                                username: username,
+                                password: password,
+                                profile: profile,
+                                price: price,
+                                validity: validity,
+                                login_url: loginUrl,
+                                date: dateStr
+                            });
+                            if (history.length > 5) {
+                                history.pop();
+                            }
+                            localStorage.setItem('mikhtrans_purchase_history', JSON.stringify(history));
+                        }
+                    } catch (e) {
+                        console.error('Error saving history:', e);
+                    }
+                })();
+
                 // Inisialisasi QR Code
                 var qr = new QRious({
                     element: document.getElementById('voucherQrCanvas'),
@@ -619,8 +672,8 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                 });
 
                 function copyVoucherCode() {
-                    var codeText = document.getElementById("voucherCode").innerText;
-                    navigator.clipboard.writeText(codeText).then(function() {
+                    var codeText = document.getElementById("voucherCode").innerText.trim();
+                    copyTextToClipboard(codeText, function() {
                         var toast = document.getElementById("copyToast");
                         if (toast) {
                             toast.classList.add("show");
@@ -628,12 +681,28 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                                 toast.classList.remove("show");
                             }, 3000);
                         }
-                    }, function(err) {
-                        alert("Gagal menyalin kode: " + codeText);
+                    }, function() {
+                        alert("Kode voucher: " + codeText + "\n(Silakan salin secara manual)");
                     });
                 }
             </script>
         <?php elseif ($pending_voucher): ?>
+            <?php
+            $wa_url = "";
+            if (!empty($portal_support_wa)) {
+                $clean_wa = preg_replace('/[^0-9]/', '', $portal_support_wa);
+                if (strpos($clean_wa, '08') === 0) {
+                    $clean_wa = '62' . substr($clean_wa, 1);
+                }
+                $wa_msg = "Halo Admin, saya baru saja membeli voucher di portal hotspot Anda.\n\n"
+                        . "Detail Transaksi:\n"
+                        . "- Order ID: " . $pending_voucher['order_id'] . "\n"
+                        . "- Paket: " . $pending_voucher['profile'] . "\n"
+                        . "- Nominal: Rp " . number_format($pending_voucher['price'], 0, ',', '.') . "\n\n"
+                        . "Status transaksi lunas tetapi pembuatan voucher di router tertunda (router offline). Mohon bantuannya untuk diproses manual. Terima kasih.";
+                $wa_url = "https://api.whatsapp.com/send?phone=" . urlencode($clean_wa) . "&text=" . urlencode($wa_msg);
+            }
+            ?>
             <!-- Menampilkan Info Transaksi Pending Karena Router Offline -->
             <div class="receipt-card" style="border-top: 5px solid #F59E0B;">
                 <div class="success-icon" style="background: rgba(245, 158, 11, 0.1); color: #F59E0B;">
@@ -678,6 +747,11 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                 </div>
 
                 <div class="receipt-actions" style="flex-direction: column; width: 100%; gap: 12px;">
+                    <?php if (!empty($wa_url)): ?>
+                        <a href="<?= htmlspecialchars($wa_url) ?>" target="_blank" class="btn-wa-support" style="text-decoration: none; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Hubungi Admin via WhatsApp
+                        </a>
+                    <?php endif; ?>
                     <div style="display: flex; gap: 12px; width: 100%;">
                         <button class="btn-copy" onclick="copyPendingOrderId()" style="flex: 1;">Salin Order ID</button>
                         <a href="index.php?session=<?= urlencode($selected_session) ?>" class="btn-done" style="flex: 1;">Selesai</a>
@@ -697,8 +771,8 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                 localStorage.removeItem('active_snap_token');
 
                 function copyPendingOrderId() {
-                    var orderId = document.getElementById("pendingOrderId").innerText.trim();
-                    navigator.clipboard.writeText(orderId).then(function() {
+                    var orderId = document.getElementById("pendingOrderId").innerText.replace(/\s+/g, '').trim();
+                    copyTextToClipboard(orderId, function() {
                         var toast = document.getElementById("copyToastPending");
                         if (toast) {
                             toast.classList.add("show");
@@ -706,8 +780,8 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                                 toast.classList.remove("show");
                             }, 3000);
                         }
-                    }, function(err) {
-                        alert("Gagal menyalin Order ID: " + orderId);
+                    }, function() {
+                        alert("Order ID: " + orderId + "\n(Silakan salin secara manual)");
                     });
                 }
             </script>
@@ -754,7 +828,7 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                                         ?>
                                     </div>
                                 </div>
-                                <form method="POST" action="#paket">
+                                <form method="POST" action="#paket" onsubmit="return handleCheckoutSubmit(this)">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="buy_profile" value="<?= htmlspecialchars($prof['name']) ?>">
                                     <button type="submit" class="btn-buy-voucher">
