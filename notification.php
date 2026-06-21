@@ -6,7 +6,7 @@
  */
 
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0); // Matikan display_errors di produksi untuk keamanan
 date_default_timezone_set('Asia/Jakarta');
 
 // Load config
@@ -56,13 +56,35 @@ function triggerWebSocketPaidEvent($app_id, $key, $secret, $cluster, $channel, $
             'ignore_errors' => true
         ],
         'ssl' => [
-            'verify_peer' => false,
-            'verify_peer_name' => false
+            'verify_peer' => true,
+            'verify_peer_name' => true
         ]
     ]);
     
     $response = @file_get_contents($url, false, $context);
     return $response;
+}
+
+// Whitelist IP Midtrans (Hanya diaktifkan secara ketat pada mode produksi)
+$incoming_ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+$is_midtrans_ip = false;
+$midtrans_prefixes = ['103.208.23.', '103.56.202.', '103.56.200.'];
+foreach ($midtrans_prefixes as $prefix) {
+    if (strpos($incoming_ip, $prefix) === 0) {
+        $is_midtrans_ip = true;
+        break;
+    }
+}
+// Selalu ijinkan localhost/loopback, dan non-produksi (sandbox / testing tunnel)
+if ($incoming_ip === '127.0.0.1' || $incoming_ip === '::1' || !$midtrans_is_production) {
+    $is_midtrans_ip = true;
+}
+
+if (!$is_midtrans_ip) {
+    writeAppLog("SECURITY_WARNING", "Webhook diakses dari IP tidak sah: " . $incoming_ip);
+    http_response_code(403);
+    echo "Access Denied. Invalid IP Origin.";
+    exit;
 }
 
 // Tangkap POST data dari Midtrans

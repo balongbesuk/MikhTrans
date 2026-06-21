@@ -2,6 +2,20 @@
 
 Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen ini.
 
+## [MikhTrans v1.5] - 2026-06-21
+
+### Ditambahkan
+- **QR Code Voucher Offline (QRious)**: Integrasi pustaka Javascript QRious (`js/qrious.min.js`) pada halaman sukses portal pelanggan (`frontpage.php`). QR Code secara otomatis di-render secara *client-side* (offline-compatible) mengarah ke URL auto-login hotspot (jika DNS name aktif) atau ke kode voucher, diposisikan secara berdampingan (*side-by-side flex layout*) dengan kode voucher teks biasa.
+- **Filter Status Riwayat Transaksi**: Ditambahkan dropdown filter status transaksi pada tab Riwayat Transaksi admin panel (`pending_transactions.php`) untuk menyaring baris tabel secara instan berdasarkan status (Semua, Lunas/Success, Pending, Gagal/Expired) menggunakan filter DOM Javascript *client-side* tanpa reload halaman.
+
+### Diperbaiki / Keamanan
+- **SSL Peer Verification**: Mengaktifkan kembali verifikasi sertifikat SSL (`verify_peer => true` dan `verify_peer_name => true`) pada koneksi API Midtrans dan integrasi Telegram Bot untuk mencegah serangan *Man-in-the-Middle* (MITM).
+- **display_errors Dimatikan**: Mengubah `ini_set('display_errors', 0)` pada portal pelanggan (`frontpage.php`) dan webhook handler (`notification.php`) untuk menghentikan kebocoran stack trace/path internal server pada environment produksi.
+- **Verifikasi IP Webhook Midtrans**: Menambahkan validasi alamat IP pengirim webhook Midtrans (`REMOTE_ADDR`) berbasis whitelist prefix IP resmi Midtrans di `notification.php` untuk environment produksi.
+- **Validasi Parameter Retry**: Menerapkan validasi strict regex (`/^[a-zA-Z0-9\-]+$/`) dan validasi realpath pada parameter POST `order_id` di `pending_transactions.php` untuk mencegah serangan directory traversal.
+
+---
+
 ## [MikhTrans v1.4] - 2026-06-21
 
 ### Ditambahkan

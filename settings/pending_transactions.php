@@ -160,71 +160,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     csrf_verify();
     
     if ($_POST['action'] === 'retry') {
-        $order_id = isset($_POST['order_id']) ? preg_replace('/[^a-zA-Z0-9\-]/', '', $_POST['order_id']) : '';
-        $filepath = __DIR__ . '/../voucher/trans-' . $order_id . '.json';
+        $order_id = isset($_POST['order_id']) ? $_POST['order_id'] : '';
         
-        if (!empty($order_id) && file_exists($filepath)) {
-            $trans = json_decode(file_get_contents($filepath), true);
+        if (empty($order_id) || !preg_match('/^[a-zA-Z0-9\-]+$/', $order_id)) {
+            $error_msg = "Order ID tidak valid.";
+        } else {
+            $filepath = __DIR__ . '/../voucher/trans-' . $order_id . '.json';
+            $real_path = realpath(dirname($filepath));
+            $voucher_dir = realpath(__DIR__ . '/../voucher');
             
-            if (isset($trans['status']) && $trans['status'] === 'paid_pending_generate') {
-                $session = $trans['session'];
-                $profile = $trans['profile'];
+            if ($real_path !== $voucher_dir || !file_exists($filepath)) {
+                $error_msg = "Berkas data transaksi tidak ditemukan.";
+            } else {
+                $trans = json_decode(file_get_contents($filepath), true);
                 
-                if (isset($data[$session])) {
-                    $iphost = explode('!', $data[$session][1])[1];
-                    $userhost = explode('@|@', $data[$session][2])[1];
-                    $passwdhost = explode('#|#', $data[$session][3])[1];
+                if (isset($trans['status']) && $trans['status'] === 'paid_pending_generate') {
+                    $session = $trans['session'];
+                    $profile = $trans['profile'];
                     
-                    $API = new RouterosAPI();
-                    $API->debug = false;
-                    
-                    if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-                        // Generate voucher code
-                        $userLength = 5;
-                        $shuf = $userLength;
-                        $a = ["1" => "", "", 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6];
-                        $shuf = $userLength - (isset($a[$userLength]) ? (int)$a[$userLength] : 2);
+                    if (isset($data[$session])) {
+                        $iphost = explode('!', $data[$session][1])[1];
+                        $userhost = explode('@|@', $data[$session][2])[1];
+                        $passwdhost = explode('#|#', $data[$session][3])[1];
                         
-                        $username = randNLC($shuf) . randN($userLength - $shuf);
-                        $password = $username;
+                        $API = new RouterosAPI();
+                        $API->debug = false;
                         
-                        $comment = "API-Retry-" . rand(100, 999) . "-" . date("m.d.y") . "-Paid QRIS";
-                        
-                        $addParams = [
-                            "server" => "all",
-                            "name" => $username,
-                            "password" => $password,
-                            "profile" => $profile,
-                            "comment" => $comment
-                        ];
-                        
-                        $API->comm("/ip/hotspot/user/add", $addParams);
-                        $API->disconnect();
-                        
-                        // Update transaction
-                        $trans['status'] = 'settlement';
-                        $trans['username'] = $username;
-                        $trans['password'] = $password;
-                        $trans['paid_at'] = time();
-                        
-                        file_put_contents($filepath, json_encode($trans));
-                        $success_msg = ($langid == 'id') 
-                            ? "Sukses! Voucher {$username} berhasil dibuat untuk Order ID: {$order_id}." 
-                            : "Success! Voucher {$username} generated for Order ID: {$order_id}.";
-                        writeAppLog("WEBHOOK_RETRY_SUCCESS", "Voucher " . $username . " sukses digenerate manual via retry queue untuk Order ID: " . $order_id);
+                        if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
+                            // Generate voucher code
+                            $userLength = 5;
+                            $shuf = $userLength;
+                            $a = ["1" => "", "", 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6];
+                            $shuf = $userLength - (isset($a[$userLength]) ? (int)$a[$userLength] : 2);
+                            
+                            $username = randNLC($shuf) . randN($userLength - $shuf);
+                            $password = $username;
+                            
+                            $comment = "API-Retry-" . rand(100, 999) . "-" . date("m.d.y") . "-Paid QRIS";
+                            
+                            $addParams = [
+                                "server" => "all",
+                                "name" => $username,
+                                "password" => $password,
+                                "profile" => $profile,
+                                "comment" => $comment
+                            ];
+                            
+                            $API->comm("/ip/hotspot/user/add", $addParams);
+                            $API->disconnect();
+                            
+                            // Update transaction
+                            $trans['status'] = 'settlement';
+                            $trans['username'] = $username;
+                            $trans['password'] = $password;
+                            $trans['paid_at'] = time();
+                            
+                            file_put_contents($filepath, json_encode($trans));
+                            $success_msg = ($langid == 'id') 
+                                ? "Sukses! Voucher {$username} berhasil dibuat untuk Order ID: {$order_id}." 
+                                : "Success! Voucher {$username} generated for Order ID: {$order_id}.";
+                            writeAppLog("WEBHOOK_RETRY_SUCCESS", "Voucher " . $username . " sukses digenerate manual via retry queue untuk Order ID: " . $order_id);
+                        } else {
+                            $error_msg = ($langid == 'id')
+                                ? "Gagal menghubungkan ke router untuk sesi '{$session}'. Pastikan router online."
+                                : "Failed to connect to router for session '{$session}'. Make sure the router is online.";
+                        }
                     } else {
-                        $error_msg = ($langid == 'id')
-                            ? "Gagal menghubungkan ke router untuk sesi '{$session}'. Pastikan router online."
-                            : "Failed to connect to router for session '{$session}'. Make sure the router is online.";
+                        $error_msg = "Sesi router '{$session}' tidak ditemukan dalam konfigurasi.";
                     }
                 } else {
-                    $error_msg = "Sesi router '{$session}' tidak ditemukan dalam konfigurasi.";
+                    $error_msg = "Transaksi tidak dalam status tertunda atau sudah terproses.";
                 }
-            } else {
-                $error_msg = "Transaksi tidak dalam status tertunda atau sudah terproses.";
             }
-        } else {
-            $error_msg = "Berkas data transaksi tidak ditemukan.";
         }
     } elseif ($_POST['action'] === 'save_settings') {
         $bot_token = isset($_POST['telegram_bot_token']) ? trim($_POST['telegram_bot_token']) : '';
@@ -806,6 +813,19 @@ uasort($profileSales, function($a, $b) {
                             <h3><i class="fa fa-history"></i> <?= ($langid == 'id') ? 'Riwayat Transaksi Sukses' : 'Successful Transaction History' ?></h3>
                         </div>
                         <div class="card-body">
+                            <!-- Filter Status Dropdown -->
+                            <div class="form-group" style="max-width: 250px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                                <label for="historyStatusFilter" style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin: 0; white-space: nowrap;">
+                                    <i class="fa fa-filter"></i> Filter Status:
+                                </label>
+                                <select id="historyStatusFilter" class="form-control" onchange="filterHistoryTable()" style="padding: 6px 12px; border-radius: 8px; font-size: 13px; cursor: pointer;">
+                                    <option value="all"><?= ($langid == 'id') ? 'Semua Status' : 'All Statuses' ?></option>
+                                    <option value="success"><?= ($langid == 'id') ? 'Lunas (Success)' : 'Paid (Success)' ?></option>
+                                    <option value="pending">Pending</option>
+                                    <option value="failed"><?= ($langid == 'id') ? 'Gagal (Failed/Expired)' : 'Failed/Expired' ?></option>
+                                </select>
+                            </div>
+                            
                             <div class="overflow">
                                 <table class="table table-hover">
                                     <thead>
@@ -819,7 +839,7 @@ uasort($profileSales, function($a, $b) {
                                             <th style="text-align: center;">Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="historyTableBody">
                                         <?php foreach ($historyTransactions as $ht): ?>
                                             <?php
                                             $stVal = isset($ht['status']) ? $ht['status'] : 'pending';
@@ -833,7 +853,7 @@ uasort($profileSales, function($a, $b) {
                                                 $badgeLabel = 'Gagal';
                                             }
                                             ?>
-                                            <tr>
+                                            <tr data-status="<?= $badgeClass ?>">
                                                 <td><?= date("Y-m-d H:i:s", isset($ht['paid_at']) ? $ht['paid_at'] : (isset($ht['created_at']) ? $ht['created_at'] : $ht['file_time'])) ?></td>
                                                 <td style="font-family: monospace;"><?= htmlspecialchars($ht['order_id']) ?></td>
                                                 <td><span class="badge bg-grey"><?= htmlspecialchars($ht['session']) ?></span></td>
@@ -1283,6 +1303,23 @@ function openTab(panelId, btnEl) {
     if (panelId === 'tab-analytics') {
         loadChartJsAndRender();
     }
+}
+
+// Filter History Table by Status
+function filterHistoryTable() {
+    var select = document.getElementById('historyStatusFilter');
+    if (!select) return;
+    var filterValue = select.value;
+    var rows = document.querySelectorAll('#historyTableBody tr');
+    
+    rows.forEach(function(row) {
+        var status = row.getAttribute('data-status');
+        if (filterValue === 'all' || status === filterValue) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
 }
 
 // Restore active tab on load

@@ -6,7 +6,7 @@
  */
 
 error_reporting(E_ALL);
-ini_set('display_errors', 1); // Tampilkan error untuk membantu debugging
+ini_set('display_errors', 0); // Matikan display_errors di produksi untuk keamanan
 date_default_timezone_set('Asia/Jakarta');
 
 // Start session safely if not already started
@@ -90,8 +90,8 @@ function getMidtransSnapToken($order_id, $price, $server_key, $is_production) {
             'ignore_errors' => true
         ],
         'ssl' => [
-            'verify_peer' => false,
-            'verify_peer_name' => false
+            'verify_peer' => true,
+            'verify_peer_name' => true
         ]
     ]);
     
@@ -418,6 +418,7 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
     <script type="text/javascript"
             src="https://app.<?= $midtrans_is_production ? '' : 'sandbox.' ?>midtrans.com/snap/snap.js"
             data-client-key="<?= $midtrans_client_key ?>"></script>
+    <script src="js/qrious.min.js"></script>
 
     <link rel="stylesheet" href="css/frontpage.css">
     <style>
@@ -533,6 +534,12 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
         <?php endif; ?>
 
         <?php if ($success_voucher): ?>
+            <?php
+            $login_url = "";
+            if (!empty($dnsname)) {
+                $login_url = "http://" . $dnsname . "/login?username=" . urlencode($success_voucher['username']) . "&password=" . urlencode($success_voucher['password']);
+            }
+            ?>
             <!-- Menampilkan Voucher Hasil Pembelian Sukses -->
             <div class="receipt-card">
                 <div class="success-icon">
@@ -541,11 +548,17 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                 <div class="receipt-title">Pembayaran Berhasil!</div>
                 <div class="receipt-subtitle">Voucher internet Anda telah berhasil diterbitkan</div>
 
-                <div class="voucher-box">
-                    <div class="voucher-code-label">Kode Voucher</div>
-                    <div class="voucher-code" id="voucherCode"><?= htmlspecialchars($success_voucher['username']) ?></div>
-                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">
-                        Gunakan kode di atas pada halaman masuk Hotspot Anda.
+                <div class="voucher-box" style="display: flex; align-items: center; justify-content: space-around; gap: 20px; flex-wrap: wrap; text-align: left;">
+                    <div style="flex: 1; min-width: 180px;">
+                        <div class="voucher-code-label">Kode Voucher</div>
+                        <div class="voucher-code" id="voucherCode" style="margin-bottom: 4px;"><?= htmlspecialchars($success_voucher['username']) ?></div>
+                        <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+                            Gunakan kode ini pada halaman login Hotspot Anda, atau gunakan QR Code di samping untuk terhubung secara otomatis.
+                        </div>
+                    </div>
+                    <div class="voucher-qrcode-container" style="display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; margin: 0 auto;">
+                        <canvas id="voucherQrCanvas" style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 6px; width: 120px; height: 120px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);"></canvas>
+                        <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Scan to Connect</span>
                     </div>
                 </div>
 
@@ -577,12 +590,6 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                 </div>
 
                 <div class="receipt-actions" style="flex-direction: column; width: 100%; gap: 12px;">
-                    <?php
-                    $login_url = "";
-                    if (!empty($dnsname)) {
-                        $login_url = "http://" . $dnsname . "/login?username=" . urlencode($success_voucher['username']) . "&password=" . urlencode($success_voucher['password']);
-                    }
-                    ?>
                     <?php if (!empty($login_url)): ?>
                         <a href="<?= htmlspecialchars($login_url) ?>" class="btn-connect btn-connect-pulse">Hubungkan Sekarang</a>
                     <?php endif; ?>
@@ -603,6 +610,13 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                 // Bersihkan data transaksi aktif dari localStorage setelah voucher sukses dimuat
                 localStorage.removeItem('active_order_id');
                 localStorage.removeItem('active_snap_token');
+
+                // Inisialisasi QR Code
+                var qr = new QRious({
+                    element: document.getElementById('voucherQrCanvas'),
+                    value: <?= json_encode($login_url ?: $success_voucher['username']) ?>,
+                    size: 150
+                });
 
                 function copyVoucherCode() {
                     var codeText = document.getElementById("voucherCode").innerText;
