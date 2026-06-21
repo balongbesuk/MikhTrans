@@ -483,6 +483,7 @@ body.login-page input.login-input {
             <p class="login-form-subtitle">Silakan masukkan akun administratif Anda</p>
             
             <form autocomplete="off" action="" method="post">
+                <?= csrf_field() ?>
                 <div class="login-form-group">
                     <i class="fa fa-user"></i>
                     <input class="login-input" type="text" name="user" id="_username" placeholder="Username" required autofocus>

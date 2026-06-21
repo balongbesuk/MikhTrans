@@ -19,6 +19,22 @@ session_start();
 // hide all error
 error_reporting(0);
 
+// CSRF protection
+include_once('./include/csrf.php');
+
+// Session timeout (30 menit idle)
+$session_timeout = 1800; // 30 minutes in seconds
+if (isset($_SESSION['mikhmon']) && isset($_SESSION['last_activity'])) {
+    if (time() - $_SESSION['last_activity'] > $session_timeout) {
+        session_unset();
+        session_destroy();
+        session_start();
+    }
+}
+if (isset($_SESSION['mikhmon'])) {
+    $_SESSION['last_activity'] = time();
+}
+
 ob_start("ob_gzhandler");
 
 // check url
@@ -71,13 +87,33 @@ include_once('./lib/formatbytesbites.php');
 if ($id == "login" || substr($url, -1) == "p") {
 
   if (isset($_POST['login'])) {
+    csrf_verify();
     $user = $_POST['user'];
     $pass = $_POST['pass'];
-    if ($user == $useradm && $pass == decrypt($passadm)) {
-      $_SESSION["mikhmon"] = $user;
-
-        echo "<script>window.location='./admin.php?id=sessions'</script>";
     
+    // Verifikasi password: support bcrypt hash, legacy base64+XOR, dan plaintext fallback
+    $password_valid = false;
+    if ($user == $useradm) {
+      // Cek apakah hash sudah bcrypt (dimulai dengan $2y$ atau $2a$)
+      if (substr($passadm, 0, 4) === '$2y$' || substr($passadm, 0, 4) === '$2a$') {
+        $password_valid = password_verify($pass, $passadm);
+      } else {
+        // Legacy: password disimpan sebagai base64-encoded XOR ciphertext
+        $password_valid = ($pass == decrypt($passadm));
+        
+        // Auto-upgrade ke bcrypt jika login berhasil
+        if ($password_valid) {
+          $bcrypt_hash = password_hash($pass, PASSWORD_BCRYPT);
+          $dbSettings = new \App\Models\AppSettings();
+          $dbSettings->saveAdminCredentials($useradm, $bcrypt_hash);
+        }
+      }
+    }
+    
+    if ($password_valid) {
+      $_SESSION["mikhmon"] = $user;
+      $_SESSION['last_activity'] = time();
+      echo "<script>window.location='./admin.php?id=sessions'</script>";
     } else {
       $error = '<div style="width: 100%; padding:5px 0px 5px 0px; border-radius:5px;" class="bg-danger"><i class="fa fa-ban"></i> Alert!<br>Invalid username or password.</div>';
     }

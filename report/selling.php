@@ -36,39 +36,37 @@ if (!isset($_SESSION["mikhmon"])) {
 	$remdata = ($_POST['remdata']);
 	$prefix = $_GET['prefix'];
 	
-
-	$gettimezone = $API->comm("/system/clock/print");
-	$timezone = $gettimezone[0]['time-zone-name'];
+	// Use session timezone instead of querying router clock
+	$timezone = isset($_SESSION['timezone']) ? $_SESSION['timezone'] : 'Asia/Jakarta';
 	date_default_timezone_set($timezone);
 
-	if (isset($remdata)) {
-		if (strlen($idhr) > "0") {
-			if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-				$API->write('/system/script/print', false);
-				$API->write('?source=' . $idhr . '', false);
-				$API->write('=.proplist=.id');
-				$ARREMD = $API->read();
-				for ($i = 0; $i < count($ARREMD); $i++) {
-					$API->write('/system/script/remove', false);
-					$API->write('=.id=' . $ARREMD[$i]['.id']);
-					$READ = $API->read();
+	// Single connection to router (reused for all operations)
+	$connected = $API->connect($iphost, $userhost, decrypt($passwdhost));
 
-				}
+	// Proplist filter for script queries (hanya ambil field yang dibutuhkan)
+	$script_proplist = array(".proplist" => ".id,name,source,owner,comment");
+
+	if (isset($remdata) && $connected) {
+		if (strlen($idhr) > "0") {
+			$API->write('/system/script/print', false);
+			$API->write('?source=' . $idhr . '', false);
+			$API->write('=.proplist=.id');
+			$ARREMD = $API->read();
+			for ($i = 0; $i < count($ARREMD); $i++) {
+				$API->write('/system/script/remove', false);
+				$API->write('=.id=' . $ARREMD[$i]['.id']);
+				$READ = $API->read();
 			}
 		} elseif (strlen($idbl) > "0") {
-			if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-				$API->write('/system/script/print', false);
-				$API->write('?owner=' . $idbl . '', false);
-				$API->write('=.proplist=.id');
-				$ARREMD = $API->read();
-				for ($i = 0; $i < count($ARREMD); $i++) {
-					$API->write('/system/script/remove', false);
-					$API->write('=.id=' . $ARREMD[$i]['.id']);
-					$READ = $API->read();
-
-				}
+			$API->write('/system/script/print', false);
+			$API->write('?owner=' . $idbl . '', false);
+			$API->write('=.proplist=.id');
+			$ARREMD = $API->read();
+			for ($i = 0; $i < count($ARREMD); $i++) {
+				$API->write('/system/script/remove', false);
+				$API->write('=.id=' . $ARREMD[$i]['.id']);
+				$READ = $API->read();
 			}
-
 		}
 		echo "<script>window.location='./?report=selling&session=" . $session . "'</script>";
 	}
@@ -78,46 +76,36 @@ if (!isset($_SESSION["mikhmon"])) {
 	} else {
 		$fprefix = "";
 	}
-	if (strlen($idhr) > "0") {
-		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-			$getData = $API->comm("/system/script/print", array(
+
+	$getData = array();
+	$TotalReg = 0;
+
+	if ($connected) {
+		if (strlen($idhr) > "0") {
+			$getData = $API->comm("/system/script/print", array_merge(array(
 				"?source" => "$idhr",
-			));
+			), $script_proplist));
 			$TotalReg = count($getData);
-		}
-		$filedownload = $idhr;
-		$shf = "hidden";
-		$shd = "inline-block";
-	} elseif (strlen($idbl) > "0") {
-		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-			$getData = $API->comm("/system/script/print", array(
+			$filedownload = $idhr;
+			$shf = "hidden";
+			$shd = "inline-block";
+		} elseif (strlen($idbl) > "0") {
+			$getData = $API->comm("/system/script/print", array_merge(array(
 				"?owner" => "$idbl",
-			));
+			), $script_proplist));
 			$TotalReg = count($getData);
-		}
-		$filedownload = $idbl;
-		$shf = "hidden";
-		$shd = "inline-block";
-	} elseif ($idhr == "" || $idbl == "") {
-		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-			$getData = $API->comm("/system/script/print", array(
+			$filedownload = $idbl;
+			$shf = "hidden";
+			$shd = "inline-block";
+		} else {
+			$getData = $API->comm("/system/script/print", array_merge(array(
 				"?comment" => "mikhmon",
-			));
+			), $script_proplist));
 			$TotalReg = count($getData);
+			$filedownload = "all";
+			$shf = "text";
+			$shd = "none";
 		}
-		$filedownload = "all";
-		$shf = "text";
-		$shd = "none";
-	} elseif (strlen($idbl) > "0" ) {
-		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-			$getData = $API->comm("/system/script/print", array(
-				"?owner" => "$idbl",
-			));
-			$TotalReg = count($getData);
-		}
-		$filedownload = $idbl;
-		$shf = "hidden";
-		$shd = "inline-block";
 	}
 	
 }

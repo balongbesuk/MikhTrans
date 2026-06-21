@@ -46,30 +46,36 @@ include('../lang/'.$langid.'.php');
     $connected = $API->connect($iphost, $userhost, decrypt($passwdhost));
     if (!$connected) exit; // safeLoad() will skip empty response
 
-    // get MikroTik system clock
-    $getclock = $API->comm("/system/clock/print");
-    $clock = is_array($getclock) ? $getclock[0] : null;
-    $timezone = isset($clock['time-zone-name']) ? $clock['time-zone-name'] : (isset($_SESSION['timezone']) ? $_SESSION['timezone'] : '');
+    // Use timezone from session
+    $timezone = isset($_SESSION['timezone']) ? $_SESSION['timezone'] : '';
     if (!empty($timezone)) {
       date_default_timezone_set($timezone);
     }
-    $_SESSION[$session.'sdate'] = isset($clock['date']) ? $clock['date'] : '';
 
     // get system resource MikroTik
-    $getresource = $API->comm("/system/resource/print");
+    $getresource = $API->comm("/system/resource/print", array(
+      ".proplist" => "uptime,version,free-memory,total-memory,cpu-load,free-hdd-space,total-hdd-space,board-name"
+    ));
     $resource = is_array($getresource) ? $getresource[0] : null;
 
     // get routeboard info
-    $getrouterboard = $API->comm("/system/routerboard/print");
-    $routerboard = is_array($getrouterboard) ? $getrouterboard[0] : null;
+    if (isset($_SESSION[$session.'_routerboard'])) {
+      $routerboard = $_SESSION[$session.'_routerboard'];
+    } else {
+      $getrouterboard = $API->comm("/system/routerboard/print");
+      $routerboard = is_array($getrouterboard) ? $getrouterboard[0] : null;
+      if (is_array($routerboard)) {
+        $_SESSION[$session.'_routerboard'] = $routerboard;
+      }
+    }
 
     // Calculate resource percentages & define UI variables
     $board_name = isset($resource['board-name']) ? $resource['board-name'] : '-';
     $model = isset($routerboard['model']) ? $routerboard['model'] : '-';
     $version = isset($resource['version']) ? $resource['version'] : '-';
     $uptime = (isset($resource['uptime']) && !empty($resource['uptime'])) ? formatDTM($resource['uptime']) : '-';
-    $time = isset($clock['time']) ? $clock['time'] : '-';
-    $date = isset($clock['date']) ? $clock['date'] : '-';
+    $time = '-';
+    $date = '-';
 
     $cpu_load = (isset($resource['cpu-load']) && is_numeric($resource['cpu-load'])) ? $resource['cpu-load'] : '-';
 
@@ -351,26 +357,34 @@ include('../lang/'.$langid.'.php');
     // ==========================================
     // 1. SYSTEM RESOURCE DATA & RENDER
     // ==========================================
-    $getclock = $API->comm("/system/clock/print");
-    $clock = is_array($getclock) ? $getclock[0] : null;
-    $timezone = isset($clock['time-zone-name']) ? $clock['time-zone-name'] : (isset($_SESSION['timezone']) ? $_SESSION['timezone'] : '');
+    // Use timezone from session
+    $timezone = isset($_SESSION['timezone']) ? $_SESSION['timezone'] : '';
     if (!empty($timezone)) {
       date_default_timezone_set($timezone);
     }
-    $_SESSION[$session.'sdate'] = isset($clock['date']) ? $clock['date'] : '';
 
-    $getresource = $API->comm("/system/resource/print");
+    $getresource = $API->comm("/system/resource/print", array(
+      ".proplist" => "uptime,version,free-memory,total-memory,cpu-load,free-hdd-space,total-hdd-space,board-name"
+    ));
     $resource = is_array($getresource) ? $getresource[0] : null;
 
-    $getrouterboard = $API->comm("/system/routerboard/print");
-    $routerboard = is_array($getrouterboard) ? $getrouterboard[0] : null;
+    $getrouterboard = isset($_SESSION[$session.'_routerboard']) ? $_SESSION[$session.'_routerboard'] : null;
+    if (!$getrouterboard) {
+      $getrouterboard_res = $API->comm("/system/routerboard/print");
+      $routerboard = is_array($getrouterboard_res) ? $getrouterboard_res[0] : null;
+      if (is_array($routerboard)) {
+        $_SESSION[$session.'_routerboard'] = $routerboard;
+      }
+    } else {
+      $routerboard = $getrouterboard;
+    }
 
     $board_name = isset($resource['board-name']) ? $resource['board-name'] : '-';
     $model = isset($routerboard['model']) ? $routerboard['model'] : '-';
     $version = isset($resource['version']) ? $resource['version'] : '-';
     $uptime = (isset($resource['uptime']) && !empty($resource['uptime'])) ? formatDTM($resource['uptime']) : '-';
-    $time = isset($clock['time']) ? $clock['time'] : '-';
-    $date = isset($clock['date']) ? $clock['date'] : '-';
+    $time = '-';
+    $date = '-';
 
     $cpu_load = (isset($resource['cpu-load']) && is_numeric($resource['cpu-load'])) ? $resource['cpu-load'] : '-';
 

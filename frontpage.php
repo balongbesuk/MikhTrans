@@ -47,6 +47,7 @@ if (!file_exists(__DIR__ . '/include/config.php')) {
 }
 include_once(__DIR__ . '/include/config.php');
 include_once(__DIR__ . '/include/env_config.php');
+include_once(__DIR__ . '/include/csrf.php');
 
 // Safety defaults for Midtrans config
 $midtrans_server_key = isset($midtrans_server_key) ? $midtrans_server_key : '';
@@ -169,7 +170,7 @@ if (isset($_GET['show_voucher']) && !empty($show_voucher_id)) {
     }
 }
 
-// Konek ke MikroTik untuk list profil & cek status online
+// Konek ke MikroTik untuk list profil & cek status online (dengan cache 5 menit)
 if (!empty($selected_session) && !$success_voucher) {
     include_once(__DIR__ . '/lib/routeros_api.class.php');
     include_once(__DIR__ . '/lib/formatbytesbites.php');
@@ -180,48 +181,70 @@ if (!empty($selected_session) && !$success_voucher) {
         $passwdhost = explode('#|#', $data[$selected_session][3])[1];
         $currency = explode('&', $data[$selected_session][6])[1];
 
-        $API = new RouterosAPI();
-        $API->debug = false;
+        // File-based profile cache (TTL: 5 menit)
+        $cache_dir = __DIR__ . '/data';
+        $cache_file = $cache_dir . '/profile_cache_' . preg_replace('/[^a-zA-Z0-9]/', '', $selected_session) . '.json';
+        $cache_ttl = 300; // 5 menit
+        $use_cache = false;
 
-        // Beri timeout koneksi cepat
-        if (@$API->connect($iphost, $userhost, decrypt($passwdhost))) {
-            $router_online = true;
-            $raw_profiles = $API->comm("/ip/hotspot/user/profile/print");
-            if (is_array($raw_profiles)) {
-                foreach ($raw_profiles as $prof) {
-                    if ($prof['name'] === 'default') continue;
-
-                    $onLogin = isset($prof['on-login']) ? $prof['on-login'] : '';
-                    $exploded = explode(',', $onLogin);
-                    
-                    $price = isset($exploded[2]) ? (float)$exploded[2] : 0;
-                    if ($price <= 0) continue; // Hanya tampilkan profil yang memiliki harga > 0
-                    
-                    $validity = isset($exploded[3]) ? $exploded[3] : '';
-                    
-                    $profiles[] = [
-                        'name' => $prof['name'],
-                        'shared_users' => isset($prof['shared-users']) ? $prof['shared-users'] : '1',
-                        'rate_limit' => isset($prof['rate-limit']) ? $prof['rate-limit'] : 'Unlimited',
-                        'price' => $price,
-                        'validity' => $validity,
-                        'currency' => $currency
-                    ];
+        if (file_exists($cache_file)) {
+            $cache_age = time() - filemtime($cache_file);
+            if ($cache_age < $cache_ttl) {
+                $cached = json_decode(file_get_contents($cache_file), true);
+                if (is_array($cached) && isset($cached['profiles'])) {
+                    $profiles = $cached['profiles'];
+                    $router_online = true;
+                    $use_cache = true;
                 }
-
-                // Urutkan profil berdasarkan harga terendah ke tertinggi
-                usort($profiles, function($a, $b) {
-                    if ($a['price'] == $b['price']) {
-                        return 0;
-                    }
-                    return ($a['price'] < $b['price']) ? -1 : 1;
-                });
             }
-            $API->disconnect();
-        } else {
-            $router_online = false;
-            $error_msg = "Sistem gagal terhubung ke router MikroTik.";
-            writeAppLog("MIKROTIK_ERROR", "Gagal koneksi API MikroTik untuk sesi: " . $selected_session);
+        }
+
+        if (!$use_cache) {
+            // Cache expired atau belum ada, query router
+            $API = new RouterosAPI();
+            $API->debug = false;
+
+            if (@$API->connect($iphost, $userhost, decrypt($passwdhost))) {
+                $router_online = true;
+                $raw_profiles = $API->comm("/ip/hotspot/user/profile/print", array(
+                    ".proplist" => "name,shared-users,rate-limit,on-login"
+                ));
+                if (is_array($raw_profiles)) {
+                    foreach ($raw_profiles as $prof) {
+                        if ($prof['name'] === 'default') continue;
+
+                        $onLogin = isset($prof['on-login']) ? $prof['on-login'] : '';
+                        $exploded = explode(',', $onLogin);
+                        
+                        $price = isset($exploded[2]) ? (float)$exploded[2] : 0;
+                        if ($price <= 0) continue;
+                        
+                        $validity = isset($exploded[3]) ? $exploded[3] : '';
+                        
+                        $profiles[] = [
+                            'name' => $prof['name'],
+                            'shared_users' => isset($prof['shared-users']) ? $prof['shared-users'] : '1',
+                            'rate_limit' => isset($prof['rate-limit']) ? $prof['rate-limit'] : 'Unlimited',
+                            'price' => $price,
+                            'validity' => $validity,
+                            'currency' => $currency
+                        ];
+                    }
+
+                    usort($profiles, function($a, $b) {
+                        if ($a['price'] == $b['price']) return 0;
+                        return ($a['price'] < $b['price']) ? -1 : 1;
+                    });
+
+                    // Simpan cache
+                    @file_put_contents($cache_file, json_encode(['profiles' => $profiles, 'cached_at' => time()]));
+                }
+                $API->disconnect();
+            } else {
+                $router_online = false;
+                $error_msg = "Sistem gagal terhubung ke router MikroTik.";
+                writeAppLog("MIKROTIK_ERROR", "Gagal koneksi API MikroTik untuk sesi: " . $selected_session);
+            }
         }
     } else {
         $router_online = false;
@@ -269,6 +292,8 @@ $fallback_profiles = [
 $snap_token = "";
 $snap_order_id = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_profile'])) {
+    // CSRF verification
+    csrf_verify();
     // Cooldown rate limit check (10 detik)
     if (isset($_SESSION['last_checkout_time']) && (time() - $_SESSION['last_checkout_time'] < 10)) {
         $error_msg = "Harap tunggu 10 detik sebelum melakukan pesanan kembali.";
@@ -599,6 +624,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_profile'])) {
                                     </div>
                                 </div>
                                 <form method="POST" action="#paket">
+                                    <?= csrf_field() ?>
                                     <input type="hidden" name="buy_profile" value="<?= htmlspecialchars($prof['name']) ?>">
                                     <button type="submit" class="btn-buy-voucher">
                                         <i class="fa fa-shopping-cart"></i> Beli Sekarang

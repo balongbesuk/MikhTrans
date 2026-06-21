@@ -28,7 +28,7 @@ if (!isset($_SESSION["mikhmon"])) {
   if (isset($_POST['save'])) {
 
     $suseradm = ($_POST['useradm']);
-    $spassadm = encrypt($_POST['passadm']);
+    $spassadm = password_hash($_POST['passadm'], PASSWORD_BCRYPT);
     $qrbt = ($_POST['qrbt']);
 
     $dbSettings = new \App\Models\AppSettings();

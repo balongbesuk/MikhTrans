@@ -33,12 +33,21 @@ if (!isset($_SESSION["mikhmon"])) {
   $_SESSION[$session.'sdate'] = isset($clock['date']) ? $clock['date'] : '';
 
   // get system resource MikroTik
-  $getresource = $API->comm("/system/resource/print");
+  $getresource = $API->comm("/system/resource/print", array(
+    ".proplist" => "uptime,version,free-memory,total-memory,cpu-load,free-hdd-space,total-hdd-space,board-name"
+  ));
   $resource = is_array($getresource) ? $getresource[0] : null;
 
   // get routeboard info
-  $getrouterboard = $API->comm("/system/routerboard/print");
-  $routerboard = is_array($getrouterboard) ? $getrouterboard[0] : null;
+  if (isset($_SESSION[$session.'_routerboard'])) {
+    $routerboard = $_SESSION[$session.'_routerboard'];
+  } else {
+    $getrouterboard = $API->comm("/system/routerboard/print");
+    $routerboard = is_array($getrouterboard) ? $getrouterboard[0] : null;
+    if (is_array($routerboard)) {
+      $_SESSION[$session.'_routerboard'] = $routerboard;
+    }
+  }
 
   // get & counting hotspot users
   $countallusers = $API->comm("/ip/hotspot/user/print", array("count-only" => ""));

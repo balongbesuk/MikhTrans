@@ -76,5 +76,7 @@ $ws_host = mikhmonEnv('WS_HOST', "");
 $ws_port = mikhmonEnv('WS_PORT', "");
 $ws_scheme = mikhmonEnv('WS_SCHEME', "");
 
+$encryption_key = mikhmonEnv('ENCRYPTION_KEY', "128");
+
 // Kredensial MikroTik Hotspot (ganti IP, admin, password_hash dengan milik Anda)
 $data['Hotspot'] = array ('1'=>'Hotspot!192.168.1.10','Hotspot@|@admin','Hotspot#|#PASSWORD_HASH','Hotspot%Voucher Hotspot','Hotspot^mywifi.id','Hotspot&Rp','Hotspot*10','Hotspot(1','Hotspot)','Hotspot=10','Hotspot@!@enable');

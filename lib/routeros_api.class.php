@@ -437,28 +437,96 @@ class RouterosAPI
 
 // encrypt decript
 
-function encrypt($string, $key="128") {
-	$key = (string)$key;
-	$result = '';
-	for($i=0, $k= strlen($string); $i<$k; $i++) {
-		$char = substr($string, $i, 1);
-		$keychar = substr($key, ($i % strlen($key))-1, 1);
-		$char = chr(ord($char)+ord($keychar));
-		$result .= $char;
-	}
-	return base64_encode($result);
+function get_mikhmon_encryption_key($default = "128") {
+    global $encryption_key;
+    if (!empty($encryption_key)) {
+        return (string)$encryption_key;
+    }
+    if (function_exists('mikhmonEnv') && mikhmonEnv('ENCRYPTION_KEY')) {
+        return (string)mikhmonEnv('ENCRYPTION_KEY');
+    }
+    return (string)$default;
 }
+
+function encrypt($string, $key="128") {
+    $key = get_mikhmon_encryption_key($key);
+    if (function_exists('openssl_encrypt')) {
+        $method = 'AES-256-CBC';
+        $strong_key = hash('sha256', $key, true);
+        $iv_length = openssl_cipher_iv_length($method);
+        $iv = openssl_random_pseudo_bytes($iv_length);
+        $encrypted = openssl_encrypt($string, $method, $strong_key, OPENSSL_RAW_DATA, $iv);
+        return 'aes:' . base64_encode($iv . $encrypted);
+    }
+    
+    // Fallback to legacy XOR
+    $result = '';
+    for($i=0, $k= strlen($string); $i<$k; $i++) {
+        $char = substr($string, $i, 1);
+        $keychar = substr($key, ($i % strlen($key))-1, 1);
+        $char = chr(ord($char)+ord($keychar));
+        $result .= $char;
+    }
+    return base64_encode($result);
+}
+
 function decrypt($string, $key="128") {
-	$key = (string)$key;
-	$result = '';
-	$string = base64_decode($string);
-	for($i=0, $k=strlen($string); $i< $k ; $i++) {
-		$char = substr($string, $i, 1);
-		$keychar = substr($key, ($i % strlen($key))-1, 1);
-		$char = chr(ord($char)-ord($keychar));
-		$result .= $char;
-	}
-	return $result;
+    $resolved_key = get_mikhmon_encryption_key($key);
+    
+    // Check if the ciphertext is in AES format (prefixed with 'aes:')
+    if (substr($string, 0, 4) === 'aes:') {
+        if (function_exists('openssl_decrypt')) {
+            $method = 'AES-256-CBC';
+            $strong_key = hash('sha256', $resolved_key, true);
+            $raw = base64_decode(substr($string, 4));
+            $iv_length = openssl_cipher_iv_length($method);
+            if (strlen($raw) > $iv_length) {
+                $iv = substr($raw, 0, $iv_length);
+                $ciphertext = substr($raw, $iv_length);
+                $decrypted = openssl_decrypt($ciphertext, $method, $strong_key, OPENSSL_RAW_DATA, $iv);
+                if ($decrypted !== false) {
+                    return $decrypted;
+                }
+            }
+        }
+    }
+    
+    // Fallback to legacy XOR decryption
+    $result = '';
+    $decoded = base64_decode($string);
+    if ($decoded !== false) {
+        for($i=0, $k=strlen($decoded); $i< $k ; $i++) {
+            $char = substr($decoded, $i, 1);
+            $keychar = substr($resolved_key, ($i % strlen($resolved_key))-1, 1);
+            $char = chr(ord($char)-ord($keychar));
+            $result .= $char;
+        }
+        
+        // If decryption using resolved_key returned empty/unprintable binary data, try with the original parameter key
+        $is_valid = true;
+        $len = strlen($result);
+        for ($j = 0; $j < $len; $j++) {
+            $ord = ord($result[$j]);
+            if ($ord < 32 || $ord > 126) {
+                $is_valid = false;
+                break;
+            }
+        }
+        if ($is_valid) {
+            return $result;
+        }
+    }
+    
+    // Final fallback using the exact key parameter passed
+    $result = '';
+    $decoded = base64_decode($string);
+    for($i=0, $k=strlen($decoded); $i< $k ; $i++) {
+        $char = substr($decoded, $i, 1);
+        $keychar = substr($key, ($i % strlen($key))-1, 1);
+        $char = chr(ord($char)-ord($keychar));
+        $result .= $char;
+    }
+    return $result;
 }
 
 // Reformat date time MikroTik

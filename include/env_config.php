@@ -105,3 +105,5 @@ $ws_cluster = mikhmonEnv('WS_CLUSTER', "ap1");
 $ws_host = mikhmonEnv('WS_HOST', "");
 $ws_port = mikhmonEnv('WS_PORT', "");
 $ws_scheme = mikhmonEnv('WS_SCHEME', "");
+
+$encryption_key = mikhmonEnv('ENCRYPTION_KEY', "128");

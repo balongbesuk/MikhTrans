@@ -2,9 +2,26 @@
 
 Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen ini.
 
+## [MikhTrans v2.1] - 2026-06-21
+
+### Ditambahkan
+- **Proteksi CSRF (Cross-Site Request Forgery)**: Menambahkan helper `include/csrf.php` dengan token per-sesi yang memproteksi seluruh form POST kritis (login admin, pembelian voucher frontpage) dari serangan CSRF.
+- **Session Timeout Auto-Logout (30 Menit)**: Sesi admin otomatis kedaluwarsa setelah 30 menit tanpa aktivitas, meningkatkan keamanan panel admin pada perangkat bersama.
+- **Polyfill Kompatibilitas PHP 5.4**: Menambahkan fungsi tiruan (*polyfills*) untuk `hash_equals()`, `password_hash()`, dan `password_verify()` berbasis Blowfish `crypt()` di `csrf.php` agar sistem v2.1 dapat berjalan tanpa eror di PHP versi lama (seperti PHP 5.4.17 bawaan server portabel).
+
+### Diubah
+- **Hashing Password Admin (bcrypt)**: Migrasi penyimpanan password admin dari skema base64/XOR ke bcrypt (`password_hash()` / `password_verify()`). Password lama di-upgrade otomatis saat login sukses pertama kali tanpa intervensi manual.
+- **Validasi Sesi & Perbaikan Redirect Loop**: Memperbaiki masalah loop redireksi tak terbatas pada halaman login admin dengan hanya melakukan validasi parameter `$_GET['session']` di `readcfg.php` ketika parameter sesi tersebut tidak kosong, serta menyembunyikan PHP notices saat sesi tidak valid.
+- **Konsolidasi Koneksi Router (Selling Report)**: Mengurangi 5x panggilan `$API->connect()` menjadi 1x koneksi tunggal di `report/selling.php`, serta menerapkan filter `.proplist` pada query `/system/script/print` untuk memangkas payload data.
+- **Cache Profil Hotspot (Frontpage)**: Menambahkan file-based cache dengan TTL 5 menit untuk daftar profil paket voucher di halaman pelanggan (`frontpage.php`), mengurangi koneksi TCP ke router MikroTik pada setiap kunjungan halaman publik.
+- **Optimasi Query Resource & System Clock**: Menghapus query `/system/clock/print` dari pemroses AJAX reloads (`aload.php`) karena banner jam terupdate secara mandiri di sisi client via JavaScript, serta menerapkan filter `.proplist` pada query `/system/resource/print` di dashboard (`home.php` & `aload.php`) untuk membatasi payload data hanya pada field yang digunakan.
+
+---
+
 ## [MikhTrans v2.0] - 2026-06-20
 
 ### Ditambahkan
+- **Enkripsi Kredensial AES-256-CBC**: Mengupgrade metode enkripsi kredensial router MikroTik di `data/database.php` menggunakan OpenSSL AES-256-CBC dengan `ENCRYPTION_KEY` dinamis dari berkas `.env` (dilengkapi fallback otomatis backward-compatible ke skema XOR lama).
 - **Indikator Live Sync Status**: Menambahkan status koneksi realtime (`Connected`, `Syncing...`, `Offline`) dengan indikator dot berwarna dan animasi denyut (*pulsing dot*) di welcome banner dashboard utama untuk memantau status sinkronisasi dengan API MikroTik secara langsung.
 - **Tema Overrides Dark Mode Global**: Menambahkan stylesheet kustom `css/modern-override.css` yang secara paksa menerapkan desain bertema gelap (Dark Mode Only) yang modern, premium, dan konsisten di seluruh halaman admin panel Mikhmon (sidebar, navbar, tabel, form, input, tombol, font).
 - **Penyimpanan Database JSON Terstruktur**: Mengganti penyimpanan `config.php` yang rentan rusak dengan file database JSON terenkripsi/terlindungi (`data/database.json`) menggunakan mekanisme lock file (`flock`) untuk mencegah korupsi data saat akses simultan.
@@ -19,8 +36,10 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 - **Diagram Pendapatan Bulanan (12 Bulan)**: Menambahkan diagram batang interaktif kustom berbasis Highcharts pada dashboard admin (`home.php`) yang menyajikan total pendapatan dan volume voucher terjual secara historis selama 12 bulan terakhir melalui pemrosesan transaksi yang dimuat secara asinkron dari API endpoint `dashboard/income_chart.php`.
 
 ### Diubah
+- **Optimasi Query Resource & System Clock**: Menghapus query `/system/clock/print` dari pemroses AJAX reloads (`aload.php`) karena banner jam terupdate secara mandiri di sisi client via JavaScript, serta menerapkan filter `.proplist` pada query `/system/resource/print` di dashboard (`home.php` & `aload.php`) untuk membatasi payload data hanya pada field yang digunakan.
+- **Caching Info Routerboard**: Mengimplementasikan session-level caching untuk query `/system/routerboard/print` di dashboard dan pemroses AJAX (`aload.php`), memangkas ribuan request API tak perlu ke router.
 - **Desain Dropdown Select Modern**: Memperbarui class `.dropd` pada stylesheet kustom untuk memberikan desain dropdown pilihan interface (*select inputs*) yang modern, premium, dan serasi dengan tema gelap TailAdmin.
-- **Pembersihan Query Redundan & Optimasi Payload MikroTik**: Menghilangkan query `count-only` tambahan yang tidak perlu pada menu User Aktif dan Users List (jumlah baris dihitung secara lokal di PHP via `count()`), serta menerapkan filter `.proplist` pada query logs dan user lists ke router untuk hanya memuat properti data yang digunakan saja (mengurangi ukuran payload data router hingga 70% dan memangkas waktu load halaman).
+- **Pembersihan Query Redundan & Optimasi Payload MikroTik**: Menghilangkan query `count-only` tambahan yang tidak perlu pada menu User Aktif dan Users List (jumlah baris dihitung secara lokal di PHP via `count()`), serta menerapkan filter `.proplist` pada query logs and user lists ke router untuk hanya memuat properti data yang digunakan saja (mengurangi ukuran payload data router hingga 70% dan memangkas waktu load halaman).
 - **Desain Premium Dashboard & Layout Admin (Dark Mode Only)**: Mengubah total layout visual panel admin dengan gaya gelap premium, font Plus Jakarta Sans, card bergaya glassmorphism, spasi baris tabel yang renggang, tombol minimalis bershadow, input field bulat dengan focus-ring, serta menyembunyikan tombol pemilih tema agar tampilan konsisten gelap.
 - **Desain Premium Dashboard Admin**: Merombak tampilan dashboard admin ([home.php](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/dashboard/home.php)) dengan desain card modern, border tipis, bayangan lembut, font Plus Jakarta Sans, ikon bergaya lingkaran minimalis, serta penyesuaian otomatis warna background, border, dan teks yang beradaptasi secara dinamis ke tema aktif (Dark, Light, dll.) menggunakan CSS Variables.
 - **Desain Premium 2-Panel Login (Admin)**: Merombak total tampilan login panel admin ([login.php](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/include/login.php)) menggunakan struktur 2-panel modern (panel visual info/branding di sisi kiri dengan efek blob & panel form interaktif di sisi kanan), font premium Plus Jakarta Sans, tombol input minimalis dengan ikon, eye-toggle untuk visibilitas password, serta layout responsive-collapse di mobile.

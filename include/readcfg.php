@@ -23,20 +23,35 @@ if (substr($_SERVER["REQUEST_URI"], -11) == "readcfg.php") {
 };
 // read config
 
-$iphost = explode('!', $data[$session][1])[1];
-$userhost = explode('@|@', $data[$session][2])[1];
-$passwdhost = explode('#|#', $data[$session][3])[1];
-$hotspotname = explode('%', $data[$session][4])[1];
-$dnsname = explode('^', $data[$session][5])[1];
-$currency = explode('&', $data[$session][6])[1];
-$areload = explode('*', $data[$session][7])[1];
-$iface = explode('(', $data[$session][8])[1];
-$infolp = explode(')', $data[$session][9])[1];
-$idleto = explode('=', $data[$session][10])[1];
-$sesname = explode('+', $data[$session][10])[1];
-$useradm = explode('<|<', $data['mikhmon'][1])[1];
-$passadm = explode('>|>', $data['mikhmon'][2])[1];
-$livereport = explode('@!@', $data[$session][11])[1];
+// Validate session parameter against registered sessions if provided
+if (!empty($session)) {
+  if (!isset($data[$session]) || $session === 'mikhmon') {
+    if (isset($_SESSION["mikhmon"])) {
+      header("Location:./admin.php?id=sessions");
+    } else {
+      header("Location:./admin.php?id=login");
+    }
+    exit;
+  }
+}
+
+$useradm = isset($data['mikhmon'][1]) ? explode('<|<', $data['mikhmon'][1])[1] : '';
+$passadm = isset($data['mikhmon'][2]) ? explode('>|>', $data['mikhmon'][2])[1] : '';
+
+if (!empty($session) && isset($data[$session]) && $session !== 'mikhmon') {
+  $iphost = isset($data[$session][1]) ? explode('!', $data[$session][1])[1] : '';
+  $userhost = isset($data[$session][2]) ? explode('@|@', $data[$session][2])[1] : '';
+  $passwdhost = isset($data[$session][3]) ? explode('#|#', $data[$session][3])[1] : '';
+  $hotspotname = isset($data[$session][4]) ? explode('%', $data[$session][4])[1] : '';
+  $dnsname = isset($data[$session][5]) ? explode('^', $data[$session][5])[1] : '';
+  $currency = isset($data[$session][6]) ? explode('&', $data[$session][6])[1] : '';
+  $areload = isset($data[$session][7]) ? explode('*', $data[$session][7])[1] : '';
+  $iface = isset($data[$session][8]) ? explode('(', $data[$session][8])[1] : '';
+  $infolp = isset($data[$session][9]) ? explode(')', $data[$session][9])[1] : '';
+  $idleto = isset($data[$session][10]) ? explode('=', $data[$session][10])[1] : '';
+  $sesname = isset($data[$session][10]) ? explode('+', $data[$session][10])[1] : '';
+  $livereport = isset($data[$session][11]) ? explode('@!@', $data[$session][11])[1] : '';
+}
 
 $cekindo['indo'] = array(
     'RP', 'Rp', 'rp', 'IDR', 'idr', 'RP.', 'Rp.', 'rp.', 'IDR.', 'idr.',
