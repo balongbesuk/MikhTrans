@@ -1,6 +1,6 @@
-# MikhTrans v1.3 - Modernized with REST API & Midtrans QRIS
+# MikhTrans v1.8 - Modernized with REST API & Midtrans QRIS
 
-MikhTrans v1.3 (Mikrotik Hotspot Monitor & Transaction System) adalah aplikasi web berbasis PHP untuk mengelola dan memantau Hotspot MikroTik, khususnya untuk pembuatan voucher otomatis. Versi ini telah dimodernisasi dengan penambahan **REST API** untuk integrasi eksternal dan **Portal Pembelian Voucher Mandiri** terintegrasi dengan **Midtrans Payment Gateway**.
+MikhTrans v1.8 (Mikrotik Hotspot Monitor & Transaction System) adalah aplikasi web berbasis PHP untuk mengelola dan memantau Hotspot MikroTik, khususnya untuk pembuatan voucher otomatis. Versi ini telah dimodernisasi dengan penambahan **REST API** untuk integrasi eksternal, **Portal Pembelian Voucher Mandiri** terintegrasi dengan **Midtrans Payment Gateway**, serta sistem **Pengerasan Keamanan (Security Hardening)** kelas enterprise.
 
 Aplikasi ini dikembangkan dan dimodifikasi dari kode sumber asli [Mikhmon v3 oleh Laksamadi Guko](https://github.com/laksa19/mikhmonv3).
 
@@ -17,51 +17,59 @@ Aplikasi ini dikembangkan dan dimodifikasi dari kode sumber asli [Mikhmon v3 ole
 2. **REST API Endpoint (`api.php`)**
    - **Keamanan**: Otentikasi aman menggunakan parameter `api_key` atau header `X-API-Key`.
    - **Informasi Paket**: Endpoint cepat untuk melihat profil hotspot dan detail harga.
-   - **Generate Voucher**: Pembuatan kode voucher secara otomatis dan programatis untuk diintegrasikan dengan aplikasi pihak ketiga (misal: sistem POS atau web eksternal).
+   - **Generate Voucher**: Pembuatan kode voucher secara otomatis dan programatis untuk diintegrasikan dengan aplikasi pihak ketiga.
 
 3. **Webhook Notification Handler (`notification.php`)**
    - **Validasi HMAC SHA512**: Verifikasi keamanan signature transaksi langsung dari Midtrans.
+   - **Verifikasi Status Ganda (Dual-Check)**: Melakukan pemanggilan asinkron langsung dari server ke endpoint API Midtrans untuk memvalidasi ulang status dan jumlah nominal transaksi sebelum voucher diterbitkan di router.
    - **Idempotensi**: Pencegahan pemrosesan transaksi berulang untuk menjaga konsistensi database dan router.
-   - **Background Processing**: Voucher MikroTik langsung digenerate secara instan saat notifikasi settlement diterima.
 
-4. **Kepatuhan & Penguatan Keamanan (Security Hardening)**
-   - **HTTP Security Headers**: Implementasi header keamanan ketat di sisi klien.
-   - **Proteksi Direktori**: Mengunci akses langsung ke folder `/logs` dan `/voucher` via aturan `.htaccess`.
-   - **Pemisahan Konfigurasi**: Kunci API eksternal diisolasi ke dalam berkas [env_config.php](file:///d:/mikhmonv3ws/Mikhmon%20Server/mikhmon/include/env_config.php) dan `.env` agar tidak mengganggu parser config admin Mikhmon.
+4. **Penguatan Keamanan Sistem (Security Hardening - v1.7 & v1.8)**
+   - **Brute-Force Protection**: Membatasi kegagalan percobaan login administrator maksimal **5 kali**. IP yang melanggar diblokir otomatis selama **10 menit** (`data/login_rate_limit.json`).
+   - **Session Fixation Protection**: Meregenerasi ID sesi peramban secara otomatis (`session_regenerate_id(true)`) sesaat setelah login administrator sukses.
+   - **Session Cookie Hardening**: Mengamankan parameter `session_start()` di semua entry point dengan parameter cookie ketat (`HttpOnly`, `SameSite=Lax`, `use_only_cookies`, dan `Secure` dinamis yang menyesuaikan protokol HTTPS/HTTP).
+   - **Konfigurasi Aman `.env.php`**: Mengisolasi semua kunci API ke dalam berkas `.env.php` terproteksi eksekusi PHP (`exit;`), mencegah kebocoran informasi teks polos jika diakses publik di server non-Apache (Nginx, IIS, Caddy).
+   - **Rate Limiting Webhook**: Membatasi laju request webhook Midtrans hingga maksimal 60 request per menit per alamat IP untuk menangkal serangan Denial of Service (DoS).
+   - **Pembersihan Cache Logout**: Menghapus total `localStorage` & `sessionStorage` peramban saat administrator logout.
 
 ---
 
 ## 🛠️ Panduan Konfigurasi & Instalasi
 
-### 1. Salin Berkas Lingkungan (`.env`)
-Buat file baru bernama `.env` di root direktori MikhTrans Anda (sejajar dengan `index.php`). Salin dan sesuaikan konfigurasi berikut:
+### 1. Buat Berkas Lingkungan Terproteksi (`.env.php`)
+Buat berkas baru bernama `.env.php` di root direktori MikhTrans Anda (sejajar dengan `index.php`). Salin dan sesuaikan konfigurasi berikut:
 
-```env
-# API Key untuk mengamankan REST API (api.php)
-MIKHMON_API_KEY=mikhmon_api_key_12345
+```php
+<?php header('HTTP/1.0 403 Forbidden'); exit; ?>
+# ==============================================================================
+# BERKAS KONFIGURASI LINGKUNGAN (.env.php)
+# ==============================================================================
+
+# API Key untuk mengamankan REST API (api.php / cron_retry.php)
+MIKHMON_API_KEY="mikhmon_api_key_12345"
 
 # Kredensial Midtrans (Dapatkan dari Dashboard Midtrans)
-MIDTRANS_SERVER_KEY=SB-Mid-server-YOUR_SANDBOX_SERVER_KEY
-MIDTRANS_CLIENT_KEY=SB-Mid-client-YOUR_SANDBOX_CLIENT_KEY
+MIDTRANS_SERVER_KEY="SB-Mid-server-YOUR_SANDBOX_SERVER_KEY"
+MIDTRANS_CLIENT_KEY="SB-Mid-client-YOUR_SANDBOX_CLIENT_KEY"
 MIDTRANS_IS_PRODUCTION=false # Ubah ke true jika sudah live/produksi
 
 # WebSocket (Pusher / Soketi) - Opsional untuk status lunas real-time instan
-WS_APP_ID=YOUR_PUSHER_APP_ID
-WS_APP_KEY=YOUR_PUSHER_KEY
-WS_APP_SECRET=YOUR_PUSHER_SECRET
-WS_CLUSTER=ap1
+WS_APP_ID="YOUR_PUSHER_APP_ID"
+WS_APP_KEY="YOUR_PUSHER_KEY"
+WS_APP_SECRET="YOUR_PUSHER_SECRET"
+WS_CLUSTER="ap1"
 
 # Konfigurasi Tambahan Soketi (Hanya jika menggunakan server WebSocket mandiri)
-# WS_HOST=your-soketi-host.com
-# WS_PORT=6001
-# WS_SCHEME=https
+# WS_HOST="your-soketi-host.com"
+# WS_PORT="6001"
+# WS_SCHEME="https"
 ```
 
 ### 2. Pengaturan Sesi & MikroTik
-Kredensial MikroTik, nama sesi, IP, user, password, dan dnsname diatur secara otomatis melalui **Web Admin Panel** MikhTrans pada menu **Admin Settings > Add Router / Edit Settings**. 
+Kredensial MikroTik, nama sesi, IP, user, password, dan dnsname diatur secara otomatis melalui **Web Admin Panel** MikhTrans pada menu **Admin Settings > Add Router / Edit Settings**.
 
 > [!IMPORTANT]
-> Berkas `include/config.php` bawaan repositori sudah dikonfigurasi secara dinamis untuk memuat sesi dari database (`data/database.json`). Anda **TIDAK PERLU** menyalin atau mengubah nama `config.php.example` menjadi `config.php`. Biarkan `include/config.php` bawaan apa adanya agar pengaturan sesi tetap tersimpan otomatis ke database.
+> Berkas `include/config.php` bawaan repositori sudah dikonfigurasi secara dinamis untuk memuat sesi dari database (`data/database.php`). Anda **TIDAK PERLU** menyalin atau mengubah nama `config.php.example` menjadi `config.php`. Biarkan `include/config.php` bawaan apa adanya agar pengaturan sesi tetap tersimpan otomatis ke database.
 
 ### 3. URL Halaman Utama
 *   **Web Admin Panel**: `http://localhost/admin.php`
@@ -150,39 +158,26 @@ Gunakan header `X-API-Key` atau parameter query `api_key` untuk otentikasi.
     - `action=generate`
     - `session=Hotspot`
     - `profile=Profil_1Jam_2K` (Nama profil hotspot di MikroTik)
-    - `qty=1` (Jumlah voucher yang ingin dibuat)
+    - `qty=1`
 
 ---
 
 ## 🛠️ Pemecahan Masalah (Troubleshooting)
 
-Berikut adalah beberapa kendala umum yang sering terjadi saat melakukan deploy MikhTrans ke VPS dan cara mengatasinya:
-
 ### 1. Error: `Call to undefined function putenv()`
-*   **Penyebab**: Panel VPS (seperti aaPanel) menonaktifkan fungsi `putenv()` demi alasan keamanan melalui direktif `disable_functions` di file `php.ini`.
-*   **Solusi Kode**: Pada versi 2.0+, MikhTrans sudah dibekali helper `mikhmonEnv()` yang aman dan kompatibel tanpa bergantung pada `putenv()`. Jika Anda masih menemui kendala ini, pastikan Anda menggunakan berkas `include/env_config.php` terbaru.
-*   **Solusi Server (aaPanel)**: Jika ingin mengaktifkannya kembali di server:
-    1. Buka **aaPanel** -> **App Store** -> Pilih **PHP Settings** (versi PHP yang Anda gunakan).
-    2. Masuk ke tab **Disabled functions**.
-    3. Cari **`putenv`** di dalam daftar, lalu klik **Del** (Hapus).
-    4. Masuk ke tab **Service** lalu klik **Restart**.
+*   **Penyebab**: VPS (seperti aaPanel) menonaktifkan fungsi `putenv()` demi alasan keamanan melalui direktif `disable_functions` di file `php.ini`.
+*   **Solusi**: MikhTrans v1.0+ sudah dilengkapi helper `mikhmonEnv()` yang aman dan kompatibel tanpa bergantung pada `putenv()`. Jika Anda masih menemui kendala ini, pastikan Anda menggunakan berkas `include/env_config.php` terbaru.
 
 ### 2. Kolom Input Kosong Kembali setelah Klik "Save" / Ping Host Kosong
 *   **Penyebab**: Web server (user `www` atau `www-data`) tidak memiliki hak akses menulis (*write permission*) pada folder `/data`. Hal ini terjadi jika Anda melakukan clone/pull git menggunakan user `root`.
 *   **Solusi**: Ubah kepemilikan owner folder `data/` menjadi `www` lewat File Manager aaPanel (klik kanan folder `data` -> **Permission** -> Ubah Owner ke **`www`** dengan permission **`755`** / **`775`** dan centang **Apply to subdir**).
-*   **Perintah Terminal SSH**:
-    ```bash
-    chown -R www:www /www/wwwroot/vc.test/data
-    chmod -R 755 /www/wwwroot/vc.test/data
-    ```
 
 ### 3. Jangan Menimpa `config.php` dengan `config.php.example`
 *   **Penyebab**: Pengguna lama Mikhmon terbiasa mengubah nama berkas `.example` ke `.php`. Pada MikhTrans v1.0+, berkas `include/config.php` sudah disertakan langsung di repositori untuk menjembatani sesi router ke database.
-*   **Solusi**: Biarkan `include/config.php` bawaan apa adanya. Anda hanya perlu menyalin `.env.example` ke `.env` di root folder dan menyesuaikan API Key Midtrans Anda di sana.
+*   **Solusi**: Biarkan `include/config.php` bawaan apa adanya. Anda hanya perlu menyalin `.env.example` ke `.env.php` di root folder dan menyesuaikan API Key Anda di sana.
 
 ---
 
 ## 📝 Changelog & Riwayat Perubahan
 
 Riwayat pembaruan sistem dan log perbaikan versi lengkap dapat Anda akses secara detail di berkas **[changelog.md](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/changelog.md)**.
-
