@@ -28,11 +28,17 @@ if (!isset($_SESSION["mikhmon"])) {
   if (isset($_POST['save'])) {
 
     $suseradm = ($_POST['useradm']);
-    $spassadm = password_hash($_POST['passadm'], PASSWORD_BCRYPT);
+    $spassadm = ($_POST['passadm']);
     $qrbt = ($_POST['qrbt']);
 
     $dbSettings = new \App\Models\AppSettings();
-    $dbSettings->saveAdminCredentials($suseradm, $spassadm);
+    if (!empty($spassadm)) {
+        $spassadm_hash = password_hash($spassadm, PASSWORD_BCRYPT);
+        $dbSettings->saveAdminCredentials($suseradm, $spassadm_hash);
+    } else {
+        $adminCreds = $dbSettings->getAdminCredentials();
+        $dbSettings->saveAdminCredentials($suseradm, $adminCreds['password_hash']);
+    }
     $dbSettings->set('quick_print_qr', $qrbt);
   
     $gen = '<?php $qrbt="' . $qrbt . '";?>';
@@ -253,8 +259,8 @@ if (!isset($_SESSION["mikhmon"])) {
               <div class="form-group-floating">
                 <div class="input-group" style="display: flex; width: 100%;">
                   <div class="input-group-11 col-box-10" style="flex: 1; position: relative; float: none;">
-                    <input class="group-item form-control" id="passadm" type="password" name="passadm" placeholder=" " value="<?= decrypt($passadm); ?>" required="1" style="border-radius: 8px 0 0 8px !important; width: 100% !important; height: 48px !important; border: 1px solid var(--border-color, #c1c1c1) !important; border-right: none !important; padding: 18px 16px 6px 16px !important;"/>
-                    <label for="passadm"><?= $_password ?></label>
+                    <input class="group-item form-control" id="passadm" type="password" name="passadm" placeholder=" " style="border-radius: 8px 0 0 8px !important; width: 100% !important; height: 48px !important; border: 1px solid var(--border-color, #c1c1c1) !important; border-right: none !important; padding: 18px 16px 6px 16px !important;"/>
+                    <label for="passadm"><?= $_password ?> <?= ($langid == 'id') ? '(Kosongkan jika tidak diubah)' : '(Leave blank if unchanged)' ?></label>
                   </div>
                   <div class="input-group-1 col-box-2" style="width: 48px; float: none;">
                     <div class="group-item group-item-r pd-2p5 text-center align-middle" style="border-radius: 0 8px 8px 0 !important; height: 48px; border: 1px solid var(--border-color, #c1c1c1); background: var(--background-alt, #F5F6F7); display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
