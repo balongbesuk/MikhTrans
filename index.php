@@ -515,6 +515,52 @@ elseif ($ppp == "edit-profile") {
 <script src="./js/mikhmon-ui.<?= $theme; ?>.min.js"></script>
 <script src="./js/mikhmon.js?t=<?= str_replace(" ","_",date("Y-m-d H:i:s")); ?>"></script>
 
+<script>
+    function setSyncStatus(status) {
+        var $badge = $("#sync-status-badge");
+        if (!$badge.length) return;
+        if (status === "connected") {
+            $badge.html("<span class=\"status-dot connected\"></span> Connected").attr("class", "sync-status connected");
+        } else if (status === "syncing") {
+            $badge.html("<span class=\"status-dot syncing\"></span> Syncing...").attr("class", "sync-status syncing");
+        } else if (status === "offline") {
+            $badge.html("<span class=\"status-dot offline\"></span> Offline").attr("class", "sync-status offline");
+        }
+    }
+
+    // Safe AJAX loader: only update DOM when response is valid & non-empty
+    function safeLoad(targetSel, url, fragmentSel, callback) {
+        setSyncStatus("syncing");
+        $.ajax({
+            url: url,
+            dataType: "html",
+            timeout: 15000,
+            success: function(data) {
+                if (!data || $.trim(data).length === 0) {
+                    setSyncStatus("offline");
+                    return; // skip empty
+                }
+                var $resp;
+                if (fragmentSel) {
+                    $resp = $("<div>").append($.parseHTML(data)).find(fragmentSel);
+                    if ($resp.length === 0) {
+                        setSyncStatus("offline");
+                        return; // fragment not found, skip
+                    }
+                    $(targetSel).html($resp.html());
+                } else {
+                    $(targetSel).html(data);
+                }
+                if (typeof callback === "function") callback();
+                setSyncStatus("connected");
+            },
+            error: function() {
+                setSyncStatus("offline");
+            }
+        });
+    }
+</script>
+
 <?php
 if ($hotspot == "dashboard" || substr(end(explode("/", $url)), 0, 8) == "?session") {
   echo '<script>
@@ -567,49 +613,7 @@ if ($hotspot == "dashboard" || substr(end(explode("/", $url)), 0, 8) == "?sessio
         }
     }
 
-    function setSyncStatus(status) {
-        var $badge = $("#sync-status-badge");
-        if (!$badge.length) return;
-        if (status === "connected") {
-            $badge.html("<span class=\"status-dot connected\"></span> Connected").attr("class", "sync-status connected");
-        } else if (status === "syncing") {
-            $badge.html("<span class=\"status-dot syncing\"></span> Syncing...").attr("class", "sync-status syncing");
-        } else if (status === "offline") {
-            $badge.html("<span class=\"status-dot offline\"></span> Offline").attr("class", "sync-status offline");
-        }
-    }
 
-    // Safe AJAX loader: only update DOM when response is valid & non-empty
-    function safeLoad(targetSel, url, fragmentSel, callback) {
-        setSyncStatus("syncing");
-        $.ajax({
-            url: url,
-            dataType: "html",
-            timeout: 15000,
-            success: function(data) {
-                if (!data || $.trim(data).length === 0) {
-                    setSyncStatus("offline");
-                    return; // skip empty
-                }
-                var $resp;
-                if (fragmentSel) {
-                    $resp = $("<div>").append($.parseHTML(data)).find(fragmentSel);
-                    if ($resp.length === 0) {
-                        setSyncStatus("offline");
-                        return; // fragment not found, skip
-                    }
-                    $(targetSel).html($resp.html());
-                } else {
-                    $(targetSel).html(data);
-                }
-                if (typeof callback === "function") callback();
-                setSyncStatus("connected");
-            },
-            error: function() {
-                setSyncStatus("offline");
-            }
-        });
-    }
 
 
     var interval1 = "' . ($areload * 1000) . '";

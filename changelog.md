@@ -12,6 +12,7 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 
 ### Diperbaiki
 - **Layout Tabel Mobile**: Memperbaiki pemotongan tampilan baris pada tabel data standar (`table-bordered`) dan tabel log aktivitas Hotspot (`card-table-modern`) di perangkat seluler dengan mengecualikan tabel data dari skema penumpukan paksa (form stacking) dan menambahkan dukungan scroll horizontal.
+- **ReferenceError safeLoad()**: Memperbaiki masalah gagalnya sistem memuat ulang (auto-refresh) tabel data secara asinkron di luar halaman Dashboard akibat deklarasi fungsi pembantu `safeLoad()` yang sebelumnya secara keliru terisolasi di dalam blok kondisional halaman utama. Fungsi kini telah ditarik ke scope global `index.php` dan tersedia di seluruh penjuru aplikasi.
 
 ---
 
