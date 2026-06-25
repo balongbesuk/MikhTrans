@@ -319,33 +319,7 @@ if (!isset($_SESSION["mikhmon"])) {
 </div>
 </div>
 </div>
-<script>
-  $(function() {
-    $.getJSON("https://raw.githubusercontent.com/laksa19/mikhmonv3/master/version.txt?t=" + (Math.floor(Math.random() * 999999999) + 1) * 128, function(data) {
-      try {
-        var getNewVer = data.version.split("v")[1];
-        var newVerNum = parseInt(getNewVer.replace(".", ""));
-        var currentVerStr = document.getElementById("loadV").innerHTML;
-        var currentVerSplit = currentVerStr.split(" ")[0].split("v")[1];
-        var currentVerNum = parseInt(currentVerSplit.replace(".", ""));
-        var verDiff = newVerNum - currentVerNum;
 
-        var getNewD = data.updated.split(" ")[0];
-        var newD = parseInt(getNewD.split("-")[2] + getNewD.split("-")[0] + getNewD.split("-")[1]);
-
-        var currentUpdateStr = currentVerStr.split(" ")[1];
-        var currentUpdateNum = parseInt(currentUpdateStr.split("-")[2] + currentUpdateStr.split("-")[0] + currentUpdateStr.split("-")[1]);
-        var dateDiff = newD - currentUpdateNum;
-
-        if (verDiff > 0 || dateDiff > 0) {
-          $("#newVer").html("New Version " + data.version + " " + data.updated + "<br><span><i class='text-white fa fa-info-circle'></i> <a class='text-blue' href='./admin.php?id=about'>Check Update</a></span>");
-        }
-      } catch (e) {
-        console.log("Error checking version: ", e);
-      }
-    });
-  });
-</script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Perform status checking for each session card

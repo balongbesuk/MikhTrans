@@ -16,6 +16,7 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 - **Layout Welcome Banner Mobile**: Menyelaraskan teks waktu dan tanggal pada *banner* selamat datang (Dashboard) agar rata kiri dengan menyetel ulang aturan flexbox (`align-items: flex-start`) pada tampilan seluler, mencegah teks waktu tampil mengambang di tengah layar.
 - **SyntaxError JSON.parse (Traffic Monitor)**: Memperbaiki kemunculan error konsol merah beruntun (`Unexpected token '<'`) pada grafik pantauan lalu lintas (Traffic Monitor) dan dasbor yang terjadi ketika sesi login admin telah kedaluwarsa. Sistem kini menangkap kegagalan *parsing* secara halus (`try-catch`) saat AJAX secara tak sengaja memuat halaman login HTML, mencegah *crash* pada *script* di peramban pengguna.
 - **TypeError DOM Reference (Halaman Login)**: Memperbaiki *error javascript* (`Cannot read properties of null`) yang muncul di halaman *login* karena *script* UI (`mikhmon-ui.min.js` dan `mikhmon.js`) mencoba mengakses elemen antarmuka (*sidebar toggle*, penanda waktu sesi) yang tidak ada di halaman tersebut. Pengecekan elemen (*null check*) telah ditambahkan.
+- **Error 404 GitHub Update Checker**: Menghapus *script* bawaan pengecek pembaruan (Update Checker) di halaman pengaturan Sesi (Sessions). *Script* lama tersebut mencoba memuat data `version.txt` dari repositori GitHub Mikhmonv3 versi orisinal yang saat ini sudah tidak tersedia, sehingga selalu menyebabkan *error* 404 *Not Found* di konsol peramban. Fitur ini tidak lagi relevan untuk versi *fork* MikhTrans.
 
 ---
 
