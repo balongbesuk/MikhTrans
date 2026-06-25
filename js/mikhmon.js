@@ -176,8 +176,11 @@ function checkSecond(e) {
   return e;
 }
 
-idleto = (idto == "" || idto == "0") ? "10:00" : idto + ":00";
-document.getElementById("timer").innerHTML = idleto;
+idleto = (idto == "" || idto == "0" || idto == "disable") ? "10:00" : idto + ":00";
+var timerElem = document.getElementById("timer");
+if (timerElem) {
+  timerElem.innerHTML = idleto;
+}
 
 var url = window.location.href,
     getID = url.split("=")[1];
