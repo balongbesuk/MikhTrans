@@ -541,8 +541,8 @@ if (!isset($_SESSION["mikhmon"])) {
     .dash-welcome { padding: 24px 20px; }
     .dash-welcome h2 { font-size: 18px; }
     .dash-welcome-time .time-big { font-size: 28px; }
-    .dash-welcome-content { flex-direction: column; gap: 12px; }
-    .dash-welcome-time { text-align: left; }
+    .dash-welcome-content { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .dash-welcome-time { text-align: left; width: 100%; }
 }
 </style>
 
