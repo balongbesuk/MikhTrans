@@ -15,6 +15,7 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 - **ReferenceError safeLoad()**: Memperbaiki masalah gagalnya sistem memuat ulang (auto-refresh) tabel data secara asinkron di luar halaman Dashboard akibat deklarasi fungsi pembantu `safeLoad()` yang sebelumnya secara keliru terisolasi di dalam blok kondisional halaman utama. Fungsi kini telah ditarik ke scope global `index.php` dan tersedia di seluruh penjuru aplikasi.
 - **Layout Welcome Banner Mobile**: Menyelaraskan teks waktu dan tanggal pada *banner* selamat datang (Dashboard) agar rata kiri dengan menyetel ulang aturan flexbox (`align-items: flex-start`) pada tampilan seluler, mencegah teks waktu tampil mengambang di tengah layar.
 - **SyntaxError JSON.parse (Traffic Monitor)**: Memperbaiki kemunculan error konsol merah beruntun (`Unexpected token '<'`) pada grafik pantauan lalu lintas (Traffic Monitor) dan dasbor yang terjadi ketika sesi login admin telah kedaluwarsa. Sistem kini menangkap kegagalan *parsing* secara halus (`try-catch`) saat AJAX secara tak sengaja memuat halaman login HTML, mencegah *crash* pada *script* di peramban pengguna.
+- **TypeError DOM Reference (Halaman Login)**: Memperbaiki *error javascript* (`Cannot read properties of null`) yang muncul di halaman *login* karena *script* UI (`mikhmon-ui.min.js` dan `mikhmon.js`) mencoba mengakses elemen antarmuka (*sidebar toggle*, penanda waktu sesi) yang tidak ada di halaman tersebut. Pengecekan elemen (*null check*) telah ditambahkan.
 
 ---
 
