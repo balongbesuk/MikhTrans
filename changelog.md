@@ -14,6 +14,7 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 - **Layout Tabel Mobile**: Memperbaiki pemotongan tampilan baris pada tabel data standar (`table-bordered`) dan tabel log aktivitas Hotspot (`card-table-modern`) di perangkat seluler dengan mengecualikan tabel data dari skema penumpukan paksa (form stacking) dan menambahkan dukungan scroll horizontal.
 - **ReferenceError safeLoad()**: Memperbaiki masalah gagalnya sistem memuat ulang (auto-refresh) tabel data secara asinkron di luar halaman Dashboard akibat deklarasi fungsi pembantu `safeLoad()` yang sebelumnya secara keliru terisolasi di dalam blok kondisional halaman utama. Fungsi kini telah ditarik ke scope global `index.php` dan tersedia di seluruh penjuru aplikasi.
 - **Layout Welcome Banner Mobile**: Menyelaraskan teks waktu dan tanggal pada *banner* selamat datang (Dashboard) agar rata kiri dengan menyetel ulang aturan flexbox (`align-items: flex-start`) pada tampilan seluler, mencegah teks waktu tampil mengambang di tengah layar.
+- **SyntaxError JSON.parse (Traffic Monitor)**: Memperbaiki kemunculan error konsol merah beruntun (`Unexpected token '<'`) pada grafik pantauan lalu lintas (Traffic Monitor) dan dasbor yang terjadi ketika sesi login admin telah kedaluwarsa. Sistem kini menangkap kegagalan *parsing* secara halus (`try-catch`) saat AJAX secara tak sengaja memuat halaman login HTML, mencegah *crash* pada *script* di peramban pengguna.
 
 ---
 
