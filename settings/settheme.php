@@ -63,6 +63,7 @@ if (empty($gettheme)) {
             echo '<center><div style="padding-top:10%;"><i class="fa fa-circle-o-notch fa-spin" style="font-size:40px"></i></div><h3>Load '.$gettheme.' theme...</h3></center>';
         }
         echo "<script>window.location='" . $url2 . "'</script>";
+        exit;
         
     } else {
         $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
@@ -71,6 +72,7 @@ if (empty($gettheme)) {
             echo '<center><div style="padding-top:10%;"><i class="fa fa-circle-o-notch fa-spin" style="font-size:40px"></i></div><h3>'.$gettheme.' theme not found...</h3></center>';
         }
         echo "<script>window.location='" . $url2 . "'</script>";
+        exit;
     }
 }
 

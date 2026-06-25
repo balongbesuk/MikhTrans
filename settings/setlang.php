@@ -28,20 +28,29 @@ if (empty($getlang)) {
 
 } else {
     if (!empty($isocodelang[$getlang])) {
-        include_once('./include/headhtml.php');
+        $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+        if (!$is_ajax) {
+            include_once('./include/headhtml.php');
+        }
         $gen = '<?php $langid="' . $getlang . '";?>';
         $slang = './include/lang.php';
         $handle = fopen($slang, 'w') or die('Cannot open file:  ' . $slang);
         $data = $gen;
         fwrite($handle, $data);
         $_SESSION['lang'] = $getlang;
-        echo '<center><div style="padding-top:10%;"><i class="fa fa-circle-o-notch fa-spin" style="font-size:40px"></i></div><h3>Load '.$getlang.' lang...</h3></center>';
+        if (!$is_ajax) {
+            echo '<center><div style="padding-top:10%;"><i class="fa fa-circle-o-notch fa-spin" style="font-size:40px"></i></div><h3>Load '.$getlang.' lang...</h3></center>';
+        }
         echo "<script>window.location='" . $url2 . "'</script>";
-        
+        exit;
     } else {
-        include_once('./include/headhtml.php');
-        echo '<center><div style="padding-top:10%;"><i class="fa fa-circle-o-notch fa-spin" style="font-size:40px"></i></div><h3>'.$getlang.' lang not found...</h3></center>';
+        $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+        if (!$is_ajax) {
+            include_once('./include/headhtml.php');
+            echo '<center><div style="padding-top:10%;"><i class="fa fa-circle-o-notch fa-spin" style="font-size:40px"></i></div><h3>'.$getlang.' lang not found...</h3></center>';
+        }
         echo "<script>window.location='" . $url2 . "'</script>";
+        exit;
     }
 }
 
