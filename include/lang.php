@@ -1,1 +1,1 @@
-<?php $langid="id";?>
+<?php $langid="en";?>

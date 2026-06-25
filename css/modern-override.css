@@ -1296,26 +1296,39 @@ span, p, div, label, small, b, strong, i, em {
 
 /* 3. Form-Layout Stacking (Tables inside form cards) */
 @media (max-width: 500px) {
-    .card .table td, 
-    .card-body .table td {
+    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern) td, 
+    .card-body .table:not(.table-bordered):not(#dataTable):not(.card-table-modern) td {
         display: block !important;
         width: 100% !important;
         border-bottom: none !important;
         box-sizing: border-box !important;
     }
-    .card .table tr {
+    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern) tr {
         display: block !important;
         border-bottom: 1px solid var(--border-color) !important;
         padding-bottom: 8px !important;
     }
-    .card .table td:first-child {
+    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern) td:first-child {
         width: 100% !important;
         padding-bottom: 4px !important;
         padding-top: 8px !important;
         font-weight: 700 !important;
     }
-    .card .table td:last-child {
+    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern) td:last-child {
         padding-top: 0 !important;
+    }
+}
+
+/* Make data tables horizontally scrollable on mobile */
+@media (max-width: 750px) {
+    .table.table-bordered, 
+    #dataTable, 
+    .card-body .table.table-bordered {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        white-space: nowrap !important;
     }
 }
 

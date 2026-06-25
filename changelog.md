@@ -10,6 +10,9 @@ Semua pembaruan penting pada modifikasi MikhTrans ini akan dicatat di dokumen in
 - **Verifikasi Status Ganda Midtrans**: Webhook handler (`notification.php`) kini melakukan verifikasi ganda (Dual-Check Verification) dengan menanyakan langsung status transaksi secara *asynchronous server-to-server* ke API Midtrans sebelum memproses pembuatan voucher di MikroTik.
 - **Pembersihan Cache Logout**: Menambahkan pembersihan total cache peramban (`localStorage` & `sessionStorage` terkait data transaksi dan sesi) saat administrator menekan tombol logout.
 
+### Diperbaiki
+- **Layout Tabel Mobile**: Memperbaiki pemotongan tampilan baris pada tabel data standar (`table-bordered`) dan tabel log aktivitas Hotspot (`card-table-modern`) di perangkat seluler dengan mengecualikan tabel data dari skema penumpukan paksa (form stacking) dan menambahkan dukungan scroll horizontal.
+
 ---
 
 ## [MikhTrans v1.7] - 2026-06-21
