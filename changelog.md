@@ -16,6 +16,8 @@ Semua pembaruan penting pada modifikasi MikhPay ini akan dicatat di dokumen ini.
 - **Batalkan Transaksi QRIS (Sticky Overlay)**: Memperbaiki *bug* pada halaman *frontpage* di mana *overlay* pop-up pembayaran QRIS tidak mau tertutup ketika tombol "Batalkan" ditekan. Tombol telah direstrukturisasi agar melakukan muat ulang halaman penuh (*hard reload*) alih-alih sekadar lompat *hash fragment*, sekaligus mencabut sistem pengecekan riwayat usang (*Resume Flow*) peninggalan Midtrans.
 - **Penyelamatan Variabel Global `$data` (`qris_verify.php`)**: Memperbaiki konflik variabel kritis di mana `$data` hasil pembacaan JSON transaksi menimpa variabel global `$data` sesi router dari database, menyebabkan error "Session tidak ditemukan". Variabel internal diubah menjadi `$transData`.
 - **Pembersihan PHP Warning (`qris_verify.php`)**: Menghapus pemanggilan file non-eksisten `include/functions.php` yang memicu peringatan PHP. Peringatan tersebut sebelumnya mengotori respons API sehingga peramban gagal melakukan *parsing* JSON (*SyntaxError*). Pembuatan username acak dialihkan menggunakan fungsi bawaan `randNLC` jika tersedia.
+- **Pemasangan Script `qrious.min.js` (`frontpage.php`)**: Memperbaiki masalah QR Code auto-login voucher yang kosong (putih polos) di halaman struk sukses karena library *qrious* tidak dimuat.
+- **Pengecekan Status Router Real-Time di Halaman Sukses**: Memperbaiki status router yang keliru tampil "Offline" pada halaman struk voucher sukses dengan tetap menjalankan fungsi cek koneksi MikroTik secara *real-time*.
 
 
 ## [MikhPay v2.0] - 2026-06-25

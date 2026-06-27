@@ -80,14 +80,35 @@ Kredensial MikroTik, nama sesi, IP, user, password, dan dnsname diatur secara ot
 ## 📡 Integrasi MacroDroid (Otomatisasi Verifikasi)
 
 Agar kode voucher terbuat secara otomatis di MikroTik setelah pelanggan mentransfer saldo ke GoPay/OVO/Dana Anda:
-1. **Siapkan HP Android Selalu Menyala**:
-   Gunakan HP (yang login ke akun e-wallet/bank penerima dana QRIS Anda) dan pasang aplikasi **MacroDroid**.
-2. **Buat Macro Pembaca Notifikasi**:
-   Buat aturan jika muncul notifikasi uang masuk (misal dari GoPay: "Berhasil terima saldo Rp X..."), ambil (ekstrak) nominal uangnya ke dalam variabel.
-3. **HTTP GET Request (Webhook)**:
-   Buat aksi di MacroDroid untuk mengeksekusi URL berikut ke server MikhPay Anda:
-   `http://[domain-anda.com]/qris_verify.php?token=ganti_dengan_token_rahasia_anda_123&nominal=[VARIABEL_NOMINAL]`
-   Sistem MikhPay akan langsung mencocokkan nominal tersebut dengan *database* transaksi *pending* dan menerbitkan voucher dalam hitungan detik!
+
+### 1. Persiapan HP Android
+- Gunakan HP Android yang login ke akun e-wallet/bank penerima dana QRIS Anda (yang akan memunculkan notifikasi mutasi saldo masuk).
+- Unduh dan pasang aplikasi **MacroDroid - Device Automation** dari Google Play Store.
+- Buka MacroDroid, berikan semua izin akses yang diminta, terutama **Akses Notifikasi** (*Notification Access*) di Pengaturan Sistem Android Anda.
+
+### 2. Konfigurasi Penghemat Baterai & Latar Belakang (Wajib!)
+Agar notifikasi dan MacroDroid tidak dimatikan oleh sistem Android saat HP dalam kondisi terkunci:
+1. Masuk ke **Pengaturan HP > Aplikasi > GoPay Merchant / MacroDroid**.
+2. Di bagian **Baterai/Battery**, setel ke **Tidak Dibatasi / Unrestricted**.
+3. Di bagian Recent Apps HP Anda, kunci (*Lock*) aplikasi GoPay Merchant dan MacroDroid agar tidak terhapus saat membersihkan RAM.
+
+### 3. Buat Makro Baru di MacroDroid
+- Klik **Tambah Makro** (*Add Macro*).
+- **Pemicu (Triggers - Merah):**
+  - Klik **+** > pilih **Event Perangkat > Notifikasi > Notifikasi Diterima**.
+  - Pilih **Pilih Aplikasi** > centang **GoPay Merchant** (atau aplikasi e-wallet Anda lainnya).
+  - Di kolom **Teks Berisi**, pilih **Sembarang** (*Any*).
+- **Tindakan (Actions - Biru):**
+  - Klik **+** > pilih **Aplikasi > HTTP Request**.
+  - Pilih metode **GET**.
+  - Masukkan URL Webhook Anda. Ganti `domain-anda.com` dengan alamat web MikhPay Anda, gunakan token rahasia dari `.env.php`, dan gunakan variabel `{notification}` di ujungnya (klik tombol titik tiga `[...]` -> Notification -> Notification Text untuk memasukkannya secara otomatis):
+    ```text
+    https://vc.galaxynet.my.id/qris_verify.php?token=mcr_b1a2c3d4e5f6g7h8&nominal={notification}
+    ```
+    *(Gunakan `https://` jika web server Anda memaksa sambungan SSL agar request tidak diblokir/dialihkan).*
+  - Klik **Simpan** (ikon disket di pojok kanan bawah).
+
+Selesai! Server MikhPay Anda secara otomatis akan membaca kalimat notifikasi tersebut, menyaring angkanya, dan langsung memproses pelunasan voucher dalam hitungan detik.
 
 ---
 
@@ -170,8 +191,23 @@ Gunakan header `X-API-Key` atau parameter query `api_key` untuk otentikasi.
 *   **Penyebab**: Pengguna lama Mikhmon terbiasa mengubah nama berkas `.example` ke `.php`. Pada MikhPay v1.0+, berkas `include/config.php` sudah disertakan langsung di repositori untuk menjembatani sesi router ke database.
 *   **Solusi**: Biarkan `include/config.php` bawaan apa adanya. Anda hanya perlu menyalin `.env.example` ke `.env.php` di root folder dan menyesuaikan API Key Anda di sana.
 
+### 4. Transaksi QRIS Berhasil Masuk Tapi Halaman Web Tetap Bengong (Status Pending)
+*   **Penyebab 1 (Izin Folder):** Web server tidak memiliki hak akses menulis (*write permission*) pada folder `/voucher` di server aaPanel/Hosting Anda, sehingga berkas transaksi `.json` tidak bisa tersimpan.
+*   **Solusi 1:** Masuk ke File Manager hosting Anda, cari folder `voucher/` (buat jika belum ada), klik kanan -> **Permission** -> Ubah Owner ke **`www`** (atau `www-data`) dengan permission **`755`** atau **`775`** (centang *Apply to subdir*). Lakukan hal yang sama untuk folder `data/` dan `logs/`.
+*   **Penyebab 2 (Variabel MacroDroid Salah):** Pada aksi HTTP Request di MacroDroid, Anda memasukkan variabel `{not_title}` (Judul Notifikasi). Ini salah karena judul notifikasi adalah "GoPay Merchant", bukan teks isi pesan yang mengandung nominal transfer.
+*   **Solusi 2:** Ubah parameter `&nominal={not_title}` pada URL MacroDroid menjadi **`&nominal={notification}`** (atau `[notification]`) agar yang dikirimkan adalah isi teks notifikasi lengkap.
+*   **Penyebab 3 (OPcache Caching):** Pada aaPanel, konfigurasi `.env.php` yang baru saja diperbarui tidak langsung dibaca oleh web server karena tersimpan di memori *OPcache PHP-FPM*.
+*   **Solusi 3:** Lakukan *restart* layanan PHP (PHP-FPM) atau Nginx di aaPanel Anda untuk membersihkan *cache* memori.
+
+### 5. Gagal Membuat Voucher Saat Verifikasi QRIS ("paid_pending_generate" / Router Offline)
+*   **Penyebab 1 (Kunci Enkripsi Mismatch):** Anda baru saja mengubah atau menambahkan `ENCRYPTION_KEY` pada file `.env.php`. Karena kunci berubah, password MikroTik Anda yang tersimpan di database (dienkripsi dengan kunci lama) tidak dapat didekripsi dengan benar (menjadi karakter acak/sampah) sehingga koneksi ditolak.
+*   **Solusi 1:** Masuk ke Admin Panel MikhPay Anda -> **Session Settings** -> klik **Edit** pada router Anda -> Ketik ulang password asli MikroTik Anda (misal `ilham101088`) -> Klik **Save**. Ini akan mengenkripsi ulang password menggunakan kunci baru Anda di `.env.php`.
+*   **Penyebab 2 (API Port MikroTik Mati):** Fitur API pada MikroTik belum diaktifkan.
+*   **Solusi 2:** Buka Winbox -> masuk ke **IP > Services** -> pastikan status **`api`** (port `8728`) dalam keadaan aktif (Enabled).
+
 ---
 
 ## 📝 Changelog & Riwayat Perubahan
 
 Riwayat pembaruan sistem dan log perbaikan versi lengkap dapat Anda akses secara detail di berkas **[changelog.md](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/changelog.md)**.
+
