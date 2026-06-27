@@ -1,8 +1,7 @@
 <?php
 /**
  * Mikhmon frontpage.php
- * Halaman depan pelanggan untuk pembelian voucher hotspot otomatis menggunakan Midtrans.
- * Memenuhi kriteria kelayakan/compliance Midtrans.
+ * Halaman depan pelanggan untuk pembelian voucher hotspot otomatis menggunakan QRIS Mandiri.
  */
 
 error_reporting(E_ALL);
@@ -265,7 +264,7 @@ $fallback_profiles = [
     ]
 ];
 
-// Proses Pembuatan Transaksi Midtrans Snap
+// Proses Pembuatan Transaksi QRIS Snap
 $snap_token = "";
 $snap_order_id = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_profile'])) {
@@ -362,11 +361,8 @@ $portal_accent_color = isset($dbSettings) ? $dbSettings->get('portal_accent_colo
 $portal_support_wa = isset($dbSettings) ? $dbSettings->get('portal_support_wa', '') : '';
 $portal_support_telegram = isset($dbSettings) ? $dbSettings->get('portal_support_telegram', '') : '';
 
-// Safety defaults for Midtrans config
-$midtrans_server_key = isset($midtrans_server_key) ? $midtrans_server_key : '';
-$midtrans_client_key = isset($midtrans_client_key) ? $midtrans_client_key : '';
-$midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_production : false;
-?>
+// Safety defaults for env config
+$qris_mode = isset($qris_mode) ? filter_var($qris_mode, FILTER_VALIDATE_BOOLEAN) : false;?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -376,7 +372,7 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
     <!-- SEO Meta Tags -->
     <meta name="robots" content="noindex, nofollow, noarchive">
     <meta name="description" content="Layanan internet hotspot instan berkecepatan tinggi dengan sistem voucher otomatis via QRIS dan E-Wallet. Cepat, stabil, dan tanpa kontrak bulanan.">
-    <meta name="keywords" content="hotspot, voucher hotspot, internet murah, qris hotspot, mikhmon midtrans">
+    <meta name="keywords" content="hotspot, voucher hotspot, internet murah, qris hotspot, mikhmon qris">
     
     <!-- Modern Typography & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -798,7 +794,7 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <!-- Tampilan paket fallback offline (tetap memajang deskripsi produk sesuai syarat Midtrans) -->
+                    <!-- Tampilan paket fallback offline (tetap memajang deskripsi produk) -->
                     <?php foreach ($fallback_profiles as $mock): ?>
                         <div class="product-card card-offline">
                             <div class="card-top">
@@ -860,7 +856,7 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
         </div>
     </section>
 
-    <!-- Terms & Policies Section (Compliance Midtrans) -->
+    <!-- Terms & Policies Section -->
     <section class="compliance-docs wrapper" id="syarat">
         <div class="section-header">
             <h2>Syarat, Ketentuan & Kebijakan</h2>
@@ -891,9 +887,8 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
             <p>Kepuasan Anda adalah komitmen utama kami. Berikut adalah rincian kebijakan pengembalian dana (refund) atas layanan kami:</p>
             <ol>
                 <li><strong>Kriteria Pengembalian Dana:</strong> Pelanggan berhak mengajukan pengembalian dana penuh jika sistem hotspot mengalami gangguan total (down time) berkelanjutan lebih dari 24 jam berturut-turut yang disebabkan langsung oleh kendala server atau infrastruktur kami.</li>
-                <li><strong>Pembatalan Transaksi:</strong> Transaksi pembayaran yang telah berhasil diproses oleh Midtrans tidak dapat dibatalkan atau dikembalikan apabila kode voucher telah aktif atau digunakan oleh pembeli.</li>
-                <li><strong>Kesalahan Pembelian:</strong> Kami tidak menyediakan pengembalian dana (refund) untuk kesalahan pemilihan paket oleh pembeli (misal salah pilih durasi atau tipe voucher). Mohon teliti kembali sebelum melakukan transaksi.</li>
-                <li><strong>Prosedur Pengajuan:</strong> Untuk mengajukan pengembalian dana, silakan kirimkan bukti pembayaran Midtrans yang sah dan tangkapan layar kendala ke kontak bisnis resmi kami.</li>
+                <li><strong>Pembatalan Transaksi:</strong> Transaksi pembayaran yang telah berhasil diproses tidak dapat dibatalkan atau dikembalikan apabila kode voucher telah aktif atau digunakan oleh pembeli.</li>
+                <li><strong>Prosedur Pengajuan:</strong> Untuk mengajukan pengembalian dana, silakan kirimkan bukti mutasi pembayaran yang sah dan tangkapan layar kendala ke kontak bisnis resmi kami.</li>
                 <li><strong>Waktu Proses:</strong> Dana pengembalian yang disetujui akan ditransfer kembali ke rekening bank atau e-wallet asal pelanggan dalam kurun waktu maksimal 3 (tiga) hari kerja sejak pengajuan disetujui.</li>
             </ol>
         </div>
@@ -992,7 +987,7 @@ $midtrans_is_production = isset($midtrans_is_production) ? $midtrans_is_producti
                 <a href="admin.php?id=login">Admin Portal</a>
             </div>
             <p>&copy; <?= date("Y") ?> <?= htmlspecialchars($portal_title) ?> Hotspot. All Rights Reserved. Seluruh transaksi diproses dalam Rupiah (IDR).</p>
-            <p style="font-size: 11px; color: var(--text-muted); padding-bottom: 60px;">Diintegrasikan dengan sistem billing otomatis Mikhmon & payment gateway Midtrans.</p>
+            <p style="font-size: 11px; color: var(--text-muted); padding-bottom: 60px;">Diintegrasikan dengan sistem billing otomatis MikhPay.</p>
         </div>
     </footer>
 

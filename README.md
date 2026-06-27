@@ -27,7 +27,7 @@ Aplikasi ini dikembangkan dan dimodifikasi dari kode sumber asli [Mikhmon v3 ole
    - **Session Fixation Protection**: Meregenerasi ID sesi peramban secara otomatis (`session_regenerate_id(true)`) sesaat setelah login administrator sukses.
    - **Session Cookie Hardening**: Mengamankan parameter `session_start()` di semua entry point dengan parameter cookie ketat (`HttpOnly`, `SameSite=Lax`, `use_only_cookies`, dan `Secure` dinamis yang menyesuaikan protokol HTTPS/HTTP).
    - **Konfigurasi Aman `.env.php`**: Mengisolasi semua kunci API ke dalam berkas `.env.php` terproteksi eksekusi PHP (`exit;`), mencegah kebocoran informasi teks polos jika diakses publik di server non-Apache (Nginx, IIS, Caddy).
-   - **Rate Limiting Webhook**: Membatasi laju request webhook Midtrans hingga maksimal 60 request per menit per alamat IP untuk menangkal serangan Denial of Service (DoS).
+   - **Rate Limiting Webhook**: Membatasi laju request verifikasi webhook hingga maksimal 60 request per menit per alamat IP untuk menangkal serangan Denial of Service (DoS).
    - **Pembersihan Cache Logout**: Menghapus total `localStorage` & `sessionStorage` peramban saat administrator logout.
 
 ---
@@ -105,7 +105,7 @@ Edit berkas `login.html` di dalam folder `hotspot` MikroTik Anda (dapat diunduh 
 *Ganti `http://172.16.11.91/` dengan alamat IP atau Domain tempat Anda meng-host MikhPay.*
 
 ### 2. Konfigurasi Walled Garden MikroTik
-Karena pelanggan yang belum login diblokir akses internetnya oleh MikroTik, Anda wajib mendaftarkan alamat IP server MikhPay dan domain Midtrans/Pusher ke **Walled Garden** agar dapat diakses secara gratis sebelum login.
+Karena pelanggan yang belum login diblokir akses internetnya oleh MikroTik, Anda wajib mendaftarkan alamat IP server MikhPay ke **Walled Garden** agar dapat diakses secara gratis sebelum login.
 
 Jalankan perintah berikut di **New Terminal** Winbox MikroTik Anda:
 ```routeros

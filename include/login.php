@@ -18,8 +18,7 @@
 session_start();
 include_once('./include/env_config.php');
 
-$is_midtrans_configured = !empty($midtrans_server_key) && $midtrans_server_key !== 'YOUR_MIDTRANS_SERVER_KEY_HERE';
-$midtrans_mode = $midtrans_is_production ? 'Production' : 'Sandbox';
+$is_qris_configured = isset($qris_mode) ? filter_var($qris_mode, FILTER_VALIDATE_BOOLEAN) : false;
 
 $dbSessions = new \App\Models\RouterSession();
 $sessionsCount = count($dbSessions->getAll());
@@ -442,7 +441,7 @@ body.login-page input.login-input {
                 <i class="fa fa-wifi"></i>
             </div>
             <h2 class="login-left-title">MikhPay v1.3</h2>
-            <p class="login-left-desc">Billing Hotspot & Router Manager dengan integrasi pembayaran otomatis Midtrans. Manajemen terstruktur, cepat, dan aman.</p>
+            <p class="login-left-desc">Billing Hotspot & Router Manager dengan sistem pembayaran QRIS Mandiri. Manajemen terstruktur, cepat, dan aman tanpa potongan admin payment gateway.</p>
             
             <div class="login-left-stats">
                 <div class="stat-card">
@@ -456,8 +455,8 @@ body.login-page input.login-input {
                     <span class="stat-icon"><i class="fa fa-credit-card"></i></span>
                     <div class="stat-text">
                         <strong>Payment Gateway</strong>
-                        <?php if ($is_midtrans_configured): ?>
-                            <span class="text-indigo">Midtrans <?= $midtrans_mode ?></span>
+                        <?php if ($is_qris_configured): ?>
+                            <span class="text-indigo">QRIS Mandiri Aktif</span>
                         <?php else: ?>
                             <span class="text-muted" style="color: #64748b;">Not Configured</span>
                         <?php endif; ?>

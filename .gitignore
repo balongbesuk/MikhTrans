@@ -1,4 +1,4 @@
-# Ignore local server configurations containing MikroTik and Midtrans credentials
+# Ignore local server configurations containing MikroTik and QRIS credentials
 .env
 .env.php
 /data/database.json
