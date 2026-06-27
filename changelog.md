@@ -14,6 +14,8 @@ Semua pembaruan penting pada modifikasi MikhPay ini akan dicatat di dokumen ini.
 
 ### Diperbaiki
 - **Batalkan Transaksi QRIS (Sticky Overlay)**: Memperbaiki *bug* pada halaman *frontpage* di mana *overlay* pop-up pembayaran QRIS tidak mau tertutup ketika tombol "Batalkan" ditekan. Tombol telah direstrukturisasi agar melakukan muat ulang halaman penuh (*hard reload*) alih-alih sekadar lompat *hash fragment*, sekaligus mencabut sistem pengecekan riwayat usang (*Resume Flow*) peninggalan Midtrans.
+- **Penyelamatan Variabel Global `$data` (`qris_verify.php`)**: Memperbaiki konflik variabel kritis di mana `$data` hasil pembacaan JSON transaksi menimpa variabel global `$data` sesi router dari database, menyebabkan error "Session tidak ditemukan". Variabel internal diubah menjadi `$transData`.
+- **Pembersihan PHP Warning (`qris_verify.php`)**: Menghapus pemanggilan file non-eksisten `include/functions.php` yang memicu peringatan PHP. Peringatan tersebut sebelumnya mengotori respons API sehingga peramban gagal melakukan *parsing* JSON (*SyntaxError*). Pembuatan username acak dialihkan menggunakan fungsi bawaan `randNLC` jika tersedia.
 
 
 ## [MikhPay v2.0] - 2026-06-25
