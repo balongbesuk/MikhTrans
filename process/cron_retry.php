@@ -29,15 +29,18 @@ if (php_sapi_name() !== 'cli') {
 }
 
 $dir = dirname(__FILE__) . '/../voucher/';
-$files = glob($dir . 'trans-*.json');
+$files = array_merge(
+    glob($dir . 'trans-*.json'),
+    glob($dir . 'trans-*.php')
+);
 $processedCount = 0;
 $failedCount = 0;
 
 if (is_array($files)) {
     foreach ($files as $file) {
-        $trans = json_decode(file_get_contents($file), true);
+        $trans = readTransactionFile($file);
         if ($trans && isset($trans['status']) && $trans['status'] === 'paid_pending_generate') {
-            $order_id = isset($trans['order_id']) ? $trans['order_id'] : basename($file, '.json');
+            $order_id = isset($trans['order_id']) ? $trans['order_id'] : basename($file, (strpos($file, '.php') !== false ? '.php' : '.json'));
             $session = $trans['session'];
             $profile = $trans['profile'];
             
@@ -78,7 +81,11 @@ if (is_array($files)) {
                     $trans['password'] = $password;
                     $trans['paid_at'] = time();
                     
-                    file_put_contents($file, json_encode($trans));
+                    if (strpos($file, '.php') !== false) {
+                        writeTransactionFile($file, $trans);
+                    } else {
+                        file_put_contents($file, json_encode($trans));
+                    }
                     $processedCount++;
                     writeAppLog("CRON_RETRY_SUCCESS", "Voucher " . $username . " sukses digenerate via Cron untuk Order ID: " . $order_id);
                     

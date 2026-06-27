@@ -47,7 +47,11 @@ if (rand(1, 100) <= 5) {
     if (is_dir($dir)) {
         $retention_days = isset($dbSettings) ? (int)$dbSettings->get('log_retention_days', 2) : 2;
         $retention_seconds = $retention_days * 86400;
-        foreach (glob($dir . 'trans-*.json') as $file) {
+        $files = array_merge(
+            glob($dir . 'trans-*.json'),
+            glob($dir . 'trans-*.php')
+        );
+        foreach ($files as $file) {
             if (time() - filemtime($file) > $retention_seconds) {
                 @unlink($file);
             }
@@ -65,10 +69,13 @@ $qris_static_string = isset($qris_static_string) ? $qris_static_string : '';
 if (isset($_GET['check_order'])) {
     header('Content-Type: application/json');
     $order_id = preg_replace('/[^a-zA-Z0-9\-]/', '', $_GET['check_order']);
-    $filepath = __DIR__ . "/voucher/trans-" . $order_id . ".json";
+    $filepath = __DIR__ . "/voucher/trans-" . $order_id . ".php";
+    if (!file_exists($filepath)) {
+        $filepath = __DIR__ . "/voucher/trans-" . $order_id . ".json";
+    }
     
     if (file_exists($filepath)) {
-        $trans = json_decode(file_get_contents($filepath), true);
+        $trans = readTransactionFile($filepath);
         if (isset($trans['status']) && $trans['status'] === 'settlement' && !empty($trans['username'])) {
             echo json_encode([
                 'status' => 'success',
@@ -122,9 +129,12 @@ $router_online = false;
 // Tampilkan voucher sukses jika redirect kembali dari pembayaran
 $show_voucher_id = isset($_GET['order_id']) ? preg_replace('/[^a-zA-Z0-9\-]/', '', $_GET['order_id']) : '';
 if (isset($_GET['show_voucher']) && !empty($show_voucher_id)) {
-    $filepath = __DIR__ . "/voucher/trans-" . $show_voucher_id . ".json";
+    $filepath = __DIR__ . "/voucher/trans-" . $show_voucher_id . ".php";
+    if (!file_exists($filepath)) {
+        $filepath = __DIR__ . "/voucher/trans-" . $show_voucher_id . ".json";
+    }
     if (file_exists($filepath)) {
-        $trans = json_decode(file_get_contents($filepath), true);
+        $trans = readTransactionFile($filepath);
         if (isset($trans['status']) && $trans['status'] === 'settlement' && !empty($trans['username'])) {
             $success_voucher = [
                 'username' => $trans['username'],
@@ -316,10 +326,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_profile'])) {
                             $active_codes = [];
                             $dir = __DIR__ . '/voucher/';
                             if (is_dir($dir)) {
-                                $files = glob($dir . 'trans-*.json');
+                                $files = array_merge(
+                                    glob($dir . 'trans-*.json'),
+                                    glob($dir . 'trans-*.php')
+                                );
                                 foreach ($files as $file) {
-                                    $tData = json_decode(file_get_contents($file), true);
-                                    if (isset($tData['status']) && $tData['status'] === 'pending' && isset($tData['price']) && isset($tData['base_price'])) {
+                                    $tData = readTransactionFile($file);
+                                    if ($tData && isset($tData['status']) && $tData['status'] === 'pending' && isset($tData['price']) && isset($tData['base_price'])) {
                                         $diff = (int)$tData['price'] - (int)$tData['base_price'];
                                         if ($diff >= 1 && $diff <= 99) {
                                             $active_codes[] = $diff;
@@ -359,7 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_profile'])) {
                             if (!file_exists(__DIR__ . '/voucher')) {
                                 mkdir(__DIR__ . '/voucher', 0755, true);
                             }
-                            file_put_contents(__DIR__ . "/voucher/trans-" . $snap_order_id . ".json", json_encode($transData));
+                            writeTransactionFile(__DIR__ . "/voucher/trans-" . $snap_order_id . ".php", $transData);
                         } else {
                             $error_msg = "Sistem QRIS Mandiri belum dikonfigurasi.";
                             writeAppLog("QRIS_ERROR", "Gagal membuat qris untuk Order ID: " . $snap_order_id . ". QRIS Mode mati atau string kosong.");

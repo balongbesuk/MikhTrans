@@ -154,3 +154,31 @@ $ws_port = mikhmonEnv('WS_PORT', "");
 $ws_scheme = mikhmonEnv('WS_SCHEME', "");
 
 $encryption_key = mikhmonEnv('ENCRYPTION_KEY', "128");
+
+/**
+ * Membaca data transaksi dengan aman (mendukung enkapsulasi PHP pelindung)
+ */
+if (!function_exists('readTransactionFile')) {
+    function readTransactionFile($filepath) {
+        if (!file_exists($filepath)) {
+            return null;
+        }
+        $content = @file_get_contents($filepath);
+        if ($content === false) {
+            return null;
+        }
+        // Bersihkan tag pembuka PHP jika ada
+        $jsonContent = preg_replace('/^<\?php.*?\?>\s*/s', '', $content);
+        return json_decode($jsonContent, true);
+    }
+}
+
+/**
+ * Menulis data transaksi dengan aman dengan menyematkan header pelindung PHP 403 Forbidden
+ */
+if (!function_exists('writeTransactionFile')) {
+    function writeTransactionFile($filepath, $data) {
+        $prefix = "<?php header('HTTP/1.0 403 Forbidden'); exit; ?>\n";
+        return @file_put_contents($filepath, $prefix . json_encode($data));
+    }
+}

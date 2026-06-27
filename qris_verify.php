@@ -38,10 +38,13 @@ $found_order_id = null;
 $trans = null;
 
 if (is_dir($dir)) {
-    $files = glob($dir . 'trans-*.json');
+    $files = array_merge(
+        glob($dir . 'trans-*.json'),
+        glob($dir . 'trans-*.php')
+    );
     foreach ($files as $file) {
-        $transData = json_decode(file_get_contents($file), true);
-        if (isset($transData['status']) && $transData['status'] === 'pending' && isset($transData['price']) && (int)$transData['price'] === $nominal) {
+        $transData = readTransactionFile($file);
+        if ($transData && isset($transData['status']) && $transData['status'] === 'pending' && isset($transData['price']) && (int)$transData['price'] === $nominal) {
             $found_order_id = $transData['order_id'];
             $trans = $transData;
             break;
@@ -114,8 +117,15 @@ if (isset($data[$selected_session])) {
     $trans['router_error'] = "Session " . $selected_session . " tidak ditemukan di database.";
 }
 
-// Simpan kembali status JSON
-file_put_contents($dir . "trans-" . $found_order_id . ".json", json_encode($trans));
+// Simpan kembali status
+if ($found_order_id) {
+    $file_ext = file_exists($dir . "trans-" . $found_order_id . ".php") ? ".php" : (file_exists($dir . "trans-" . $found_order_id . ".json") ? ".json" : ".php");
+    if ($file_ext === ".php") {
+        writeTransactionFile($dir . "trans-" . $found_order_id . ".php", $trans);
+    } else {
+        file_put_contents($dir . "trans-" . $found_order_id . ".json", json_encode($trans));
+    }
+}
 
 echo json_encode([
     'status' => 'success',

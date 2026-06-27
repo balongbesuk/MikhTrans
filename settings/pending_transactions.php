@@ -47,10 +47,13 @@ function createBackupZip() {
         $zip->addFile($dbFile, 'data/database.php');
     }
     
-    // 3. Add voucher/*.json files
+    // 3. Add voucher/* files
     $voucherDir = __DIR__ . '/../voucher/';
     if (file_exists($voucherDir)) {
-        $files = glob($voucherDir . 'trans-*.json');
+        $files = array_merge(
+            glob($voucherDir . 'trans-*.json'),
+            glob($voucherDir . 'trans-*.php')
+        );
         if (is_array($files)) {
             foreach ($files as $file) {
                 if (file_exists($file)) {
@@ -91,10 +94,13 @@ function createBackupTar() {
         $filesToArchive['data/database.php'] = $dbFile;
     }
     
-    // Add voucher/*.json
+    // Add voucher/*
     $voucherDir = __DIR__ . '/../voucher/';
     if (file_exists($voucherDir)) {
-        $files = glob($voucherDir . 'trans-*.json');
+        $files = array_merge(
+            glob($voucherDir . 'trans-*.json'),
+            glob($voucherDir . 'trans-*.php')
+        );
         if (is_array($files)) {
             foreach ($files as $file) {
                 if (file_exists($file)) {
@@ -165,14 +171,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if (empty($order_id) || !preg_match('/^[a-zA-Z0-9\-]+$/', $order_id)) {
             $error_msg = "Order ID tidak valid.";
         } else {
-            $filepath = __DIR__ . '/../voucher/trans-' . $order_id . '.json';
+            $filepath = __DIR__ . '/../voucher/trans-' . $order_id . '.php';
+            if (!file_exists($filepath)) {
+                $filepath = __DIR__ . '/../voucher/trans-' . $order_id . '.json';
+            }
             $real_path = realpath(dirname($filepath));
             $voucher_dir = realpath(__DIR__ . '/../voucher');
             
             if ($real_path !== $voucher_dir || !file_exists($filepath)) {
                 $error_msg = "Berkas data transaksi tidak ditemukan.";
             } else {
-                $trans = json_decode(file_get_contents($filepath), true);
+                $trans = readTransactionFile($filepath);
                 
                 if (isset($trans['status']) && $trans['status'] === 'paid_pending_generate') {
                     $session = $trans['session'];
@@ -215,7 +224,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             $trans['password'] = $password;
                             $trans['paid_at'] = time();
                             
-                            file_put_contents($filepath, json_encode($trans));
+                            if (strpos($filepath, '.php') !== false) {
+                                writeTransactionFile($filepath, $trans);
+                            } else {
+                                file_put_contents($filepath, json_encode($trans));
+                            }
                             $success_msg = ($langid == 'id') 
                                 ? "Sukses! Voucher {$username} berhasil dibuat untuk Order ID: {$order_id}." 
                                 : "Success! Voucher {$username} generated for Order ID: {$order_id}.";
@@ -309,7 +322,10 @@ $portal_support_telegram = $settingsModel->get('portal_support_telegram', '');
 
 // Load and group transactions
 $dir = __DIR__ . '/../voucher/';
-$files = glob($dir . 'trans-*.json');
+$files = array_merge(
+    glob($dir . 'trans-*.json'),
+    glob($dir . 'trans-*.php')
+);
 
 $pendingTransactions = [];
 $historyTransactions = [];
@@ -322,9 +338,9 @@ if (is_array($files)) {
     });
     
     foreach ($files as $file) {
-        $dataTrans = json_decode(file_get_contents($file), true);
+        $dataTrans = readTransactionFile($file);
         if ($dataTrans) {
-            $order = isset($dataTrans['order_id']) ? $dataTrans['order_id'] : basename($file, '.json');
+            $order = isset($dataTrans['order_id']) ? $dataTrans['order_id'] : basename($file, (strpos($file, '.php') !== false ? '.php' : '.json'));
             $status = isset($dataTrans['status']) ? $dataTrans['status'] : 'pending';
             
             // Add file details
@@ -357,7 +373,7 @@ $profileSales = [];
 
 if (is_array($files)) {
     foreach ($files as $file) {
-        $dataTrans = json_decode(file_get_contents($file), true);
+        $dataTrans = readTransactionFile($file);
         if ($dataTrans) {
             $status = isset($dataTrans['status']) ? $dataTrans['status'] : 'pending';
             $price = isset($dataTrans['price']) ? (float)$dataTrans['price'] : 0.0;
