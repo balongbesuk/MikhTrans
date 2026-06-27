@@ -134,7 +134,6 @@ if (isset($_GET['show_voucher']) && !empty($show_voucher_id)) {
                 'validity' => $trans['validity']
             ];
             $currency = isset($data[$selected_session]) ? explode('&', $data[$selected_session][6])[1] : 'Rp';
-            $router_online = true;
         } elseif (isset($trans['status']) && ($trans['status'] === 'paid_pending_generate' || ($trans['status'] === 'settlement' && empty($trans['username'])))) {
             $pending_voucher = [
                 'order_id' => $show_voucher_id,
@@ -148,7 +147,7 @@ if (isset($_GET['show_voucher']) && !empty($show_voucher_id)) {
 }
 
 // Konek ke MikroTik untuk list profil & cek status online (dengan cache 5 menit)
-if (!empty($selected_session) && !$success_voucher) {
+if (!empty($selected_session)) {
     include_once(__DIR__ . '/lib/routeros_api.class.php');
     include_once(__DIR__ . '/lib/formatbytesbites.php');
 
