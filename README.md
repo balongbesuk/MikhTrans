@@ -209,5 +209,5 @@ Gunakan header `X-API-Key` atau parameter query `api_key` untuk otentikasi.
 
 ## 📝 Changelog & Riwayat Perubahan
 
-Riwayat pembaruan sistem dan log perbaikan versi lengkap dapat Anda akses secara detail di berkas **[changelog.md](file:///d:/mikhmonv3ws/Mikhmon Server/mikhmon/changelog.md)**.
+Riwayat pembaruan sistem dan log perbaikan versi lengkap dapat Anda akses secara detail di berkas **changelog.md**.
 
