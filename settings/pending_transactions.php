@@ -626,7 +626,7 @@ uasort($profileSales, function($a, $b) {
                 </div>
                 <div class="dash-welcome-time">
                     <div class="time-big" style="font-size: 24px;"><i class="fa fa-exchange"></i></div>
-                    <div class="time-date">MikhPay v1.4</div>
+                    <div class="time-date">MikhPay v2.0</div>
                 </div>
             </div>
         </div>
