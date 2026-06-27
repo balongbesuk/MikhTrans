@@ -103,7 +103,7 @@ Agar notifikasi dan MacroDroid tidak dimatikan oleh sistem Android saat HP dalam
   - Pilih metode **GET**.
   - Masukkan URL Webhook Anda. Ganti `domain-anda.com` dengan alamat web MikhPay Anda, gunakan token rahasia dari `.env.php`, dan gunakan variabel `{notification}` di ujungnya (klik tombol titik tiga `[...]` -> Notification -> Notification Text untuk memasukkannya secara otomatis):
     ```text
-    https://vc.galaxynet.my.id/qris_verify.php?token=mcr_b1a2c3d4e5f6g7h8&nominal={notification}
+    https://[domain-anda.com]/qris_verify.php?token=[token_rahasia_anda]&nominal={notification}
     ```
     *(Gunakan `https://` jika web server Anda memaksa sambungan SSL agar request tidak diblokir/dialihkan).*
   - Klik **Simpan** (ikon disket di pojok kanan bawah).
@@ -119,11 +119,11 @@ Agar pelanggan dapat membeli voucher secara langsung saat terhubung ke Hotspot, 
 ### 1. Tambahkan Tombol Beli Voucher di `login.html`
 Edit berkas `login.html` di dalam folder `hotspot` MikroTik Anda (dapat diunduh via FTP atau menu Files di Winbox). Tambahkan kode tombol berikut:
 ```html
-<a href="http://172.16.11.91/" style="display:block; background:#4f46e5; color:white; padding:12px; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-top:10px;">
+<a href="http://[ip-atau-domain-mikhpay]/" style="display:block; background:#4f46e5; color:white; padding:12px; text-align:center; border-radius:8px; text-decoration:none; font-weight:bold; margin-top:10px;">
     Beli Voucher Otomatis (QRIS / E-Wallet)
 </a>
 ```
-*Ganti `http://172.16.11.91/` dengan alamat IP atau Domain tempat Anda meng-host MikhPay.*
+*Ganti `[ip-atau-domain-mikhpay]` dengan alamat IP atau Domain tempat Anda meng-host MikhPay.*
 
 ### 2. Konfigurasi Walled Garden MikroTik
 Karena pelanggan yang belum login diblokir akses internetnya oleh MikroTik, Anda wajib mendaftarkan alamat IP server MikhPay ke **Walled Garden** agar dapat diakses secara gratis sebelum login.
@@ -131,7 +131,7 @@ Karena pelanggan yang belum login diblokir akses internetnya oleh MikroTik, Anda
 Jalankan perintah berikut di **New Terminal** Winbox MikroTik Anda:
 ```routeros
 # Izinkan akses ke Web Server MikhPay
-/ip hotspot walled-garden ip add dst-host=172.16.11.91 action=allow
+/ip hotspot walled-garden ip add dst-host=[ip-atau-domain-mikhpay] action=allow
 
 # Izinkan sistem pembayaran e-wallet agar pelanggan bisa scan QR dari HP-nya
 /ip hotspot walled-garden add dst-host=*.gopay.co.id action=allow
@@ -201,7 +201,7 @@ Gunakan header `X-API-Key` atau parameter query `api_key` untuk otentikasi.
 
 ### 5. Gagal Membuat Voucher Saat Verifikasi QRIS ("paid_pending_generate" / Router Offline)
 *   **Penyebab 1 (Kunci Enkripsi Mismatch):** Anda baru saja mengubah atau menambahkan `ENCRYPTION_KEY` pada file `.env.php`. Karena kunci berubah, password MikroTik Anda yang tersimpan di database (dienkripsi dengan kunci lama) tidak dapat didekripsi dengan benar (menjadi karakter acak/sampah) sehingga koneksi ditolak.
-*   **Solusi 1:** Masuk ke Admin Panel MikhPay Anda -> **Session Settings** -> klik **Edit** pada router Anda -> Ketik ulang password asli MikroTik Anda (misal `ilham101088`) -> Klik **Save**. Ini akan mengenkripsi ulang password menggunakan kunci baru Anda di `.env.php`.
+*   **Solusi 1:** Masuk ke Admin Panel MikhPay Anda -> **Session Settings** -> klik **Edit** pada router Anda -> Ketik ulang password asli MikroTik Anda (misal `password_mikrotik_anda`) -> Klik **Save**. Ini akan mengenkripsi ulang password menggunakan kunci baru Anda di `.env.php`.
 *   **Penyebab 2 (API Port MikroTik Mati):** Fitur API pada MikroTik belum diaktifkan.
 *   **Solusi 2:** Buka Winbox -> masuk ke **IP > Services** -> pastikan status **`api`** (port `8728`) dalam keadaan aktif (Enabled).
 
