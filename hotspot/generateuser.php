@@ -283,16 +283,34 @@ date_default_timezone_set($_SESSION['timezone']);
 
 }
 ?>
-<div class="row">
-	
-<div class="col-8">
-<div class="card box-bordered">
+<div class="gen-row-flex">
+	<style>
+	.gen-row-flex {
+	    display: flex !important;
+	    gap: 24px !important;
+	    width: 100% !important;
+	    flex-wrap: wrap !important;
+	    box-sizing: border-box !important;
+	}
+	.gen-col-left {
+	    flex: 1 1 calc(66.666% - 12px) !important;
+	    min-width: 400px !important;
+	    box-sizing: border-box !important;
+	}
+	.gen-col-right {
+	    flex: 1 1 calc(33.333% - 12px) !important;
+	    min-width: 250px !important;
+	    box-sizing: border-box !important;
+	}
+	</style>
+<div class="gen-col-left">
+<div class="card" style="box-shadow: var(--shadow-card); border-radius: var(--radius); border: 1px solid var(--border-color); margin: 0 !important;">
 	<div class="card-header">
 	<h3><i class="fa fa-user-plus"></i> <?= $_generate_user ?> <small id="loader" style="display: none;" ><i><i class='fa fa-circle-o-notch fa-spin'></i> <?= $_processing ?> </i></small></h3> 
 	</div>
-	<div class="card-body">
+	<div class="card-body" style="padding: 24px !important;">
 <form autocomplete="off" method="post" action="">
-	<div>
+	<div style="margin-bottom: 20px; display: flex; gap: 8px; flex-wrap: wrap;">
 		<?php if ($_SESSION['ubp'] != "") {
 		echo "    <a class='btn bg-warning' href='./?hotspot=users&profile=" . $_SESSION['ubp'] . "&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close."</a>";
 	} elseif ($_SESSION['vcr'] = "active") {
@@ -395,12 +413,12 @@ date_default_timezone_set($_SESSION['timezone']);
   </tr>
 	<tr>
     <td class="align-middle"><?= $_data_limit ?></td><td>
-      <div class="input-group">
-      	<div class="input-group-10 col-box-9">
-        	<input class="group-item group-item-l" type="number" min="0" max="9999" name="datalimit" value="<?= $udatalimit; ?>">
+      <div class="input-group" style="display: flex; width: 100%;">
+      	<div class="input-group-10 col-box-9" style="flex: 1; float: none;">
+        	<input class="group-item group-item-l" type="number" min="0" max="9999" name="datalimit" value="<?= $udatalimit; ?>" style="border-radius: 8px 0 0 8px !important; width: 100% !important; height: 38px !important;">
     	</div>
-          <div class="input-group-2 col-box-3">
-              <select style="padding:4.2px;" class="group-item group-item-r" name="mbgb" required="1">
+          <div class="input-group-2 col-box-3" style="width: 70px; float: none;">
+              <select style="padding:4.2px; height: 38px !important; border-radius: 0 8px 8px 0 !important; border-left: none !important; width: 100% !important;" class="group-item group-item-r form-control" name="mbgb" required="1">
 				        <option value=1048576>MB</option>
 				        <option value=1073741824>GB</option>
 			        </select>
@@ -424,12 +442,12 @@ date_default_timezone_set($_SESSION['timezone']);
 </div>
 </div>
 
-<div class="col-4">
-	<div class="card">
+<div class="gen-col-right">
+	<div class="card" style="box-shadow: var(--shadow-card); border-radius: var(--radius); border: 1px solid var(--border-color); margin: 0 !important;">
 		<div class="card-header">
 			<h3><i class="fa fa-ticket"></i> <?= $_last_generate ?></h3>
 		</div>
-		<div class="card-body">
+		<div class="card-body" style="padding: 24px !important;">
 <table class="table table-bordered">
   <tr>
   	<td><?= $_generate_code ?></td><td><?= $ucode ?></td>
