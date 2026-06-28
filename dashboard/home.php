@@ -115,46 +115,51 @@ if (!isset($_SESSION["mikhmon"])) {
 /* ─── Welcome Banner ─── */
 .dash-welcome {
     background: var(--welcome-bg) !important;
-    border-radius: 20px;
-    padding: 32px 36px;
-    margin-bottom: 24px;
+    border-radius: 24px;
+    padding: 36px 40px;
+    margin-bottom: 28px;
     position: relative;
     overflow: hidden;
-    border: 1px solid var(--border-color) !important;
+    border: none !important;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.25) !important;
 }
 .dash-welcome::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    top: -80px;
+    right: -80px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
     border-radius: 50%;
+    pointer-events: none;
 }
 .dash-welcome::after {
     content: '';
     position: absolute;
-    bottom: -40%;
-    left: 10%;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+    bottom: -100px;
+    left: -60px;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
     border-radius: 50%;
+    pointer-events: none;
 }
 .dash-welcome-content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 .dash-welcome h2 {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 800;
-    color: #ffffff;
-    margin: 0 0 6px 0;
+    color: #ffffff !important;
+    margin: 8px 0 16px 0;
     letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 .dash-welcome p {
     font-size: 13px;
@@ -162,21 +167,110 @@ if (!isset($_SESSION["mikhmon"])) {
     margin: 0;
     font-weight: 500;
 }
+.dash-welcome-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+.sync-status.connected {
+    background: rgba(16, 185, 129, 0.22) !important;
+    color: #a7f3d0 !important;
+    border: 1px solid rgba(16, 185, 129, 0.35) !important;
+    padding: 4px 14px !important;
+    border-radius: 30px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+.sync-status.offline {
+    background: rgba(239, 68, 68, 0.22) !important;
+    color: #fca5a5 !important;
+    border: 1px solid rgba(239, 68, 68, 0.35) !important;
+    padding: 4px 14px !important;
+    border-radius: 30px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+.sync-status.syncing {
+    background: rgba(245, 158, 11, 0.22) !important;
+    color: #fde68a !important;
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    padding: 4px 14px !important;
+    border-radius: 30px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+.status-dot {
+    width: 7px; height: 7px; border-radius: 50%; display: inline-block;
+}
+.status-dot.connected {
+    background: #10B981 !important;
+    box-shadow: 0 0 8px #10B981 !important;
+}
+.status-dot.offline {
+    background: #EF4444 !important;
+    box-shadow: 0 0 8px #EF4444 !important;
+}
+.status-dot.syncing {
+    background: #F59E0B !important;
+    box-shadow: 0 0 8px #F59E0B !important;
+}
+.dash-welcome-badges {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+.welcome-badge {
+    background: rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    padding: 10px 18px !important;
+    border-radius: 14px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.welcome-badge:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
 .dash-welcome-time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: right;
 }
 .dash-welcome-time .time-big {
-    font-size: 36px;
+    font-size: 40px;
     font-weight: 800;
     color: #ffffff;
     letter-spacing: -1px;
     line-height: 1;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 .dash-welcome-time .time-date {
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.55);
-    font-weight: 500;
-    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 600;
+    margin-top: 8px;
 }
 
 /* ─── System Resource Cards (r_1) ─── */
@@ -538,11 +632,21 @@ if (!isset($_SESSION["mikhmon"])) {
 
 /* ─── Responsive ─── */
 @media (max-width: 750px) {
-    .dash-welcome { padding: 24px 20px; }
-    .dash-welcome h2 { font-size: 18px; }
+    .dash-welcome { padding: 24px 28px !important; border-radius: 16px !important; }
+    .dash-welcome h2 { font-size: 20px !important; margin-bottom: 12px !important; }
     .dash-welcome-time .time-big { font-size: 28px; }
-    .dash-welcome-content { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .dash-welcome-content { flex-direction: column; align-items: flex-start; gap: 16px; }
     .dash-welcome-time { text-align: left; width: 100%; }
+}
+@media (max-width: 576px) {
+    .dash-welcome-content {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 20px !important;
+    }
+    .dash-welcome-time {
+        align-self: flex-end !important;
+    }
 }
 </style>
 
