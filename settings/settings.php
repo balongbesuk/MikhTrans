@@ -24,22 +24,22 @@ if (!isset($_SESSION["mikhmon"])) {
 } else {
 
   if ($id == "settings" && explode("-",$router)[0] == "new") {
-    $dbSessions = new \App\Models\RouterSession();
-    $dbSessions->save(array(
-      'session_name' => $router,
-      'ip_address' => '',
-      'username' => '',
-      'password' => '',
-      'hotspot_name' => '',
-      'dns_name' => '',
-      'currency' => 'Rp',
-      'auto_reload' => 10,
-      'traffic_interface' => '1',
-      'idle_timeout' => '10',
-      'live_report' => 'disable'
-    ));
     echo "<script>window.location='./admin.php?id=settings&session=" . $router . "'</script>";
     exit;
+  }
+
+  // Initialize default form values for new sessions
+  if (explode("-", $session)[0] == "new") {
+    $iphost = '';
+    $userhost = '';
+    $passwdhost = '';
+    $hotspotname = '';
+    $dnsname = '';
+    $currency = 'Rp';
+    $areload = 10;
+    $iface = '1';
+    $idleto = '10';
+    $livereport = 'disable';
   }
 
   if (isset($_POST['save'])) {

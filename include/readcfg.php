@@ -25,7 +25,8 @@ if (substr($_SERVER["REQUEST_URI"], -11) == "readcfg.php") {
 
 // Validate session parameter against registered sessions if provided
 if (!empty($session)) {
-  if (!isset($data[$session]) || $session === 'mikhmon') {
+  $isNewSession = (explode('-', $session)[0] === 'new');
+  if (!$isNewSession && (!isset($data[$session]) || $session === 'mikhmon')) {
     if (isset($_SESSION["mikhmon"])) {
       header("Location:./admin.php?id=sessions");
     } else {
