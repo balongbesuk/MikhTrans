@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             $username = randNLC($shuf) . randN($userLength - $shuf);
                             $password = $username;
                             
-                            $comment = "API-Retry-" . rand(100, 999) . "-" . date("m.d.y") . "-Paid QRIS";
+                            $comment = "vc-API-Retry-" . rand(100, 999) . "-" . date("m.d.y") . "-Paid QRIS";
                             
                             $addParams = [
                                 "server" => "all",

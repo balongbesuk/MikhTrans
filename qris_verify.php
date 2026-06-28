@@ -85,7 +85,7 @@ if (isset($data[$selected_session])) {
             $username = substr(str_shuffle("abcdefghjkmnpqrstuvwxyz23456789"), 0, $userLength);
         }
         $password = $username;
-        $comment = "QRIS-" . $found_order_id . "-" . date("m.d.y");
+        $comment = "vc-QRIS-" . $found_order_id . "-" . date("m.d.y");
         
         $addParams = [
             "server" => "all",

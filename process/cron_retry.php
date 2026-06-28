@@ -62,7 +62,7 @@ if (is_array($files)) {
                     $username = randNLC($shuf) . randN($userLength - $shuf);
                     $password = $username;
                     
-                    $comment = "API-Cron-" . rand(100, 999) . "-" . date("m.d.y") . "-Paid QRIS";
+                    $comment = "vc-API-Cron-" . rand(100, 999) . "-" . date("m.d.y") . "-Paid QRIS";
                     
                     $addParams = [
                         "server" => "all",
