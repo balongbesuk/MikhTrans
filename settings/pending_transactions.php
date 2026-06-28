@@ -1135,197 +1135,234 @@ uasort($profileSales, function($a, $b) {
             <!-- Panel Settings & Backup -->
             <div id="tab-settings" class="tab-panel">
                 <style>
-                    #tab-settings .form-group { margin-bottom: 16px; }
+                    #tab-settings .form-group { margin-bottom: 20px; }
                     #tab-settings .form-group label {
                         display: block;
-                        font-size: 11px;
+                        font-size: 13px;
                         font-weight: 700;
                         color: var(--text-muted);
-                        margin-bottom: 6px;
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
+                        margin-bottom: 8px;
+                        text-align: left;
+                    }
+                    #tab-settings .form-control {
+                        width: 100% !important;
+                        height: 48px !important;
+                        border: 1px solid var(--border-color) !important;
+                        border-radius: 12px !important;
+                        background: var(--bg-card, #ffffff) !important;
+                        color: var(--text-main) !important;
+                        padding: 0 16px !important;
+                        font-size: 14px !important;
+                        outline: none !important;
+                        transition: all 0.25s ease !important;
+                        box-sizing: border-box !important;
+                    }
+                    #tab-settings .form-control:focus {
+                        border-color: var(--primary) !important;
+                        box-shadow: 0 0 0 3.5px var(--primary-glow) !important;
+                    }
+                    #tab-settings textarea.form-control {
+                        height: auto !important;
+                        padding: 12px 16px !important;
                     }
                     #tab-settings .mt-hint {
-                        font-size: 11px;
+                        font-size: 12px;
                         color: var(--text-muted);
                         line-height: 1.5;
                         margin-top: 6px;
+                        text-align: left;
                     }
                     #tab-settings .mt-color-row {
                         display: flex;
-                        gap: 10px;
+                        gap: 12px;
                         align-items: center;
                     }
                     #tab-settings .mt-color-row input[type="color"] {
-                        width: 42px;
-                        height: 42px;
+                        width: 44px;
+                        height: 44px;
                         border: 1px solid var(--border-color);
-                        border-radius: var(--radius, 8px);
+                        border-radius: 10px;
                         cursor: pointer;
-                        padding: 3px;
-                        background: var(--input-bg);
+                        padding: 4px;
+                        background: var(--bg-card, #ffffff);
+                        box-sizing: border-box;
                     }
                     #tab-settings .mt-color-row span {
                         font-family: monospace;
-                        font-size: 13px;
-                        color: var(--text-muted);
-                        font-weight: 600;
+                        font-size: 14px;
+                        color: var(--text-main);
+                        font-weight: 700;
                     }
                     #tab-settings .mt-info-box {
-                        background: var(--bg-card-hover, rgba(0,0,0,0.02));
-                        border: 1px dashed var(--border-color);
-                        border-radius: var(--radius, 8px);
-                        padding: 14px;
-                        margin-bottom: 16px;
-                        font-size: 11px;
+                        background: var(--background-alt, #F8FAFC);
+                        border: 1px solid var(--border-color);
+                        border-radius: 12px;
+                        padding: 16px;
+                        margin-bottom: 20px;
+                        font-size: 13px;
                         color: var(--text-muted);
                         line-height: 1.6;
+                        text-align: left;
                     }
                     #tab-settings .mt-info-box strong { color: var(--text-main); }
                     #tab-settings .mt-info-box code {
                         background: var(--primary-glow);
                         color: var(--primary);
-                        padding: 1px 5px;
-                        border-radius: 4px;
-                        font-size: 11px;
+                        padding: 2px 6px;
+                        border-radius: 6px;
+                        font-size: 12px;
+                        font-family: monospace;
                     }
-                    #tab-settings .mt-info-box ul { margin: 6px 0 0 16px; padding: 0; }
-                    
-                    /* Custom Layout styles */
-                    #tab-settings .row-flex {
+                    #tab-settings .mt-info-box ul { margin: 8px 0 0 20px; padding: 0; }
+
+                    /* Subtabs switch styling */
+                    .settings-subtabs-nav {
                         display: flex !important;
+                        gap: 8px !important;
+                        border-bottom: 1px solid var(--border-color) !important;
+                        padding-bottom: 12px !important;
+                        margin-bottom: 24px !important;
                         flex-wrap: wrap !important;
-                        margin: 0 -12px !important;
                     }
-                    #tab-settings .col-flex-6 {
-                        box-sizing: border-box !important;
-                        width: 50% !important;
-                        padding: 0 12px !important;
-                        display: flex !important;
-                        flex-direction: column !important;
+                    .subtab-btn {
+                        background: transparent !important;
+                        border: 1px solid transparent !important;
+                        color: var(--text-muted) !important;
+                        padding: 8px 16px !important;
+                        font-size: 13px !important;
+                        font-weight: 700 !important;
+                        border-radius: 8px !important;
+                        cursor: pointer !important;
+                        transition: all 0.2s ease !important;
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        gap: 8px !important;
                     }
-                    @media (min-width: 751px) {
-                        #tab-settings .col-left {
-                            border-right: 1px solid var(--border-color) !important;
-                            padding-right: 24px !important;
-                        }
-                        #tab-settings .col-right {
-                            padding-left: 24px !important;
-                        }
+                    .subtab-btn:hover {
+                        background: var(--primary-glow) !important;
+                        color: var(--primary) !important;
                     }
-                    @media (max-width: 750px) {
-                        #tab-settings .col-flex-6 {
-                            width: 100% !important;
+                    .subtab-btn.active {
+                        background: var(--primary) !important;
+                        color: #ffffff !important;
+                        box-shadow: 0 4px 12px rgba(0, 139, 201, 0.15) !important;
+                    }
+                    
+                    .subtab-panel {
+                        display: none;
+                        width: 100%;
+                    }
+                    .subtab-panel.active {
+                        display: block;
+                    }
+
+                    .subtab-panel-title {
+                        font-size: 12px !important;
+                        font-weight: 800 !important;
+                        text-transform: uppercase !important;
+                        letter-spacing: 1px !important;
+                        color: var(--primary) !important;
+                        margin-bottom: 20px !important;
+                        border-bottom: 1px solid var(--primary-glow) !important;
+                        padding-bottom: 8px !important;
+                        text-align: left !important;
+                    }
+
+                    .btn-modern-settings {
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        height: 42px !important;
+                        padding: 0 20px !important;
+                        border-radius: 10px !important;
+                        font-size: 13px !important;
+                        font-weight: 700 !important;
+                        gap: 8px !important;
+                        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                        border: 1px solid transparent !important;
+                        cursor: pointer !important;
+                        text-decoration: none !important;
+                        width: 100% !important;
+                    }
+                    .btn-modern-settings.btn-save {
+                        background: var(--primary) !important;
+                        color: #ffffff !important;
+                        box-shadow: 0 4px 12px rgba(0, 139, 201, 0.2) !important;
+                    }
+                    .btn-modern-settings.btn-save:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 6px 16px rgba(0, 139, 201, 0.3) !important;
+                    }
+                    .btn-modern-settings.btn-test {
+                        background: rgba(16, 185, 129, 0.08) !important;
+                        color: #10b981 !important;
+                        border-color: rgba(16, 185, 129, 0.15) !important;
+                    }
+                    .btn-modern-settings.btn-test:hover {
+                        background: #10b981 !important;
+                        color: #ffffff !important;
+                        transform: translateY(-1px);
+                    }
+
+                    .settings-form-grid {
+                        display: grid !important;
+                        grid-template-columns: repeat(2, 1fr) !important;
+                        gap: 20px !important;
+                    }
+                    .settings-form-full {
+                        grid-column: span 2 !important;
+                    }
+                    @media (max-width: 768px) {
+                        .settings-form-grid {
+                            grid-template-columns: 1fr !important;
                         }
-                        #tab-settings .col-left {
-                            border-right: none !important;
-                            padding-right: 12px !important;
-                            margin-bottom: 24px;
+                        .settings-form-full {
+                            grid-column: span 1 !important;
                         }
                     }
                 </style>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fa fa-sliders"></i> <?= ($langid == 'id') ? 'Pengaturan & Backup' : 'Settings & Backup' ?></h3>
+                <div class="card" style="box-shadow: var(--shadow-card); border-radius: var(--radius); border: 1px solid var(--border-color);">
+                    <div class="card-header" style="padding: 16px 24px !important;">
+                        <h3 class="card-title" style="margin: 0;"><i class="fa fa-sliders"></i> <?= ($langid == 'id') ? 'Pengaturan & Backup' : 'Settings & Backup' ?></h3>
                     </div>
-                    <div class="card-body">
-                        <div class="row-flex">
-                            <!-- Left Column: Bot Settings, Test Bot, and Backup Data -->
-                            <div class="col-flex-6 col-left">
-                                
-                                <!-- Telegram Bot Settings -->
-                                <form method="post" action="" autocomplete="off" style="margin-bottom: 24px;">
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="action" value="save_settings" />
-                                    <!-- Preserve other settings when saving telegram bot -->
-                                    <input type="hidden" name="portal_title" value="<?= htmlspecialchars($portal_title) ?>" />
-                                    <input type="hidden" name="portal_logo_url" value="<?= htmlspecialchars($portal_logo_url) ?>" />
-                                    <input type="hidden" name="portal_accent_color" value="<?= htmlspecialchars($portal_accent_color) ?>" />
-                                    <input type="hidden" name="portal_support_wa" value="<?= htmlspecialchars($portal_support_wa) ?>" />
-                                    <input type="hidden" name="portal_support_telegram" value="<?= htmlspecialchars($portal_support_telegram) ?>" />
-                                    <input type="hidden" name="portal_support_email" value="<?= htmlspecialchars($portal_support_email) ?>" />
-                                    <input type="hidden" name="portal_office_address" value="<?= htmlspecialchars($portal_office_address) ?>" />
-                                    <input type="hidden" name="portal_operational_hours" value="<?= htmlspecialchars($portal_operational_hours) ?>" />
-                                    <input type="hidden" name="log_retention_days" value="<?= $log_retention_days ?>" />
-                                    
-                                    <h4 style="margin-top: 0; margin-bottom: 16px; font-weight: 700; font-size: 14px; color: var(--text-bright); display: flex; align-items: center; gap: 8px;">
-                                        <i class="fa fa-paper-plane" style="color: #0088cc;"></i> Telegram Bot
-                                    </h4>
-                                    <div class="form-group">
-                                        <label for="telegram_bot_token">Bot Token</label>
-                                        <input class="form-control" type="text" id="telegram_bot_token" name="telegram_bot_token" value="<?= htmlspecialchars($telegram_bot_token) ?>" placeholder="123456789:ABCdef..."/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="telegram_chat_id">Chat ID</label>
-                                        <input class="form-control" type="text" id="telegram_chat_id" name="telegram_chat_id" value="<?= htmlspecialchars($telegram_chat_id) ?>" placeholder="987654321"/>
-                                    </div>
-                                    <div class="mt-hint" style="margin-bottom: 16px;">
-                                        Buat bot via <a href="https://t.me/BotFather" target="_blank">@BotFather</a> · Chat ID via <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a>
-                                    </div>
-                                    <button type="submit" class="btn bg-primary" style="margin: 0; width: 100%; height: 38px; justify-content: center;">
-                                        <i class="fa fa-save"></i> Simpan Pengaturan Bot
-                                    </button>
-                                </form>
-                                
-                                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 24px 0;">
-                                
-                                <!-- Test Notification -->
-                                <?php if (!empty($telegram_bot_token) && !empty($telegram_chat_id)): ?>
-                                    <div style="margin-bottom: 24px;">
-                                        <h4 style="margin-top: 0; margin-bottom: 12px; font-weight: 700; font-size: 14px; color: var(--text-bright); display: flex; align-items: center; gap: 8px;">
-                                            <i class="fa fa-send" style="color: #219653;"></i> Test Notifikasi
-                                        </h4>
-                                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Kirim pesan uji coba ke Telegram Anda untuk memastikan kredensial bot sudah benar.</p>
-                                        <button type="submit" form="testTelegramForm" class="btn bg-green" style="margin: 0; width: 100%; height: 38px; justify-content: center;">
-                                            <i class="fa fa-paper-plane"></i> Kirim Test ke Telegram
-                                        </button>
-                                    </div>
-                                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 24px 0;">
-                                <?php endif; ?>
-                                
-                                <!-- Backup Data -->
-                                <div style="flex: 1; display: flex; flex-direction: column;">
-                                    <h4 style="margin-top: 0; margin-bottom: 12px; font-weight: 700; font-size: 14px; color: var(--text-bright); display: flex; align-items: center; gap: 8px;">
-                                        <i class="fa fa-download" style="color: var(--primary);"></i> Backup Data
-                                    </h4>
-                                    <div class="mt-info-box" style="margin-bottom: 16px; flex: 1;">
-                                        <strong>Isi File Backup:</strong>
-                                        <ul>
-                                            <li><code>.env</code> — Kredensial API</li>
-                                            <li><code>data/database.php</code> — Sesi & Admin</li>
-                                            <li><code>voucher/*.json</code> — Log Transaksi</li>
-                                        </ul>
-                                        <em style="display:block; margin-top:6px;">* Format TAR jika ZipArchive tidak aktif.</em>
-                                    </div>
-                                    <button type="submit" form="backupForm" class="btn bg-primary" style="margin: 0; width: 100%; height: 38px; justify-content: center;">
-                                        <i class="fa fa-file-archive-o"></i> Buat & Unduh Backup
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Right Column: Portal Pelanggan & Log Retention -->
-                            <div class="col-flex-6 col-right">
-                                <!-- Portal Customization Settings -->
-                                <form method="post" action="" autocomplete="off" style="margin-bottom: 24px;">
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="action" value="save_settings" />
-                                    <!-- Preserve other settings when saving portal settings -->
-                                    <input type="hidden" name="telegram_bot_token" value="<?= htmlspecialchars($telegram_bot_token) ?>" />
-                                    <input type="hidden" name="telegram_chat_id" value="<?= htmlspecialchars($telegram_chat_id) ?>" />
-                                    <input type="hidden" name="log_retention_days" value="<?= $log_retention_days ?>" />
-                                    
-                                    <h4 style="margin-top: 0; margin-bottom: 16px; font-weight: 700; font-size: 14px; color: var(--text-bright); display: flex; align-items: center; gap: 8px;">
-                                        <i class="fa fa-paint-brush" style="color: var(--primary);"></i> Portal Pelanggan
-                                    </h4>
+                    <div class="card-body" style="padding: 24px !important;">
+                        
+                        <!-- Segmented local sub-tabs navigation -->
+                        <div class="settings-subtabs-nav">
+                            <button type="button" class="subtab-btn active" onclick="openSubTab('subtab-portal', this)">
+                                <i class="fa fa-paint-brush"></i> <?= ($langid == 'id') ? 'Portal Pelanggan' : 'Customer Portal' ?>
+                            </button>
+                            <button type="button" class="subtab-btn" onclick="openSubTab('subtab-telegram', this)">
+                                <i class="fa fa-paper-plane"></i> <?= ($langid == 'id') ? 'Telegram & Retensi' : 'Telegram & Retention' ?>
+                            </button>
+                            <button type="button" class="subtab-btn" onclick="openSubTab('subtab-backup', this)">
+                                <i class="fa fa-file-archive-o"></i> Backup Data
+                            </button>
+                        </div>
+
+                        <!-- Subtab 1: Portal Pelanggan -->
+                        <div id="subtab-portal" class="subtab-panel active">
+                            <form method="post" action="" autocomplete="off">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="action" value="save_settings" />
+                                <input type="hidden" name="telegram_bot_token" value="<?= htmlspecialchars($telegram_bot_token) ?>" />
+                                <input type="hidden" name="telegram_chat_id" value="<?= htmlspecialchars($telegram_chat_id) ?>" />
+                                <input type="hidden" name="log_retention_days" value="<?= $log_retention_days ?>" />
+
+                                <div class="subtab-panel-title">Tampilan & Informasi Kontak Portal</div>
+
+                                <div class="settings-form-grid">
                                     <div class="form-group">
                                         <label for="portal_title">Judul Portal</label>
-                                        <input class="form-control" type="text" id="portal_title" name="portal_title" value="<?= htmlspecialchars($portal_title) ?>" required/>
+                                        <input class="form-control" type="text" id="portal_title" name="portal_title" value="<?= htmlspecialchars($portal_title) ?>" required placeholder="Masukkan judul portal"/>
                                     </div>
+                                    
                                     <div class="form-group">
                                         <label for="portal_logo_url">URL Logo (Opsional)</label>
-                                        <input class="form-control" type="text" id="portal_logo_url" name="portal_logo_url" value="<?= htmlspecialchars($portal_logo_url) ?>" placeholder="https://..."/>
+                                        <input class="form-control" type="text" id="portal_logo_url" name="portal_logo_url" value="<?= htmlspecialchars($portal_logo_url) ?>" placeholder="https://domain.com/logo.png"/>
                                     </div>
+
                                     <div class="form-group">
                                         <label>Warna Aksen</label>
                                         <div class="mt-color-row">
@@ -1333,71 +1370,177 @@ uasort($profileSales, function($a, $b) {
                                             <span><?= htmlspecialchars($portal_accent_color) ?></span>
                                         </div>
                                     </div>
+
                                     <div class="form-group">
                                         <label for="portal_support_wa">WhatsApp Support</label>
-                                        <input class="form-control" type="text" id="portal_support_wa" name="portal_support_wa" value="<?= htmlspecialchars($portal_support_wa) ?>" placeholder="+628123456789"/>
+                                        <input class="form-control" type="text" id="portal_support_wa" name="portal_support_wa" value="<?= htmlspecialchars($portal_support_wa) ?>" placeholder="Contoh: +628123456789"/>
                                     </div>
-                                    <div class="form-group" style="margin-bottom: 16px;">
-                                         <label for="portal_support_telegram">Telegram Support</label>
-                                         <input class="form-control" type="text" id="portal_support_telegram" name="portal_support_telegram" value="<?= htmlspecialchars($portal_support_telegram) ?>" placeholder="username (tanpa @)"/>
-                                     </div>
-                                     <div class="form-group">
-                                         <label for="portal_support_email">Email Resmi Support</label>
-                                         <input class="form-control" type="email" id="portal_support_email" name="portal_support_email" value="<?= htmlspecialchars($portal_support_email) ?>" placeholder="support@domain.my.id"/>
-                                     </div>
-                                     <div class="form-group">
-                                         <label for="portal_operational_hours">Jam Operasional Support</label>
-                                         <input class="form-control" type="text" id="portal_operational_hours" name="portal_operational_hours" value="<?= htmlspecialchars($portal_operational_hours) ?>" placeholder="Setiap Hari: 08.00 WIB - 22.00 WIB"/>
-                                     </div>
-                                     <div class="form-group" style="margin-bottom: 20px;">
-                                         <label for="portal_office_address">Alamat Kantor</label>
-                                         <textarea class="form-control" id="portal_office_address" name="portal_office_address" rows="3" style="resize: vertical; min-height: 80px;" placeholder="Alamat Kantor Pusat / Cabang..."><?= htmlspecialchars($portal_office_address) ?></textarea>
-                                     </div>
-                                     <button type="submit" class="btn bg-primary" style="margin: 0; width: 100%; height: 38px; justify-content: center;">
-                                        <i class="fa fa-save"></i> Simpan Pengaturan Portal
-                                    </button>
-                                </form>
-                                
-                                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 24px 0;">
-                                
-                                <!-- Log Retention -->
-                                <form method="post" action="" style="margin: 0;">
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="action" value="save_settings" />
-                                    <!-- Preserve other settings when saving retention -->
-                                    <input type="hidden" name="telegram_bot_token" value="<?= htmlspecialchars($telegram_bot_token) ?>" />
-                                    <input type="hidden" name="telegram_chat_id" value="<?= htmlspecialchars($telegram_chat_id) ?>" />
-                                    <input type="hidden" name="portal_title" value="<?= htmlspecialchars($portal_title) ?>" />
-                                    <input type="hidden" name="portal_logo_url" value="<?= htmlspecialchars($portal_logo_url) ?>" />
-                                    <input type="hidden" name="portal_accent_color" value="<?= htmlspecialchars($portal_accent_color) ?>" />
-                                    <input type="hidden" name="portal_support_wa" value="<?= htmlspecialchars($portal_support_wa) ?>" />
-                                    <input type="hidden" name="portal_support_telegram" value="<?= htmlspecialchars($portal_support_telegram) ?>" />
-                                    <input type="hidden" name="portal_support_email" value="<?= htmlspecialchars($portal_support_email) ?>" />
-                                    <input type="hidden" name="portal_office_address" value="<?= htmlspecialchars($portal_office_address) ?>" />
-                                    <input type="hidden" name="portal_operational_hours" value="<?= htmlspecialchars($portal_operational_hours) ?>" />
-                                    
-                                    <h4 style="margin-top: 0; margin-bottom: 16px; font-weight: 700; font-size: 14px; color: var(--text-bright); display: flex; align-items: center; gap: 8px;">
-                                        <i class="fa fa-clock-o" style="color: #10b981;"></i> Retensi Log
-                                    </h4>
+
                                     <div class="form-group">
+                                        <label for="portal_support_telegram">Telegram Support</label>
+                                        <input class="form-control" type="text" id="portal_support_telegram" name="portal_support_telegram" value="<?= htmlspecialchars($portal_support_telegram) ?>" placeholder="Username Telegram tanpa @"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="portal_support_email">Email Resmi Support</label>
+                                        <input class="form-control" type="email" id="portal_support_email" name="portal_support_email" value="<?= htmlspecialchars($portal_support_email) ?>" placeholder="support@domain.my.id"/>
+                                    </div>
+
+                                    <div class="form-group settings-form-full">
+                                        <label for="portal_operational_hours">Jam Operasional Support</label>
+                                        <input class="form-control" type="text" id="portal_operational_hours" name="portal_operational_hours" value="<?= htmlspecialchars($portal_operational_hours) ?>" placeholder="Contoh: Setiap Hari: 08.00 WIB - 22.00 WIB"/>
+                                    </div>
+
+                                    <div class="form-group settings-form-full">
+                                        <label for="portal_office_address">Alamat Kantor</label>
+                                        <textarea class="form-control" id="portal_office_address" name="portal_office_address" rows="3" style="resize: vertical; min-height: 80px;" placeholder="Tuliskan Alamat Kantor Pusat / Cabang..."><?= htmlspecialchars($portal_office_address) ?></textarea>
+                                    </div>
+
+                                    <div class="settings-form-full">
+                                        <button type="submit" class="btn-modern-settings btn-save">
+                                            <i class="fa fa-save"></i> Simpan Pengaturan Portal
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Subtab 2: Telegram Bot & Retensi Log -->
+                        <div id="subtab-telegram" class="subtab-panel">
+                            
+                            <!-- Bot Credentials Form -->
+                            <form method="post" action="" autocomplete="off" style="margin-bottom: 24px;">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="action" value="save_settings" />
+                                <input type="hidden" name="portal_title" value="<?= htmlspecialchars($portal_title) ?>" />
+                                <input type="hidden" name="portal_logo_url" value="<?= htmlspecialchars($portal_logo_url) ?>" />
+                                <input type="hidden" name="portal_accent_color" value="<?= htmlspecialchars($portal_accent_color) ?>" />
+                                <input type="hidden" name="portal_support_wa" value="<?= htmlspecialchars($portal_support_wa) ?>" />
+                                <input type="hidden" name="portal_support_telegram" value="<?= htmlspecialchars($portal_support_telegram) ?>" />
+                                <input type="hidden" name="portal_support_email" value="<?= htmlspecialchars($portal_support_email) ?>" />
+                                <input type="hidden" name="portal_office_address" value="<?= htmlspecialchars($portal_office_address) ?>" />
+                                <input type="hidden" name="portal_operational_hours" value="<?= htmlspecialchars($portal_operational_hours) ?>" />
+                                <input type="hidden" name="log_retention_days" value="<?= $log_retention_days ?>" />
+
+                                <div class="subtab-panel-title">Pengaturan Bot Notifikasi</div>
+
+                                <div class="settings-form-grid">
+                                    <div class="form-group">
+                                        <label for="telegram_bot_token">Bot Token</label>
+                                        <input class="form-control" type="text" id="telegram_bot_token" name="telegram_bot_token" value="<?= htmlspecialchars($telegram_bot_token) ?>" placeholder="123456789:ABCdef..."/>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="telegram_chat_id">Chat ID</label>
+                                        <input class="form-control" type="text" id="telegram_chat_id" name="telegram_chat_id" value="<?= htmlspecialchars($telegram_chat_id) ?>" placeholder="987654321"/>
+                                    </div>
+
+                                    <div class="settings-form-full mt-hint" style="margin-top: -8px; margin-bottom: 16px;">
+                                        Tips: Buat bot via <a href="https://t.me/BotFather" target="_blank" style="font-weight: 700; color: var(--primary);">@BotFather</a> · Dapatkan Chat ID Anda via <a href="https://t.me/userinfobot" target="_blank" style="font-weight: 700; color: var(--primary);">@userinfobot</a>
+                                    </div>
+
+                                    <div class="settings-form-full">
+                                        <button type="submit" class="btn-modern-settings btn-save">
+                                            <i class="fa fa-save"></i> Simpan Pengaturan Bot
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Test Telegram Notification -->
+                            <?php if (!empty($telegram_bot_token) && !empty($telegram_chat_id)): ?>
+                                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 28px 0;">
+                                <div style="margin-bottom: 24px;">
+                                    <div class="subtab-panel-title" style="color: #10b981 !important; border-bottom-color: rgba(16,185,129,0.15) !important;">Uji Coba Notifikasi</div>
+                                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px; text-align: left;">Kirim pesan uji coba ke Telegram Anda untuk memastikan kredensial bot Telegram di atas sudah benar.</p>
+                                    <button type="submit" form="testTelegramForm" class="btn-modern-settings btn-test">
+                                        <i class="fa fa-paper-plane"></i> Kirim Test Notifikasi ke Telegram
+                                    </button>
+                                </div>
+                            <?php endif; ?>
+
+                            <!-- Log Retention Form -->
+                            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 28px 0;">
+                            <form method="post" action="" style="margin: 0;">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="action" value="save_settings" />
+                                <input type="hidden" name="telegram_bot_token" value="<?= htmlspecialchars($telegram_bot_token) ?>" />
+                                <input type="hidden" name="telegram_chat_id" value="<?= htmlspecialchars($telegram_chat_id) ?>" />
+                                <input type="hidden" name="portal_title" value="<?= htmlspecialchars($portal_title) ?>" />
+                                <input type="hidden" name="portal_logo_url" value="<?= htmlspecialchars($portal_logo_url) ?>" />
+                                <input type="hidden" name="portal_accent_color" value="<?= htmlspecialchars($portal_accent_color) ?>" />
+                                <input type="hidden" name="portal_support_wa" value="<?= htmlspecialchars($portal_support_wa) ?>" />
+                                <input type="hidden" name="portal_support_telegram" value="<?= htmlspecialchars($portal_support_telegram) ?>" />
+                                <input type="hidden" name="portal_support_email" value="<?= htmlspecialchars($portal_support_email) ?>" />
+                                <input type="hidden" name="portal_office_address" value="<?= htmlspecialchars($portal_office_address) ?>" />
+                                <input type="hidden" name="portal_operational_hours" value="<?= htmlspecialchars($portal_operational_hours) ?>" />
+                                
+                                <div class="subtab-panel-title">Pengaturan Masa Simpan Log</div>
+                                
+                                <div class="settings-form-grid">
+                                    <div class="form-group settings-form-full">
                                         <label for="log_retention_days">Masa Simpan Berkas Transaksi</label>
-                                        <select class="form-control" id="log_retention_days" name="log_retention_days" style="width: 100%;">
+                                        <select class="form-control" id="log_retention_days" name="log_retention_days">
                                             <option value="1" <?= $log_retention_days === 1 ? 'selected' : '' ?>>1 Hari</option>
                                             <option value="2" <?= $log_retention_days === 2 ? 'selected' : '' ?>>2 Hari (Default)</option>
                                             <option value="7" <?= $log_retention_days === 7 ? 'selected' : '' ?>>7 Hari</option>
                                             <option value="30" <?= $log_retention_days === 30 ? 'selected' : '' ?>>30 Hari</option>
                                             <option value="0" <?= $log_retention_days === 0 ? 'selected' : '' ?>>Simpan Selamanya</option>
                                         </select>
+                                        <div class="mt-hint">Berkas log lama di atas batas masa simpan akan dibersihkan sistem secara otomatis.</div>
                                     </div>
-                                    <div class="mt-hint" style="margin-bottom: 16px;">Berkas lama dihapus otomatis berdasarkan durasi di atas.</div>
-                                    <button type="submit" class="btn bg-primary" style="margin: 0; width: 100%; height: 38px; justify-content: center;">
-                                        <i class="fa fa-save"></i> Simpan Retensi Log
-                                    </button>
-                                </form>
-                            </div>
+                                    
+                                    <div class="settings-form-full">
+                                        <button type="submit" class="btn-modern-settings btn-save">
+                                            <i class="fa fa-save"></i> Simpan Retensi Log
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
+
+                        <!-- Subtab 3: Backup Data -->
+                        <div id="subtab-backup" class="subtab-panel">
+                            <div class="subtab-panel-title">MikhPay System Backup</div>
+                            
+                            <div class="mt-info-box">
+                                <strong style="font-size: 14px;"><i class="fa fa-info-circle" style="color: var(--primary);"></i> Isi File Cadangan (Backup):</strong>
+                                <ul style="margin-top: 10px;">
+                                    <li style="margin-bottom: 6px;"><code>.env</code> — Berkas konfigurasi kredensial API & Kunci sistem.</li>
+                                    <li style="margin-bottom: 6px;"><code>data/database.php</code> — Kredensial Admin & Informasi sesi router MikroTik.</li>
+                                    <li style="margin-bottom: 6px;"><code>voucher/*.json</code> — Log transaksi logis & arsip voucher billing.</li>
+                                </ul>
+                                <em style="display:block; margin-top:10px; font-weight: 600; color: var(--text-muted);">* Sistem akan menggunakan format cadangan TAR jika modul php-ZipArchive tidak aktif di server.</em>
+                            </div>
+                            
+                            <button type="submit" form="backupForm" class="btn-modern-settings btn-save" style="max-width: 320px; margin-top: 10px;">
+                                <i class="fa fa-file-archive-o"></i> Buat & Unduh Berkas Backup
+                            </button>
+                        </div>
+
                     </div>
                 </div>
+                
+                <script type="text/javascript">
+                    function openSubTab(tabId, btn) {
+                        // Hide all subtab panels
+                        var panels = document.querySelectorAll('.subtab-panel');
+                        for (var i = 0; i < panels.length; i++) {
+                            panels[i].style.display = 'none';
+                        }
+                        // Show target panel
+                        document.getElementById(tabId).style.display = 'block';
+
+                        // Deactivate all button highlights
+                        var buttons = document.querySelectorAll('.subtab-btn');
+                        for (var i = 0; i < buttons.length; i++) {
+                            buttons[i].classList.remove('active');
+                        }
+                        // Highlight current button
+                        btn.classList.add('active');
+                    }
+                </script>
+            </div>
             </div>
         </div>
 
