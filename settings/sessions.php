@@ -76,71 +76,245 @@ if (!isset($_SESSION["mikhmon"])) {
                 <h3 class="card-title"><i class="fa fa-server"></i> <?= $_router_list ?></h3>
               </div>
             <div class="card-body">
-            <div class="row">
+            <style>
+            .router-grid-container {
+                display: grid !important;
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+                gap: 20px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .session-card-modern {
+                background: var(--bg-card, #ffffff) !important;
+                border: 1px solid var(--border-color) !important;
+                border-radius: 16px !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+                padding: 20px !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                box-sizing: border-box !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 16px !important;
+            }
+            .session-card-modern:hover {
+                border-color: var(--primary) !important;
+                box-shadow: 0 10px 25px rgba(0, 139, 201, 0.08) !important;
+                transform: translateY(-3px) !important;
+            }
+            .session-card-header {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: flex-start !important;
+                width: 100% !important;
+            }
+            .session-card-meta {
+                display: flex !important;
+                align-items: center !important;
+                gap: 12px !important;
+            }
+            .session-icon-avatar {
+                width: 44px !important;
+                height: 44px !important;
+                border-radius: 12px !important;
+                background: var(--primary-glow) !important;
+                color: var(--primary) !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 18px !important;
+            }
+            .session-title-details {
+                text-align: left !important;
+            }
+            .session-title-details h4 {
+                margin: 0 0 4px 0 !important;
+                font-size: 15px !important;
+                font-weight: 800 !important;
+                color: var(--text-main) !important;
+            }
+            .session-name-tag {
+                font-size: 11.5px !important;
+                color: var(--text-muted) !important;
+                display: block !important;
+            }
+            .session-status-badge {
+                display: inline-flex !important;
+            }
+            .status-indicator {
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 6px !important;
+                font-size: 10.5px !important;
+                font-weight: 800 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
+                padding: 4px 10px !important;
+                border-radius: 20px !important;
+                background: rgba(148, 163, 184, 0.08) !important;
+                color: var(--text-muted) !important;
+            }
+            .session-card-body {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 10px !important;
+                background: var(--background-alt, #F8FAFC) !important;
+                border-radius: 12px !important;
+                padding: 14px !important;
+                box-sizing: border-box !important;
+            }
+            .metric-pill {
+                display: flex !important;
+                align-items: center !important;
+                gap: 10px !important;
+                width: 100% !important;
+            }
+            .metric-pill-icon {
+                width: 28px !important;
+                height: 28px !important;
+                border-radius: 8px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 12px !important;
+            }
+            .metric-pill-icon.cpu-icon {
+                background: rgba(14, 165, 233, 0.08) !important;
+                color: #0ea5e9 !important;
+            }
+            .metric-pill-icon.users-icon {
+                background: rgba(139, 92, 246, 0.08) !important;
+                color: #8b5cf6 !important;
+            }
+            .metric-pill-icon.uptime-icon {
+                background: rgba(245, 158, 11, 0.08) !important;
+                color: #f59e0b !important;
+            }
+            .metric-pill-info {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                flex: 1 !important;
+                font-size: 12.5px !important;
+            }
+            .metric-pill-label {
+                color: var(--text-muted) !important;
+                font-weight: 600 !important;
+            }
+            .metric-pill-info strong {
+                color: var(--text-main) !important;
+                font-weight: 700 !important;
+            }
+            .session-card-footer {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            .session-card-footer .action-btn {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                height: 36px !important;
+                border-radius: 8px !important;
+                font-size: 12px !important;
+                font-weight: 700 !important;
+                gap: 6px !important;
+                text-decoration: none !important;
+                transition: all 0.2s ease !important;
+                border: 1px solid transparent !important;
+                cursor: pointer !important;
+            }
+            .session-card-footer .action-btn.btn-open {
+                background: var(--primary) !important;
+                color: #ffffff !important;
+                box-shadow: 0 2px 6px rgba(0, 139, 201, 0.15) !important;
+            }
+            .session-card-footer .action-btn.btn-open:hover {
+                opacity: 0.95;
+                transform: translateY(-1px);
+            }
+            .session-card-footer .action-btn.btn-edit {
+                background: rgba(14, 165, 233, 0.08) !important;
+                color: #0ea5e9 !important;
+                border-color: rgba(14, 165, 233, 0.15) !important;
+            }
+            .session-card-footer .action-btn.btn-edit:hover {
+                background: #0ea5e9 !important;
+                color: #ffffff !important;
+            }
+            .session-card-footer .action-btn.btn-delete {
+                background: rgba(239, 68, 68, 0.08) !important;
+                color: #ef4444 !important;
+                border-color: rgba(239, 68, 68, 0.15) !important;
+            }
+            .session-card-footer .action-btn.btn-delete:hover {
+                background: #ef4444 !important;
+                color: #ffffff !important;
+            }
+            </style>
+
+            <div class="router-grid-container">
               <?php
               $dbSessions = new \App\Models\RouterSession();
               $sessionsList = $dbSessions->getAll();
               foreach ($sessionsList as $sessionData) {
                 $value = $sessionData['session_name'];
                 ?>
-                    <div class="col-12">
-                        <div class="box box-bordered session-card" data-session="<?= $value; ?>" style="padding: 24px !important; border-radius: 16px !important; border: 1px solid var(--border-color) !important; background: var(--bg-card, #ffffff) !important; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02) !important;">
-                            <div class="box-group" style="display: flex; gap: 20px; align-items: flex-start;">
-                              
-                              <div class="box-group-icon" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-glow) 100%) !important; color: #ffffff !important; width: 48px !important; height: 48px !important; border-radius: 12px !important; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0, 139, 201, 0.15) !important;">
-                                <span class="connect pointer" id="<?= $value; ?>" style="color: #ffffff !important;">
-                                  <i class="fa fa-server" style="font-size: 20px;"></i>
-                                </span>
-                              </div>
-                            
-                              <div class="box-group-area" style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
-                                    <strong style="font-size: 16px; color: var(--text-main); font-weight: 800;"><?= explode('%', $data[$value][4])[1] ?: $value; ?></strong>
-                                    
-                                    <span class="status-indicator-pill" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; background: rgba(156, 163, 175, 0.08); color: #6b7280; transition: all 0.3s ease;">
-                                        <span class="dot-pulse" style="width: 7px; height: 7px; border-radius: 50%; background: #9CA3AF; display: inline-block;"></span>
-                                        <span class="status-text">Checking</span>
-                                    </span>
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px; text-align: left;">
-                                  Sesi: <span style="font-family: monospace; font-weight: bold; background: rgba(148, 163, 184, 0.08); padding: 2px 6px; border-radius: 6px; color: var(--text-main);"><?= $value; ?></span>
-                                </div>
-                                
-                                <!-- Metrics grid as mini cards -->
-                                <div class="session-metrics" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px;">
-                                    <div style="font-size: 11px; text-align: center; background: rgba(148, 163, 184, 0.04); border: 1px solid var(--border-color); padding: 10px 6px; border-radius: 10px;">
-                                        <span style="display: block; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">CPU Load</span>
-                                        <strong class="metric-cpu" style="color: var(--text-main); font-size: 13px;">-</strong>
-                                    </div>
-                                    <div style="font-size: 11px; text-align: center; background: rgba(148, 163, 184, 0.04); border: 1px solid var(--border-color); padding: 10px 6px; border-radius: 10px;">
-                                        <span style="display: block; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Active Users</span>
-                                        <strong class="metric-active" style="color: var(--text-main); font-size: 13px;">-</strong>
-                                    </div>
-                                    <div style="font-size: 11px; text-align: center; background: rgba(148, 163, 184, 0.04); border: 1px solid var(--border-color); padding: 10px 6px; border-radius: 10px;">
-                                        <span style="display: block; color: var(--text-muted); margin-bottom: 4px; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Uptime</span>
-                                        <strong class="metric-uptime" style="color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">-</strong>
-                                    </div>
-                                </div>
-
-                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 12px; font-weight: bold; text-align: center;">
-                                  <div>
-                                    <span class="connect pointer action-link-btn btn-open" id="<?= $value; ?>" style="width: 100%;"><i class="fa fa-external-link"></i> <?= $_open ?></span>
-                                  </div>
-                                  <div>
-                                    <a class="action-link-btn btn-edit" href="./admin.php?id=settings&session=<?= $value; ?>" style="width: 100%;"><i class="fa fa-edit"></i> <?= $_edit ?></a>
-                                  </div>
-                                  <div>
-                                    <a class="action-link-btn btn-delete" href="javascript:void(0)" onclick="if(confirm('Are you sure to delete data <?= $value; ?>?')){loadpage('./admin.php?id=remove-session&session=<?= $value; ?>')}" style="width: 100%;"><i class="fa fa-remove"></i> <?= $_delete ?></a>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                        </div>
+                <div class="session-card-modern session-card" data-session="<?= $value; ?>">
+                  <div class="session-card-header">
+                    <div class="session-card-meta">
+                      <div class="session-icon-avatar">
+                        <i class="fa fa-server"></i>
+                      </div>
+                      <div class="session-title-details">
+                        <h4><?= htmlspecialchars($sessionData['hotspot_name'] ?: $value); ?></h4>
+                        <span class="session-name-tag">Sesi: <strong><?= htmlspecialchars($value); ?></strong></span>
+                      </div>
                     </div>
+                    <div class="session-status-badge">
+                      <span class="status-indicator">
+                        <span class="dot-pulse" style="width: 8px; height: 8px; border-radius: 50%; background: #9CA3AF; display: inline-block;"></span>
+                        <span class="status-text">Checking...</span>
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div class="session-card-body">
+                    <div class="metric-pill">
+                      <div class="metric-pill-icon cpu-icon"><i class="fa fa-microchip"></i></div>
+                      <div class="metric-pill-info">
+                        <span class="metric-pill-label">CPU Load</span>
+                        <strong class="metric-cpu">-</strong>
+                      </div>
+                    </div>
+                    
+                    <div class="metric-pill">
+                      <div class="metric-pill-icon users-icon"><i class="fa fa-users"></i></div>
+                      <div class="metric-pill-info">
+                        <span class="metric-pill-label">Active Users</span>
+                        <strong class="metric-active">-</strong>
+                      </div>
+                    </div>
+                    
+                    <div class="metric-pill">
+                      <div class="metric-pill-icon uptime-icon"><i class="fa fa-clock-o"></i></div>
+                      <div class="metric-pill-info">
+                        <span class="metric-pill-label">Uptime</span>
+                        <strong class="metric-uptime">-</strong>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="session-card-footer">
+                    <span class="connect pointer action-btn btn-open" id="<?= $value; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></span>
+                    <a class="action-btn btn-edit" href="./admin.php?id=settings&session=<?= $value; ?>"><i class="fa fa-edit"></i> <?= $_edit ?></a>
+                    <a class="action-btn btn-delete" href="javascript:void(0)" onclick="if(confirm('Are you sure to delete data <?= $value; ?>?')){loadpage('./admin.php?id=remove-session&session=<?= $value; ?>')}"><i class="fa fa-remove"></i> <?= $_delete ?></a>
+                  </div>
+                </div>
               <?php
               }
               ?>
-              </div>
+            </div>
             </div>
           </div>
         </div>
@@ -420,7 +594,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // Perform status checking for each session card
     document.querySelectorAll('.session-card').forEach(function(card) {
         var sessionName = card.getAttribute('data-session');
-        var pill = card.querySelector('.status-indicator-pill');
         var dot = card.querySelector('.dot-pulse');
         var statusText = card.querySelector('.status-text');
         var metricCpu = card.querySelector('.metric-cpu');
@@ -435,20 +608,18 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 dot.style.animation = "none";
                 if (data.status === "online") {
-                    pill.style.background = "rgba(16, 185, 129, 0.08)";
-                    pill.style.color = "#10B981";
-                    dot.style.background = "#10B981";
+                    dot.style.background = "#10B981"; // Emerald green
                     statusText.innerText = "Online";
+                    statusText.style.color = "#10B981";
                     
                     metricCpu.innerText = data.cpu;
                     metricActive.innerText = data.active_users + " / " + data.total_users;
                     metricUptime.innerText = data.uptime;
                     metricUptime.title = data.uptime;
                 } else {
-                    pill.style.background = "rgba(239, 68, 68, 0.08)";
-                    pill.style.color = "#EF4444";
-                    dot.style.background = "#EF4444";
+                    dot.style.background = "#EF4444"; // Red
                     statusText.innerText = "Offline";
+                    statusText.style.color = "#EF4444";
                     
                     metricCpu.innerText = "Offline";
                     metricActive.innerText = "Offline";
@@ -457,10 +628,9 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(err => {
                 dot.style.animation = "none";
-                pill.style.background = "rgba(239, 68, 68, 0.08)";
-                pill.style.color = "#EF4444";
                 dot.style.background = "#EF4444";
                 statusText.innerText = "Offline";
+                statusText.style.color = "#EF4444";
                 
                 metricCpu.innerText = "Error";
                 metricActive.innerText = "Error";
