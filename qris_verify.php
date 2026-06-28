@@ -125,6 +125,22 @@ if ($found_order_id) {
     } else {
         file_put_contents($dir . "trans-" . $found_order_id . ".json", json_encode($trans));
     }
+    
+    // Jika integrasi WebSocket diaktifkan, push notifikasi langsung ke browser pelanggan
+    if (!empty($ws_app_key)) {
+        triggerWebSocketPaidEvent(
+            $ws_app_id, 
+            $ws_app_key, 
+            $ws_app_secret, 
+            $ws_cluster, 
+            'order-' . $found_order_id, 
+            'paid', 
+            [
+                'status' => 'success',
+                'order_id' => $found_order_id
+            ]
+        );
+    }
 }
 
 echo json_encode([

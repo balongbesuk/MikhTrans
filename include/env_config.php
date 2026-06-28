@@ -138,6 +138,53 @@ if (!function_exists('sendTelegramNotification')) {
     }
 }
 
+// Helper untuk mengirim event asinkron ke Pusher / Soketi WebSocket
+if (!function_exists('triggerWebSocketPaidEvent')) {
+    function triggerWebSocketPaidEvent($app_id, $key, $secret, $cluster, $channel, $event, $data) {
+        $auth_version = '1.0';
+        $auth_key = $key;
+        $auth_timestamp = time();
+        
+        $body = json_encode([
+            'name' => $event,
+            'channel' => $channel,
+            'data' => json_encode($data)
+        ]);
+        
+        $body_md5 = md5($body);
+        $path = "/apps/{$app_id}/events";
+        
+        // Buat signature Pusher REST API
+        $params = "auth_key={$auth_key}&auth_timestamp={$auth_timestamp}&auth_version={$auth_version}&body_md5={$body_md5}";
+        $string_to_sign = "POST\n{$path}\n{$params}";
+        $auth_signature = hash_hmac('sha256', $string_to_sign, $secret);
+        
+        // Deteksi host WebSocket (Self-hosted Soketi atau official Cloud Pusher)
+        $ws_host = mikhmonEnv('WS_HOST') ?: "api-{$cluster}.pusher.com";
+        $ws_scheme = mikhmonEnv('WS_SCHEME') ?: "http";
+        $ws_port = mikhmonEnv('WS_PORT') ?: ($ws_scheme === 'https' ? '443' : '80');
+        
+        $url = "{$ws_scheme}://{$ws_host}:{$ws_port}{$path}?{$params}&auth_signature={$auth_signature}";
+        
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'header' => "Content-Type: application/json\r\n",
+                'content' => $body,
+                'timeout' => 5,
+                'ignore_errors' => true
+            ],
+            'ssl' => [
+                'verify_peer' => true,
+                'verify_peer_name' => true
+            ]
+        ]);
+        
+        $response = @file_get_contents($url, false, $context);
+        return $response;
+    }
+}
+
 // QRIS environment variables config overrides
 $mikhmon_api_key = mikhmonEnv('MIKHMON_API_KEY', "YOUR_MIKHMON_API_KEY_HERE");
 $qris_mode = filter_var(mikhmonEnv('QRIS_MODE', false), FILTER_VALIDATE_BOOLEAN);
