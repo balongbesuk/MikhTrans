@@ -8,6 +8,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Set timezone untuk menyinkronkan jam perbandingan dengan MikroTik
+$timezone = isset($_SESSION['timezone']) ? $_SESSION['timezone'] : 'Asia/Jakarta';
+date_default_timezone_set($timezone);
+
 header('Content-Type: application/json');
 
 // Proteksi akses: wajib login admin mikhmon

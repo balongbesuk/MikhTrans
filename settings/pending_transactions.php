@@ -9,6 +9,10 @@ if (!isset($_SESSION["mikhmon"])) {
     exit;
 }
 
+// Set timezone untuk menyinkronkan jam tampilan dengan MikroTik
+$timezone = isset($_SESSION['timezone']) ? $_SESSION['timezone'] : 'Asia/Jakarta';
+date_default_timezone_set($timezone);
+
 // CSRF check
 include_once('./include/csrf.php');
 

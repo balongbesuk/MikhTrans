@@ -8,6 +8,9 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Set timezone Asia/Jakarta agar catatan waktu lunas sinkron dengan MikroTik
+date_default_timezone_set('Asia/Jakarta');
+
 include_once(__DIR__ . '/include/config.php');
 include_once(__DIR__ . '/include/env_config.php');
 

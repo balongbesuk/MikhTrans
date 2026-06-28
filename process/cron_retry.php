@@ -9,6 +9,9 @@ if (php_sapi_name() === 'cli') {
     set_time_limit(0);
 }
 
+// Set timezone Asia/Jakarta agar catatan waktu lunas sinkron dengan MikroTik
+date_default_timezone_set('Asia/Jakarta');
+
 // Load config and dependencies
 require_once dirname(__FILE__) . '/../include/config.php';
 require_once dirname(__FILE__) . '/../lib/routeros_api.class.php';
