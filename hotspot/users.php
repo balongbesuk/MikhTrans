@@ -61,103 +61,185 @@ if (!isset($_SESSION["mikhmon"])) {
 }
 ?>
 
+<style>
+.filter-row-flex {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+    margin-bottom: 20px !important;
+    width: 100% !important;
+}
+.filter-inputs-group {
+    display: flex !important;
+    gap: 8px !important;
+    flex: 1 1 auto !important;
+    min-width: 300px !important;
+}
+.filter-actions-group {
+    display: flex !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+}
+.filter-control-modern {
+    height: 38px !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    background: var(--bg-card, #ffffff) !important;
+    color: var(--text-main) !important;
+    padding: 0 12px !important;
+    font-size: 13px !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
+    box-sizing: border-box !important;
+    flex: 1 !important;
+}
+.filter-control-modern:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary-glow) !important;
+}
+.btn-modern-filter-action {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 38px !important;
+    padding: 0 14px !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+}
+.btn-modern-filter-action.btn-accent {
+    background: var(--primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(0, 139, 201, 0.15) !important;
+}
+.btn-modern-filter-action.btn-accent:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
+.btn-modern-filter-action.btn-danger {
+    background: var(--danger) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.15) !important;
+}
+.btn-modern-filter-action.btn-danger:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
+.btn-modern-filter-action.btn-secondary {
+    background: rgba(148, 163, 184, 0.08) !important;
+    color: #475569 !important;
+    border: 1px solid rgba(148, 163, 184, 0.15) !important;
+}
+.btn-modern-filter-action.btn-secondary:hover {
+    background: rgba(148, 163, 184, 0.15) !important;
+    color: #1e293b !important;
+}
+.header-actions-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+</style>
+
 <div class="row">
 <div class="col-12">
-<div class="card">
-<div class="card-header">
-    <h3><i class="fa fa-users"></i> <?= $_users ?>
-      <span style="font-size: 14px">
-        <?php
-        if ($counttuser == 0) {
-          echo "<script>window.location='./?hotspot=users&profile=all&session=" . $session . "</script>";
-        } ?>
-         &nbsp; | &nbsp; <a href="./?hotspot-user=add&session=<?= $session; ?>" title="Add User"><i class="fa fa-user-plus"></i> <?= $_add ?></a>
-        &nbsp; | &nbsp; <a href="./?hotspot-user=generate&session=<?= $session; ?>" title="Generate User"><i class="fa fa-users"></i> <?= $_generate ?></a>
-         &nbsp; | &nbsp; <a href="<?= str_replace("=users", "=export-users", $url); ?>&export=script" title="Download User List as Mikrotik Script"><i class="fa fa-download"></i> Script</a>&nbsp; | &nbsp; <a href="<?= str_replace("=users", "=export-users", $url); ?>&export=csv" title="Download User List as CSV"><i class="fa fa-download"></i> CSV</a>
-        </span>  &nbsp;
-        <small id="loader" style="display: none;" ><i><i class='fa fa-circle-o-notch fa-spin'></i> <?= $_processing ?> </i></small>
-    </h3>
-    
-</div>
-<div class="card-body">
-  <div class="row">
-   <div class="col-6 pd-t-5 pd-b-5">
-  <div class="input-group">
-    <div class="input-group-4 col-box-4">
-      <input id="filterTable" type="text" style="padding:5.8px;" class="group-item group-item-l" placeholder="<?= $_search ?>">
+<div class="card" style="box-shadow: var(--shadow-card); border-radius: var(--radius); border: 1px solid var(--border-color);">
+<div class="card-header" style="padding: 16px 24px !important;">
+    <div class="header-actions-wrapper">
+        <h3 style="margin: 0;"><i class="fa fa-users"></i> <?= $_users ?>
+            <?php if ($counttuser == 0) {
+              echo "<script>window.location='./?hotspot=users&profile=all&session=" . $session . "</script>";
+            } ?>
+            <small id="loader" style="display: none;" ><i><i class='fa fa-circle-o-notch fa-spin'></i> <?= $_processing ?> </i></small>
+        </h3>
+        
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <a href="./?hotspot-user=add&session=<?= $session; ?>" class="btn-modern-filter-action btn-accent"><i class="fa fa-user-plus"></i> <?= $_add ?></a>
+          <a href="./?hotspot-user=generate&session=<?= $session; ?>" class="btn-modern-filter-action btn-accent"><i class="fa fa-users"></i> <?= $_generate ?></a>
+          <a href="<?= str_replace("=users", "=export-users", $url); ?>&export=script" class="btn-modern-filter-action btn-secondary" title="Script"><i class="fa fa-download"></i> Script</a>
+          <a href="<?= str_replace("=users", "=export-users", $url); ?>&export=csv" class="btn-modern-filter-action btn-secondary" title="CSV"><i class="fa fa-download"></i> CSV</a>
+        </div>
     </div>
-    <div class="input-group-4 col-box-4">
-      <select style="padding:5px;" class="group-item group-item-m" onchange="location = this.value; loader()" title="Filter by Profile">
+</div>
+<div class="card-body" style="padding: 24px !important;">
+  <div class="filter-row-flex">
+    <div class="filter-inputs-group">
+      <input id="filterTable" type="text" class="filter-control-modern" placeholder="<?= $_search ?>">
+      
+      <select class="filter-control-modern" onchange="location = this.value; loader()" title="Filter by Profile">
         <option><?= $_profile ?> </option>
         <option value="./?hotspot=users&profile=all&session=<?= $session; ?>"><?= $_show_all ?></option>
-      <?php
-      for ($i = 0; $i < $TotalReg2; $i++) {
-        $profile = $getprofile[$i];
-        echo "<option value='./?hotspot=users&profile=" . $profile['name'] . "&session=" . $session . "'>" . $profile['name'] . "</option>";
-      }
-      ?>
-    </select>
-  </div>
-  <div class="input-group-4 col-box-4">
-    <select style="padding:5px;" class="group-item group-item-r" id="comment" name="comment" onchange="location = './?hotspot=users&comment='+ this.value +'&session=<?= $session;?>';">
-    <?php
-    if ($comm != "") {
-    } else {
-      echo "<option value=''>".$_comment."</option>";
-    }
-    $TotalReg = count($getuser);
-    for ($i = 0; $i < $TotalReg; $i++) {
-      $ucomment = $getuser[$i]['comment'];
-      $uprofile = $getuser[$i]['profile'];
-      $acomment .= ",".$ucomment."#". $uprofile;
-    }
+        <?php
+        for ($i = 0; $i < $TotalReg2; $i++) {
+          $profile = $getprofile[$i];
+          echo "<option value='./?hotspot=users&profile=" . $profile['name'] . "&session=" . $session . "'>" . $profile['name'] . "</option>";
+        }
+        ?>
+      </select>
 
-    $ocomment=  explode(",",$acomment);
-    
-    $comments=array_count_values($ocomment) ;
-    foreach ($comments as $tcomment=>$value) {
+      <select class="filter-control-modern" id="comment" name="comment" onchange="location = './?hotspot=users&comment='+ this.value +'&session=<?= $session;?>';">
+        <?php
+        if ($comm != "") {
+        } else {
+          echo "<option value=''>".$_comment."</option>";
+        }
+        $TotalReg = count($getuser);
+        for ($i = 0; $i < $TotalReg; $i++) {
+          $ucomment = $getuser[$i]['comment'];
+          $uprofile = $getuser[$i]['profile'];
+          $acomment .= ",".$ucomment."#". $uprofile;
+        }
 
-      if (is_numeric(substr($tcomment, 3, 3))) {
-       
-        echo "<option value='" . explode("#",$tcomment)[0] . "' >". explode("#",$tcomment)[0]." ".explode("#",$tcomment)[1]. " [".$value. "]</option>";
-       }
+        $ocomment=  explode(",",$acomment);
+        $comments=array_count_values($ocomment) ;
+        foreach ($comments as $tcomment=>$value) {
+          if (is_numeric(substr($tcomment, 3, 3))) {
+            echo "<option value='" . explode("#",$tcomment)[0] . "' >". explode("#",$tcomment)[0]." ".explode("#",$tcomment)[1]. " [".$value. "]</option>";
+          }
+        }
+        ?>
+      </select>
+    </div>
  
-    }
-
-    ?>
-    </select>
-  </div>
-  </div>
-  </div>
- 
-  <div class="col-6">
-    <?php if ($comm != "") { ?>
-  <button class="btn bg-red" onclick="if(confirm('Are you sure to delete username by comment (<?= $comm; ?>)?')){loadpage('./?remove-hotspot-user-by-comment=<?= $comm; ?>&session=<?= $session; ?>');loader();}else{}" title="Remove user by comment <?= $comm; ?>">  <i class="fa fa-trash"></i> <?= $_by_comment ?></button>
-    <?php ; }else if ($exp == "1"){ ?>
-  <button class="btn bg-red" onclick="if(confirm('Are you sure to delete users?')){loadpage('./?remove-hotspot-user-expired=1&session=<?= $session; ?>');loader();}else{}" title="Remove user expired">  <i class="fa fa-trash"></i> Expired Users</button>
+    <div class="filter-actions-group">
+      <?php if ($comm != "") { ?>
+        <button class="btn-modern-filter-action btn-danger" onclick="if(confirm('Are you sure to delete username by comment (<?= $comm; ?>)?')){loadpage('./?remove-hotspot-user-by-comment=<?= $comm; ?>&session=<?= $session; ?>');loader();}else{}" title="Remove user by comment <?= $comm; ?>"><i class="fa fa-trash"></i> <?= $_by_comment ?></button>
+      <?php } else if ($exp == "1") { ?>
+        <button class="btn-modern-filter-action btn-danger" onclick="if(confirm('Are you sure to delete users?')){loadpage('./?remove-hotspot-user-expired=1&session=<?= $session; ?>');loader();}else{}" title="Remove user expired"><i class="fa fa-trash"></i> Expired Users</button>
       <?php } ?>
-  <script>
-    function printV(a,b){
-    var comm = document.getElementById('comment').value;
-    var url = "./voucher/print.php?id="+comm+"&"+a+"="+b+"&session=<?= $session; ?>";
-    if (comm === "" ){
-      <?php if ($currency == in_array($currency, $cekindo['indo'])) { ?>
-      alert('Silakan pilih salah satu Comment terlebih dulu!');
-      <?php
-    } else { ?>
-      alert('Please choose one of the Comments first!');
-      <?php
-    } ?>
-    }else{
-      var win = window.open(url, '_blank');
-      win.focus();
-    }}
-  </script>
-  <button class="btn bg-primary" title='Print' onclick="printV('qr','no');"><i class="fa fa-print"></i> <?= $_print_default ?></button>
-  <button class="btn bg-primary" title='Print QR' onclick="printV('qr','yes');"><i class="fa fa-print"></i> <?= $_print_qr ?></button>
-  <button class="btn bg-primary" title='Print Small'onclick="printV('small','yes');"><i class="fa fa-print"></i> <?= $_print_small ?></button>
+
+      <script>
+        function printV(a,b){
+          var comm = document.getElementById('comment').value;
+          var url = "./voucher/print.php?id="+comm+"&"+a+"="+b+"&session=<?= $session; ?>";
+          if (comm === "" ){
+            <?php if ($currency == in_array($currency, $cekindo['indo'])) { ?>
+              alert('Silakan pilih salah satu Comment terlebih dulu!');
+            <?php } else { ?>
+              alert('Please choose one of the Comments first!');
+            <?php } ?>
+          } else {
+            var win = window.open(url, '_blank');
+            win.focus();
+          }
+        }
+      </script>
+      <button class="btn-modern-filter-action btn-accent" title='Print' onclick="printV('qr','no');"><i class="fa fa-print"></i> <?= $_print_default ?></button>
+      <button class="btn-modern-filter-action btn-accent" title='Print QR' onclick="printV('qr','yes');"><i class="fa fa-print"></i> <?= $_print_qr ?></button>
+      <button class="btn-modern-filter-action btn-accent" title='Print Small' onclick="printV('small','yes');"><i class="fa fa-print"></i> <?= $_print_small ?></button>
+    </div>
   </div>
-</div>
 <div class="overflow mr-t-10 box-bordered" style="max-height: 75vh">
 <table id="dataTable" class="table table-bordered table-hover text-nowrap">
   <thead>
