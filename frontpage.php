@@ -73,8 +73,8 @@ if (isset($_GET['cancel_order'])) {
     if (file_exists($filepath)) {
         $tData = readTransactionFile($filepath);
         if ($tData && isset($tData['status']) && $tData['status'] === 'pending') {
-            $ip_ok = !isset($tData['client_ip']) || $tData['client_ip'] === $_SERVER['REMOTE_ADDR'];
-            if ($ip_ok) {
+            $sess_ok = !isset($tData['session_id']) || $tData['session_id'] === session_id();
+            if ($sess_ok) {
                 @unlink($filepath);
                 writeAppLog("TRANSACTION_CANCELLED", "Order ID: " . $cancel_id . " dibatalkan oleh pengguna.");
             }
@@ -310,10 +310,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_profile'])) {
     } else {
         $_SESSION['last_checkout_time'] = time();
 
-        // Pastikan tidak ada transaksi pending aktif milik IP klien ini
-        $client_ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+        // Pastikan tidak ada transaksi pending aktif milik Session ID browser ini
         $found_existing = null;
-        if (!empty($client_ip)) {
+        $current_session_id = session_id();
+        if (!empty($current_session_id)) {
             $dir = __DIR__ . '/voucher/';
             if (is_dir($dir)) {
                 $files = array_merge(
@@ -324,7 +324,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_profile'])) {
                 foreach ($files as $file) {
                     $tData = readTransactionFile($file);
                     if ($tData && isset($tData['status']) && $tData['status'] === 'pending'
-                        && isset($tData['client_ip']) && $tData['client_ip'] === $client_ip
+                        && isset($tData['session_id']) && $tData['session_id'] === $current_session_id
                         && ($now - $tData['created_at']) < 900) {
                         $found_existing = $tData;
                         break;
@@ -423,6 +423,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_profile'])) {
                                 'validity' => $validity,
                                 'created_at' => time(),
                                 'client_ip' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '',
+                                'session_id' => session_id(),
                                 'qris_string' => $dynamic_qris_string
                             ];
                             
