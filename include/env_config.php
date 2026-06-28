@@ -93,6 +93,28 @@ if (!function_exists('writeAppLog')) {
             }
             fclose($fp);
         }
+
+        // Siarkan log secara real-time via WebSocket ke dasbor admin jika aktif
+        $ws_key = mikhmonEnv('WS_APP_KEY');
+        if (!empty($ws_key) && function_exists('triggerWebSocketPaidEvent')) {
+            $ws_id = mikhmonEnv('WS_APP_ID');
+            $ws_sec = mikhmonEnv('WS_APP_SECRET');
+            $ws_clus = mikhmonEnv('WS_CLUSTER');
+            @triggerWebSocketPaidEvent(
+                $ws_id,
+                $ws_key,
+                $ws_sec,
+                $ws_clus,
+                'admin-events',
+                'new-log',
+                [
+                    'time' => date('Y-m-d H:i:s'),
+                    'type' => $type,
+                    'ip' => $ip,
+                    'message' => $message
+                ]
+            );
+        }
     }
 }
 

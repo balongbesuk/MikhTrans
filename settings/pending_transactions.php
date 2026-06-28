@@ -709,6 +709,9 @@ uasort($profileSales, function($a, $b) {
                 <button class="tab-header-btn" onclick="openTab('tab-history', this)">
                     <i class="fa fa-history"></i> <?= ($langid == 'id') ? 'Riwayat Transaksi' : 'Transaction History' ?>
                 </button>
+                <button class="tab-header-btn" onclick="openTab('tab-logs', this)">
+                    <i class="fa fa-terminal"></i> Log Aktivitas <span id="wsStatusBadge" style="margin-left: 6px; padding: 2px 6px; border-radius: 4px; font-size: 9px; background: #94a3b8; color: #ffffff;">Mengecek...</span>
+                </button>
                 <button class="tab-header-btn" onclick="openTab('tab-settings', this)">
                     <i class="fa fa-sliders"></i> <?= ($langid == 'id') ? 'Pengaturan & Backup' : 'Settings & Backup' ?>
                 </button>
@@ -943,6 +946,85 @@ uasort($profileSales, function($a, $b) {
                         </div>
                     </div>
                 <?php endif; ?>
+            </div>
+
+            <!-- Panel Live Activity Logs -->
+            <div id="tab-logs" class="tab-panel">
+                <style>
+                    .console-container {
+                        background: #0f172a !important; /* Slate 900 */
+                        border: 1px solid #1e293b;
+                        border-radius: 12px;
+                        padding: 16px;
+                        font-family: 'Courier New', Courier, monospace;
+                        font-size: 12px;
+                        color: #cbd5e1; /* Slate 300 */
+                        min-height: 380px;
+                        max-height: 520px;
+                        overflow-y: auto;
+                        box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+                    }
+                    .console-line {
+                        margin-bottom: 6px;
+                        line-height: 1.5;
+                        word-break: break-all;
+                        animation: consoleFadeIn 0.2s ease-out;
+                    }
+                    @keyframes consoleFadeIn {
+                        from { opacity: 0; transform: translateY(4px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                    .log-time { color: #64748b; margin-right: 8px; }
+                    .log-ip { color: #38bdf8; margin-right: 8px; font-weight: bold; }
+                    .log-type {
+                        display: inline-block;
+                        padding: 1px 6px;
+                        border-radius: 4px;
+                        font-size: 10px;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        margin-right: 8px;
+                    }
+                    .log-type.success { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+                    .log-type.error { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+                    .log-type.info { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+                    .log-type.warning { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+                    
+                    .console-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 12px;
+                        flex-wrap: wrap;
+                        gap: 8px;
+                    }
+                </style>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="console-header">
+                            <h3 style="margin: 0;"><i class="fa fa-terminal"></i> Log Aktivitas Real-Time</h3>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <select id="logFilterLevel" onchange="filterConsoleLogs()" class="form-control" style="padding: 4px 8px; font-size: 12px; border-radius: 6px; width: 130px; display: inline-block; height: auto; cursor: pointer; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color);">
+                                    <option value="all">Semua Level</option>
+                                    <option value="success">Sukses / Settlement</option>
+                                    <option value="error">Error / Gagal</option>
+                                    <option value="info">Info / Pending</option>
+                                </select>
+                                <button type="button" class="btn bg-grey" onclick="clearConsoleLogUI()" style="margin: 0; padding: 4px 10px; font-size: 12px;">
+                                    <i class="fa fa-trash-o"></i> Clear UI
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="logsConsole" class="console-container">
+                            <div class="console-line" style="color: #64748b;"><i class="fa fa-info-circle"></i> Memuat catatan log aktivitas...</div>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 10px; text-align: left;">
+                            * Menampilkan 30 aktivitas sistem terbaru. Log aktivitas disinkronkan secara otomatis.
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Panel Settings & Backup -->
@@ -1375,6 +1457,8 @@ function openTab(panelId, btnEl) {
     
     if (panelId === 'tab-analytics') {
         loadChartJsAndRender();
+    } else if (panelId === 'tab-logs') {
+        fetchLatestLogs();
     }
 }
 
@@ -1517,6 +1601,103 @@ function updateDashboardStats(data) {
     }
 }
 
+// Append log line to console UI
+function appendLogToConsole(log) {
+    var consoleEl = document.getElementById("logsConsole");
+    if (!consoleEl) return;
+    
+    // Remove loading indicator if present
+    var loadingEl = consoleEl.querySelector(".fa-info-circle");
+    if (loadingEl && loadingEl.parentElement) {
+        loadingEl.parentElement.remove();
+    }
+    
+    // Map log types to CSS classes
+    var typeLower = log.type.toLowerCase();
+    var levelClass = "info";
+    if (typeLower.includes("success") || typeLower.includes("settlement") || typeLower.includes("capture")) {
+        levelClass = "success";
+    } else if (typeLower.includes("error") || typeLower.includes("fail")) {
+        levelClass = "error";
+    } else if (typeLower.includes("warn")) {
+        levelClass = "warning";
+    }
+    
+    var line = document.createElement("div");
+    line.className = "console-line";
+    line.setAttribute("data-level", levelClass);
+    line.innerHTML = `
+        <span class="log-time">[${log.time}]</span>
+        <span class="log-type ${levelClass}">${log.type}</span>
+        <span class="log-ip">[${log.ip}]</span>
+        <span class="log-msg">${log.message}</span>
+    `;
+    
+    consoleEl.appendChild(line);
+    
+    // Keep maximum 30 log lines
+    var lines = consoleEl.querySelectorAll(".console-line");
+    if (lines.length > 30) {
+        lines[0].remove();
+    }
+    
+    // Apply current filter settings
+    filterConsoleLogs();
+    
+    // Auto-scroll to bottom
+    consoleEl.scrollTop = consoleEl.scrollHeight;
+}
+
+// Fetch latest logs from backend API
+function fetchLatestLogs() {
+    var consoleEl = document.getElementById("logsConsole");
+    if (!consoleEl) return;
+    
+    fetch("process/admin_get_logs.php")
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'success') {
+                consoleEl.innerHTML = "";
+                if (data.logs && data.logs.length > 0) {
+                    data.logs.forEach(function(log) {
+                        appendLogToConsole(log);
+                    });
+                } else {
+                    consoleEl.innerHTML = '<div class="console-line" style="color: #64748b;"><i class="fa fa-info-circle"></i> Belum ada catatan aktivitas log.</div>';
+                }
+            }
+        })
+        .catch(function(e) {
+            console.error("Error loading console logs:", e);
+            consoleEl.innerHTML = '<div class="console-line" style="color: #ef4444;"><i class="fa fa-exclamation-triangle"></i> Gagal memuat catatan log dari server.</div>';
+        });
+}
+
+// Filter console logs based on selected level dropdown
+function filterConsoleLogs() {
+    var select = document.getElementById("logFilterLevel");
+    if (!select) return;
+    var filterValue = select.value;
+    var lines = document.querySelectorAll("#logsConsole .console-line");
+    
+    lines.forEach(function(line) {
+        var level = line.getAttribute("data-level");
+        if (filterValue === "all" || level === filterValue) {
+            line.style.display = "";
+        } else {
+            line.style.display = "none";
+        }
+    });
+}
+
+// Clear logs in the console UI
+function clearConsoleLogUI() {
+    var consoleEl = document.getElementById("logsConsole");
+    if (consoleEl) {
+        consoleEl.innerHTML = '<div class="console-line" style="color: #64748b;"><i class="fa fa-info-circle"></i> Tampilan log dibersihkan secara lokal.</div>';
+    }
+}
+
 // Global configurations for updates
 var AdminWSConfig = {
     enabled: <?= !empty($ws_app_key) ? 'true' : 'false' ?>,
@@ -1530,6 +1711,8 @@ var AdminWSConfig = {
 
 // Initialize features on load
 function initDashboardRealtimeFeatures() {
+    var statusBadge = document.getElementById("wsStatusBadge");
+    
     // Define helper to trigger UI reload if viewing pending or history queue
     function reloadQueueUiIfSafe() {
         var activeTab = localStorage.getItem('mikhtrans_active_tab') || 'tab-pending';
@@ -1565,6 +1748,12 @@ function initDashboardRealtimeFeatures() {
             var pusher = new Pusher(AdminWSConfig.key, pusherConfig);
             var channel = pusher.subscribe('admin-events');
             
+            // Set status badge to WebSocket
+            if (statusBadge) {
+                statusBadge.textContent = "WS (Aktif)";
+                statusBadge.style.backgroundColor = "#10b981"; // Green
+            }
+            
             channel.bind('new-payment', function(data) {
                 // Tampilkan notifikasi toast dan suara bel
                 showToastNotification(
@@ -1584,6 +1773,10 @@ function initDashboardRealtimeFeatures() {
                 reloadQueueUiIfSafe();
             });
             
+            channel.bind('new-log', function(data) {
+                appendLogToConsole(data);
+            });
+            
             console.log("WebSocket Dashboard Listener connected.");
         } catch (e) {
             console.error("Failed to connect WebSocket on admin panel. Falling back to HTTP polling...", e);
@@ -1596,6 +1789,11 @@ function initDashboardRealtimeFeatures() {
     
     function startAdminHttpPolling() {
         console.log("HTTP Polling Dashboard Listener started (15s intervals).");
+        if (statusBadge) {
+            statusBadge.textContent = "Polling";
+            statusBadge.style.backgroundColor = "#f59e0b"; // Orange/Yellow
+        }
+        
         setInterval(function() {
             fetch(`process/admin_check_updates.php?last_check_time=${AdminWSConfig.lastCheckTime}`)
                 .then(r => r.json())
@@ -1621,6 +1819,14 @@ function initDashboardRealtimeFeatures() {
                     }
                 })
                 .catch(e => console.error("Error checking dashboard updates: ", e));
+        }, 15000);
+
+        // Poll for logs console updates
+        setInterval(function() {
+            var activeTab = localStorage.getItem('mikhtrans_active_tab') || 'tab-pending';
+            if (activeTab === 'tab-logs') {
+                fetchLatestLogs();
+            }
         }, 15000);
     }
 }
