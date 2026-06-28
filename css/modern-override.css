@@ -281,6 +281,10 @@ body {
     color: inherit !important;
     float: none !important;
 }
+.sidenav .dropdown-btn .fa-caret-down {
+    margin-left: auto !important;
+    width: auto !important;
+}
 
 .sidenav a:hover, .sidenav .dropdown-btn:hover {
     background-color: var(--hover-bg-intense) !important;
