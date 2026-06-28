@@ -1128,10 +1128,8 @@ $qris_mode = isset($qris_mode) ? filter_var($qris_mode, FILTER_VALIDATE_BOOLEAN)
                 background: rgba(15, 23, 42, 0.7) !important;
                 backdrop-filter: blur(12px) !important;
                 -webkit-backdrop-filter: blur(12px) !important;
-                display: flex !important;
-                align-items: center;
-                justify-content: center;
-                padding: 16px;
+                display: block !important;
+                padding: 20px 10px;
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -1144,15 +1142,15 @@ $qris_mode = isset($qris_mode) ? filter_var($qris_mode, FILTER_VALIDATE_BOOLEAN)
             .qris-modal-card {
                 background: #ffffff;
                 border-radius: 24px;
-                padding: 24px;
+                padding: 20px 16px;
                 width: 100%;
-                max-width: 400px;
+                max-width: 360px;
                 box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
                 text-align: center;
                 animation: qrisModalFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
                 color: #1e293b;
                 box-sizing: border-box;
-                margin: auto;
+                margin: 20px auto;
             }
             @keyframes qrisModalFade {
                 from { opacity: 0; transform: scale(0.95) translateY(10px); }
@@ -1191,11 +1189,11 @@ $qris_mode = isset($qris_mode) ? filter_var($qris_mode, FILTER_VALIDATE_BOOLEAN)
             }
             .qris-qr-container {
                 background: #ffffff;
-                padding: 16px;
+                padding: 12px;
                 border-radius: 20px;
                 border: 1px solid #e2e8f0;
                 display: inline-block;
-                margin-bottom: 20px;
+                margin-bottom: 16px;
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             }
             .btn-download-qris-new {
@@ -1298,11 +1296,14 @@ $qris_mode = isset($qris_mode) ? filter_var($qris_mode, FILTER_VALIDATE_BOOLEAN)
                     <i class="fa fa-clock"></i> Bayar sebelum: <span id="countdownTimer">15:00</span>
                 </div>
                 
-                <div class="qris-qr-container">
-                    <div id="qrisCanvas"></div>
-                    <button type="button" id="btnDownloadQris" class="btn-download-qris-new">
+                <div class="qris-qr-container" style="width: 100%; max-width: 280px; box-sizing: border-box; display: inline-flex; flex-direction: column; align-items: center;">
+                    <div id="qrisCanvas" style="padding: 10px; background: white; border-radius: 12px; display: inline-block;"></div>
+                    <button type="button" id="btnDownloadQris" class="btn-download-qris-new" style="width: 100%; justify-content: center; box-sizing: border-box;">
                         <i class="fa fa-download"></i> Simpan QRIS ke Galeri
                     </button>
+                    <div class="qris-helper-tip" style="font-size: 11px; color: #64748b; margin-top: 8px; font-style: italic; line-height: 1.4; text-align: center;">
+                        * Jika tombol tidak merespons di browser Wi-Fi, silakan ambil <b>Tangkapan Layar (Screenshot)</b> QR Code di atas.
+                    </div>
                 </div>
                 
                 <div class="qris-total-amount">
