@@ -457,7 +457,7 @@ body.login-page input.login-input {
                     <div class="stat-text">
                         <strong>Payment Gateway</strong>
                         <?php if ($is_qris_configured): ?>
-                            <span class="text-indigo">QRIS Mandiri Aktif</span>
+                            <span class="text-green"><i class="fa fa-circle"></i> QRIS Mandiri Aktif</span>
                         <?php else: ?>
                             <span class="text-muted" style="color: #64748b;">Not Configured</span>
                         <?php endif; ?>
