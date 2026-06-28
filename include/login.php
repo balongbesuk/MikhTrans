@@ -22,6 +22,9 @@ $is_qris_configured = isset($qris_mode) ? filter_var($qris_mode, FILTER_VALIDATE
 
 $dbSessions = new \App\Models\RouterSession();
 $sessionsCount = count($dbSessions->getAll());
+
+$dbSettings = new \App\Models\AppSettings();
+$portal_accent_color = $dbSettings->get('portal_accent_color', '#6366f1');
 ?>
 
 <style>
@@ -32,7 +35,7 @@ body.login-page {
     margin: 0;
     padding: 0;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background: #090d16; /* Dark space background */
+    background: #f8fafc; /* Soft light background */
     min-height: 100vh;
     display: flex;
     align-items: stretch;
@@ -52,10 +55,10 @@ body.login-page {
     flex: 1.2;
     background: #0f172a;
     background-image: 
-        radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-        radial-gradient(at 100% 0%, hsla(225,39%,20%,0.4) 0, transparent 50%),
-        radial-gradient(at 100% 100%, hsla(339,49%,20%,0.2) 0, transparent 50%),
-        radial-gradient(at 0% 100%, hsla(225,39%,15%,0.3) 0, transparent 50%);
+        radial-gradient(at 0% 0%, hsla(222, 47%, 11%, 1) 0, transparent 60%), 
+        radial-gradient(at 100% 0%, <?= $portal_accent_color ?> 0, transparent 60%),
+        radial-gradient(at 100% 100%, hsla(222, 47%, 11%, 0.8) 0, transparent 60%),
+        radial-gradient(at 0% 100%, <?= $portal_accent_color ?> 0, transparent 60%);
     background-size: cover;
     display: flex;
     align-items: center;
@@ -81,23 +84,24 @@ body.login-page {
 
 .login-left-logo {
     font-size: 40px;
-    color: #6366f1;
+    color: <?= $portal_accent_color ?>;
     margin-bottom: 24px;
     display: inline-flex;
-    background: rgba(99, 102, 241, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     width: 72px;
     height: 72px;
     border-radius: 20px;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .login-left-title {
     font-size: 42px;
     font-weight: 800;
     margin: 0 0 16px 0;
-    background: linear-gradient(135deg, #ffffff 40%, #818cf8 100%);
+    background: linear-gradient(135deg, #ffffff 40%, <?= $portal_accent_color ?> 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -1px;
@@ -106,7 +110,7 @@ body.login-page {
 .login-left-desc {
     font-size: 16px;
     line-height: 1.6;
-    color: #94a3b8;
+    color: rgba(255, 255, 255, 0.7);
     margin: 0 0 40px 0;
 }
 
@@ -116,9 +120,9 @@ body.login-page {
 }
 
 .stat-card {
-    background: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     padding: 16px 20px;
     border-radius: 16px;
     display: flex;
@@ -129,8 +133,8 @@ body.login-page {
 
 .stat-icon {
     font-size: 20px;
-    color: #38bdf8;
-    background: rgba(56, 189, 248, 0.1);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
     width: 44px;
     height: 44px;
     border-radius: 12px;
@@ -147,8 +151,8 @@ body.login-page {
 
 .stat-text strong {
     font-size: 13px;
-    color: #cbd5e1;
-    font-weight: 600;
+    color: #ffffff;
+    font-weight: 700;
 }
 
 .stat-text span {
@@ -159,8 +163,8 @@ body.login-page {
     gap: 6px;
 }
 
-.text-green { color: #4dbd74; }
-.text-indigo { color: #818cf8; }
+.text-green { color: #34d399; }
+.text-indigo { color: #a5b4fc; }
 
 .text-green i { font-size: 8px; }
 
@@ -186,7 +190,7 @@ body.login-page {
 .left-blob-1 {
     width: 300px;
     height: 300px;
-    background: #6366f1;
+    background: <?= $portal_accent_color ?>;
     top: -50px;
     left: -50px;
 }
@@ -194,7 +198,7 @@ body.login-page {
 .left-blob-2 {
     width: 400px;
     height: 400px;
-    background: #db2777;
+    background: <?= $portal_accent_color ?>;
     bottom: -100px;
     right: -100px;
     animation-delay: -7s;
@@ -209,7 +213,7 @@ body.login-page {
 /* RIGHT PANEL */
 .login-right-panel {
     flex: 1;
-    background: #0f172a;
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -238,17 +242,17 @@ body.login-page {
 .login-logo-mobile img {
     width: 64px;
     height: 64px;
-    background: rgba(255, 255, 255, 0.03);
+    background: #f8fafc;
     padding: 10px;
     border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid #e2e8f0;
     box-sizing: border-box;
 }
 
 .login-form-title {
     font-size: 32px;
     font-weight: 800;
-    color: #ffffff !important;
+    color: #0f172a !important;
     margin: 0 0 8px 0;
     letter-spacing: -0.5px;
     text-align: left;
@@ -256,7 +260,7 @@ body.login-page {
 
 .login-form-subtitle {
     font-size: 15px;
-    color: #94a3b8 !important;
+    color: #64748b !important;
     margin: 0 0 40px 0;
     text-align: left;
 }
@@ -269,23 +273,23 @@ body.login-page {
 
 .login-form-group i:not(.password-toggle-icon) {
     position: absolute;
-    left: 16px;
+    left: 18px;
     top: 50%;
     transform: translateY(-50%);
-    color: #475569;
+    color: #64748b;
     font-size: 18px;
     transition: color 0.3s ease;
 }
 
 body.login-page input.login-input {
     width: 100% !important;
-    height: 54px !important;
-    padding: 0 16px 0 52px !important;
+    height: 56px !important;
+    padding: 0 18px 0 54px !important;
     box-sizing: border-box !important;
     border-radius: 16px !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    background: rgba(30, 41, 59, 0.3) !important;
-    color: #f8fafc !important;
+    border: 1.5px solid #e2e8f0 !important;
+    background: #f8fafc !important;
+    color: #0f172a !important;
     font-size: 15px !important;
     font-family: inherit !important;
     outline: none !important;
@@ -293,17 +297,17 @@ body.login-page input.login-input {
 }
 
 .login-input::placeholder {
-    color: #475569;
+    color: #94a3b8;
 }
 
 .login-input:focus {
-    border-color: #6366f1 !important;
-    background: rgba(15, 23, 42, 0.6) !important;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15) !important;
+    border-color: <?= $portal_accent_color ?> !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12) !important;
 }
 
 .login-form-group:focus-within i {
-    color: #6366f1;
+    color: <?= $portal_accent_color ?>;
 }
 
 .password-toggle-icon {
@@ -313,29 +317,29 @@ body.login-page input.login-input {
     transform: translateY(-50%);
     left: auto !important;
     cursor: pointer;
-    color: #475569;
+    color: #64748b;
     font-size: 16px;
     transition: color 0.3s ease;
 }
 
 .password-toggle-icon:hover {
-    color: #94a3b8;
+    color: #0f172a;
 }
 
 /* Button */
 .login-submit-btn {
     width: 100% !important;
-    height: 54px !important;
+    height: 56px !important;
     border-radius: 16px !important;
     border: none !important;
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    background: <?= $portal_accent_color ?> !important;
     color: #ffffff !important;
     font-size: 16px !important;
     font-weight: 700 !important;
     font-family: inherit !important;
     cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2) !important;
     margin-top: 12px;
     display: flex;
     align-items: center;
@@ -344,9 +348,9 @@ body.login-page input.login-input {
 }
 
 .login-submit-btn:hover {
-    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important;
-    box-shadow: 0 12px 28px rgba(79, 70, 229, 0.35) !important;
     transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(99, 102, 241, 0.35) !important;
+    opacity: 0.95;
 }
 
 .login-submit-btn:active {
@@ -357,11 +361,11 @@ body.login-page input.login-input {
 .bg-danger {
     margin-top: 24px;
     padding: 14px 18px !important;
-    background: rgba(239, 68, 68, 0.12) !important;
-    border: 1px solid rgba(239, 68, 68, 0.22) !important;
+    background: rgba(239, 68, 68, 0.06) !important;
+    border: 1px solid rgba(239, 68, 68, 0.18) !important;
     border-radius: 16px !important;
-    color: #fca5a5 !important;
-    font-size: 13.5px !important;
+    color: #ef4444 !important;
+    font-size: 14px !important;
     text-align: left !important;
     animation: shakeAlert 0.4s ease;
     width: 100% !important;
@@ -379,13 +383,13 @@ body.login-page input.login-input {
 
 .bg-danger i {
     font-size: 16px;
-    color: #f87171;
+    color: #ef4444;
 }
 
 .login-right-footer {
     margin-top: 48px;
     font-size: 12px;
-    color: #475569;
+    color: #94a3b8;
     text-align: left;
 }
 
@@ -397,7 +401,7 @@ body.login-page input.login-input {
 }
 
 .login-right-footer a:hover {
-    color: #6366f1;
+    color: <?= $portal_accent_color ?>;
 }
 
 /* Hide standard Mikhmon wrapper background */
@@ -422,10 +426,7 @@ body.login-page input.login-input {
     }
     .login-right-panel {
         flex: 1;
-        background: #0f172a;
-        background-image: 
-            radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-            radial-gradient(at 100% 100%, hsla(225,39%,15%,0.3) 0, transparent 50%);
+        background: #ffffff;
     }
     .login-form-container {
         max-width: 360px;
