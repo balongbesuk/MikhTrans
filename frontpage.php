@@ -1489,6 +1489,7 @@ $qris_mode = isset($qris_mode) ? filter_var($qris_mode, FILTER_VALIDATE_BOOLEAN)
         <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
     <?php endif; ?>
 
+    <script src="js/jquery.min.js"></script>
     <script src="js/frontpage.js"></script>
     <!-- View Switcher Controller -->
     <script>
