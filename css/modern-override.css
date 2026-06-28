@@ -233,6 +233,9 @@ body {
     margin-top: 50px !important;
     box-shadow: none !important;
     transition: all 0.3s ease !important;
+    height: calc(100vh - 50px) !important;
+    overflow-y: auto !important;
+    padding-bottom: 30px !important;
 }
 
 .sidenav .card-header {
