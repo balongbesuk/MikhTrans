@@ -426,14 +426,15 @@ uasort($profileSales, function($a, $b) {
 <style>
 /* Welcome Status Banner Styles */
 .dash-welcome {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #c084fc 100%) !important;
+    background: <?= $portal_accent_color ?> !important;
+    background: linear-gradient(135deg, <?= $portal_accent_color ?> 0%, color-mix(in srgb, <?= $portal_accent_color ?>, #000 25%) 50%, color-mix(in srgb, <?= $portal_accent_color ?>, #000 45%) 100%) !important;
     border-radius: 24px;
     padding: 36px 40px;
     margin-bottom: 28px;
     position: relative;
     overflow: hidden;
     border: none !important;
-    box-shadow: 0 20px 40px -15px rgba(124, 58, 237, 0.4) !important;
+    box-shadow: 0 20px 40px -15px color-mix(in srgb, <?= $portal_accent_color ?>, transparent 60%) !important;
 }
 @media (max-width: 750px) {
     .dash-welcome {
