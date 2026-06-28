@@ -215,14 +215,18 @@ if (!isset($_SESSION["mikhmon"])) {
     box-sizing: border-box;
 }
 
-.modern-data-limit-wrapper input {
+.modern-data-limit-wrapper input.form-control {
     border-radius: 12px 0 0 12px !important;
+    border-right: none !important;
     flex: 1 !important;
 }
 
-.modern-data-limit-wrapper select.data-unit-select {
+.modern-data-limit-wrapper input.form-control:focus {
+    border-right: 1px solid var(--primary) !important;
+}
+
+.modern-data-limit-wrapper select.data-unit-select.form-control {
     border-radius: 0 12px 12px 0 !important;
-    border-left: none !important;
     width: 80px !important;
     background: var(--background-alt, #F5F6F7) !important;
     font-weight: 700 !important;
