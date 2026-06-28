@@ -1,6 +1,12 @@
 # Prevent directory listing
 Options -Indexes
 
+# Force correct MIME types for JS and CSS on Windows
+<IfModule mod_mime.c>
+    AddType application/javascript .js
+    AddType text/css .css
+</IfModule>
+
 # Protect sensitive environment and git files
 <FilesMatch "^\.(env|git|gitignore)">
     <IfModule mod_authz_core.c>
