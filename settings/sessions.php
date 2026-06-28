@@ -123,13 +123,13 @@ if (!isset($_SESSION["mikhmon"])) {
 
                                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 12px; font-weight: bold; text-align: center;">
                                   <div>
-                                    <span class="connect pointer" id="<?= $value; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></span>
+                                    <span class="connect pointer action-link-btn btn-open" id="<?= $value; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></span>
                                   </div>
                                   <div>
-                                    <a href="./admin.php?id=settings&session=<?= $value; ?>"><i class="fa fa-edit"></i> <?= $_edit ?></a>
+                                    <a class="action-link-btn btn-edit" href="./admin.php?id=settings&session=<?= $value; ?>"><i class="fa fa-edit"></i> <?= $_edit ?></a>
                                   </div>
                                   <div>
-                                    <a href="javascript:void(0)" onclick="if(confirm('Are you sure to delete data <?= $value; ?>?')){loadpage('./admin.php?id=remove-session&session=<?= $value; ?>')}"><i class="fa fa-remove"></i> <?= $_delete ?></a>
+                                    <a class="action-link-btn btn-delete" href="javascript:void(0)" onclick="if(confirm('Are you sure to delete data <?= $value; ?>?')){loadpage('./admin.php?id=remove-session&session=<?= $value; ?>')}"><i class="fa fa-remove"></i> <?= $_delete ?></a>
                                   </div>
                                 </div>
                               </div>
@@ -146,7 +146,7 @@ if (!isset($_SESSION["mikhmon"])) {
         <div class="settings-col-flex">
           <form autocomplete="off" method="post" action="" style="display: flex; flex-direction: column; flex: 1;">
             <div class="card" style="box-shadow: var(--shadow-card); border-radius: var(--radius); border: 1px solid var(--border-color); margin: 0 !important; height: 100%; display: flex; flex-direction: column;">
-              <div class="card-header">
+              <div class="card-header" style="padding: 14px 20px !important;">
                 <h3 class="card-title"><i class="fa fa-user-circle"></i> <?= $_admin ?></h3>
               </div>
             <div class="card-body" style="padding: 24px !important; flex: 1;">
@@ -166,64 +166,151 @@ if (!isset($_SESSION["mikhmon"])) {
                 flex-direction: column !important;
                 gap: 20px !important;
             }
-            .form-group-floating {
-                position: relative;
-                margin-bottom: 16px;
-                width: 100%;
-            }
-            .form-group-floating .form-control {
+            
+            /* Form Styles matching premium theme */
+            .form-field-group {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+                margin-bottom: 18px !important;
                 width: 100% !important;
+                box-sizing: border-box;
+            }
+            .form-field-group label {
+                font-size: 13px !important;
+                font-weight: 700 !important;
+                color: var(--text-muted) !important;
+                text-align: left !important;
+            }
+            .form-field-group input.form-control,
+            .form-field-group select.form-control {
                 height: 48px !important;
-                padding: 18px 16px 6px 16px !important;
+                border: 1px solid var(--border-color) !important;
+                border-radius: 12px !important;
+                background: var(--bg-card, #ffffff) !important;
+                color: var(--text-main) !important;
+                padding: 0 16px !important;
                 font-size: 14px !important;
-                border: 1px solid var(--border-color, #c1c1c1) !important;
-                border-radius: 8px !important;
-                background: var(--card-bg, #fff) !important;
-                color: var(--text-main, #3E3E3E) !important;
                 outline: none !important;
-                transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+                transition: all 0.25s ease !important;
                 box-sizing: border-box !important;
+                width: 100% !important;
             }
-            .form-group-floating .form-control::placeholder {
-                color: transparent !important;
-                opacity: 0 !important;
+            .form-field-group input.form-control:focus,
+            .form-field-group select.form-control:focus {
+                border-color: var(--primary) !important;
+                box-shadow: 0 0 0 3.5px var(--primary-glow) !important;
             }
-            .form-group-floating label {
-                position: absolute;
-                left: 16px;
-                top: 14px;
-                font-size: 14px;
-                color: var(--text-muted, #73818f);
-                pointer-events: none;
-                transition: all 0.2s ease;
-                margin: 0;
+            
+            /* Password Toggle Wrapper */
+            .modern-password-wrapper {
+                position: relative !important;
+                width: 100% !important;
+                display: flex !important;
+                align-items: center !important;
+                box-sizing: border-box;
             }
-            .form-group-floating .form-control:focus ~ label,
-            .form-group-floating .form-control:not(:placeholder-shown) ~ label {
-                top: 4px;
-                left: 16px;
-                font-size: 11px;
-                color: var(--primary, #008BC9);
-                font-weight: 600;
+            .modern-password-wrapper input {
+                padding-right: 48px !important;
             }
-            .form-group-floating .form-control:focus {
-                border-color: var(--primary, #008BC9) !important;
-                box-shadow: 0 0 0 3px rgba(0, 139, 201, 0.15) !important;
-            }
-            .btn-modern-save {
-                height: 40px;
-                border-radius: 8px !important;
-                padding: 0 20px !important;
-                font-weight: 600 !important;
-                background: var(--primary, #008BC9) !important;
-                color: #fff !important;
+            .password-toggle-btn {
+                position: absolute !important;
+                right: 4px !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                background: transparent !important;
                 border: none !important;
-                cursor: pointer;
-                transition: background-color 0.2s ease;
+                color: var(--text-muted) !important;
+                width: 40px !important;
+                height: 40px !important;
+                cursor: pointer !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border-radius: 50% !important;
+                transition: all 0.2s !important;
             }
-            .btn-modern-save:hover {
-                background: var(--primary-hover, #007bb0) !important;
+            .password-toggle-btn:hover {
+                color: var(--primary) !important;
+                background: var(--primary-glow) !important;
             }
+
+            /* Buttons style */
+            .btn-modern-action {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                height: 40px !important;
+                padding: 0 16px !important;
+                border-radius: 10px !important;
+                font-size: 13px !important;
+                font-weight: 700 !important;
+                gap: 8px !important;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                border: 1px solid transparent !important;
+                cursor: pointer !important;
+                text-decoration: none !important;
+            }
+            .btn-modern-action.btn-save {
+                background: var(--primary) !important;
+                color: #ffffff !important;
+                box-shadow: 0 4px 12px rgba(0, 139, 201, 0.2) !important;
+            }
+            .btn-modern-action.btn-save:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 16px rgba(0, 139, 201, 0.3) !important;
+            }
+            .btn-modern-action.btn-reload {
+                background: rgba(148, 163, 184, 0.08) !important;
+                color: #475569 !important;
+                border-color: rgba(148, 163, 184, 0.15) !important;
+            }
+            .btn-modern-action.btn-reload:hover {
+                background: rgba(148, 163, 184, 0.15) !important;
+            }
+
+            /* Action Buttons inside Session Card */
+            .action-link-btn {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 6px 12px !important;
+                border-radius: 8px !important;
+                font-size: 12px !important;
+                font-weight: 700 !important;
+                gap: 6px !important;
+                text-decoration: none !important;
+                transition: all 0.2s ease !important;
+                border: 1px solid transparent !important;
+            }
+            .action-link-btn.btn-open {
+                background: rgba(16, 185, 129, 0.08) !important;
+                color: #10b981 !important;
+                border-color: rgba(16, 185, 129, 0.15) !important;
+            }
+            .action-link-btn.btn-open:hover {
+                background: #10b981 !important;
+                color: #ffffff !important;
+            }
+            .action-link-btn.btn-edit {
+                background: rgba(14, 165, 233, 0.08) !important;
+                color: #0ea5e9 !important;
+                border-color: rgba(14, 165, 233, 0.15) !important;
+            }
+            .action-link-btn.btn-edit:hover {
+                background: #0ea5e9 !important;
+                color: #ffffff !important;
+            }
+            .action-link-btn.btn-delete {
+                background: rgba(239, 68, 68, 0.08) !important;
+                color: #ef4444 !important;
+                border-color: rgba(239, 68, 68, 0.15) !important;
+            }
+            .action-link-btn.btn-delete:hover {
+                background: #ef4444 !important;
+                color: #ffffff !important;
+            }
+
             .box.box-bordered {
                 background: var(--bg-card) !important;
                 border: 1px solid var(--border-color) !important;
@@ -280,42 +367,28 @@ if (!isset($_SESSION["mikhmon"])) {
             .box-group-area span {
                 color: inherit !important;
             }
-            .box-group-area a, .box-group-area .connect {
-                font-size: 12px !important;
-                font-weight: 600 !important;
-                color: var(--primary) !important;
-                display: inline-flex;
-                align-items: center;
-                gap: 4px;
-                margin-top: 6px;
-            }
-            .box-group-area a:hover, .box-group-area .connect:hover {
-                color: var(--primary-hover-text) !important;
-            }
             </style>
+            
             <div style="padding: 10px 0;">
-              <div class="form-group-floating">
-                <input class="form-control" id="useradm" type="text" name="useradm" placeholder=" " value="<?= $useradm; ?>" required="1"/>
+              
+              <div class="form-field-group">
                 <label for="useradm"><?= $_user_name ?></label>
+                <input class="form-control" id="useradm" type="text" name="useradm" placeholder="Username Admin" value="<?= $useradm; ?>" required="1"/>
               </div>
               
-              <div class="form-group-floating">
-                <div class="input-group" style="display: flex; width: 100%;">
-                  <div class="input-group-11 col-box-10" style="flex: 1; position: relative; float: none;">
-                    <input class="group-item form-control" id="passadm" type="password" name="passadm" placeholder=" " style="border-radius: 8px 0 0 8px !important; width: 100% !important; height: 48px !important; border: 1px solid var(--border-color, #c1c1c1) !important; border-right: none !important; padding: 18px 16px 6px 16px !important;"/>
-                    <label for="passadm"><?= $_password ?> <?= ($langid == 'id') ? '(Kosongkan jika tidak diubah)' : '(Leave blank if unchanged)' ?></label>
-                  </div>
-                  <div class="input-group-1 col-box-2" style="width: 48px; float: none;">
-                    <div class="group-item group-item-r pd-2p5 text-center align-middle" style="border-radius: 0 8px 8px 0 !important; height: 48px; border: 1px solid var(--border-color, #c1c1c1); background: var(--background-alt, #F5F6F7); display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                      <input title="Show/Hide Password" type="checkbox" onclick="Pass('passadm')">
-                    </div>
-                  </div>
+              <div class="form-field-group">
+                <label for="passadm"><?= $_password ?> <?= ($langid == 'id') ? '(Kosongkan jika tidak diubah)' : '(Leave blank if unchanged)' ?></label>
+                <div class="modern-password-wrapper">
+                  <input class="form-control" id="passadm" type="password" name="passadm" placeholder="Password Admin baru"/>
+                  <button type="button" class="password-toggle-btn" onclick="togglePass();" title="Tampilkan Password">
+                    <i id="pass-icon" class="fa fa-eye"></i>
+                  </button>
                 </div>
               </div>
 
-              <div style="margin-bottom: 20px;">
-                <label style="font-size: 12px; color: var(--text-muted, #73818f); display: block; margin-bottom: 6px; font-weight: 600; text-align: left;"><?= $_quick_print ?> QR</label>
-                <select class="form-control" name="qrbt" style="height: 48px !important; border-radius: 8px !important; border: 1px solid var(--border-color, #c1c1c1) !important; background: var(--card-bg, #fff) !important; color: var(--text-main, #3E3E3E) !important; padding: 0 16px !important; width: 100% !important;">
+              <div class="form-field-group">
+                <label for="qrbt"><?= $_quick_print ?> QR</label>
+                <select class="form-control" name="qrbt" id="qrbt">
                   <option value="<?= $qrbt ?>"><?= $qrbt ?></option>
                   <option value="enable">enable</option>
                   <option value="disable">disable</option>
@@ -323,10 +396,10 @@ if (!isset($_SESSION["mikhmon"])) {
               </div>
 
               <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
-                <div id="loadV" style="font-size: 12px; color: var(--text-muted, #73818f);">v<?= $_SESSION['v']; ?> </div>
+                <div id="loadV" style="font-size: 12px; color: var(--text-muted);">v<?= $_SESSION['v']; ?> </div>
                 <div style="display: flex; gap: 8px;">
-                  <button type="submit" name="save" class="btn-modern-save"><?= $_save ?></button>
-                  <div style="cursor: pointer; height: 40px; width: 40px; border-radius: 8px; border: 1px solid var(--border-color, #c1c1c1); display: flex; align-items: center; justify-content: center; background: var(--card-bg, #fff);" onclick="location.reload();" title="Reload Data"><i class="fa fa-refresh"></i></div>
+                  <button type="submit" name="save" class="btn-modern-action btn-save"><?= $_save ?></button>
+                  <div class="btn-modern-action btn-reload pointer" onclick="location.reload();" title="Reload Data"><i class="fa fa-refresh"></i></div>
                 </div>
               </div>
               <div><b id="newVer" class="text-green"></b></div>
