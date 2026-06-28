@@ -424,90 +424,171 @@ uasort($profileSales, function($a, $b) {
 ?>
 
 <style>
-/* Welcome Status Banner Styles (aligned with dashboard) */
+/* Welcome Status Banner Styles */
 .dash-welcome {
-    background: var(--welcome-bg) !important;
-    border-radius: 20px;
-    padding: 32px 36px;
-    margin-bottom: 24px;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #c084fc 100%) !important;
+    border-radius: 24px;
+    padding: 36px 40px;
+    margin-bottom: 28px;
     position: relative;
     overflow: hidden;
-    border: 1px solid var(--border-color) !important;
+    border: none !important;
+    box-shadow: 0 20px 40px -15px rgba(124, 58, 237, 0.4) !important;
 }
 @media (max-width: 750px) {
     .dash-welcome {
-        padding: 18px 20px !important;
-        border-radius: 12px !important;
+        padding: 24px 28px !important;
+        border-radius: 16px !important;
     }
     .dash-welcome h2 {
-        font-size: 18px !important;
+        font-size: 20px !important;
+        margin-bottom: 12px !important;
     }
 }
 @media (max-width: 576px) {
     .dash-welcome-content {
         flex-direction: column !important;
         align-items: flex-start !important;
-        gap: 16px !important;
+        gap: 20px !important;
     }
     .dash-welcome-time {
-        text-align: left !important;
+        align-self: flex-end !important;
     }
 }
 .dash-welcome::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    top: -80px;
+    right: -80px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
     border-radius: 50%;
+    pointer-events: none;
 }
 .dash-welcome::after {
     content: '';
     position: absolute;
-    bottom: -40%;
-    left: 10%;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+    bottom: -100px;
+    left: -60px;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
     border-radius: 50%;
+    pointer-events: none;
 }
 .dash-welcome-content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 .dash-welcome h2 {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 800;
-    color: #ffffff;
-    margin: 0 0 6px 0;
+    color: #ffffff !important;
+    margin: 8px 0 16px 0;
     letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
-.dash-welcome p {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.65);
-    margin: 0;
-    font-weight: 500;
+.dash-welcome-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+.sync-status.connected {
+    background: rgba(16, 185, 129, 0.22) !important;
+    color: #a7f3d0 !important;
+    border: 1px solid rgba(16, 185, 129, 0.35) !important;
+    padding: 4px 14px !important;
+    border-radius: 30px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+.sync-status.disconnected {
+    background: rgba(239, 68, 68, 0.22) !important;
+    color: #fca5a5 !important;
+    border: 1px solid rgba(239, 68, 68, 0.35) !important;
+    padding: 4px 14px !important;
+    border-radius: 30px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+.status-dot.connected {
+    background: #10B981 !important;
+    box-shadow: 0 0 8px #10B981 !important;
+}
+.status-dot.disconnected {
+    background: #EF4444 !important;
+    box-shadow: 0 0 8px #EF4444 !important;
+}
+.dash-welcome-badges {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+.welcome-badge {
+    background: rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    padding: 10px 18px !important;
+    border-radius: 14px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.welcome-badge:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 .dash-welcome-time {
-    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
 }
-.dash-welcome-time .time-big {
-    font-size: 36px;
-    font-weight: 800;
+.dash-welcome-time:hover {
+    transform: rotate(15deg) scale(1.05);
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+.dash-welcome-time i {
+    font-size: 32px;
     color: #ffffff;
-    letter-spacing: -1px;
-    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .dash-welcome-time .time-date {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.55);
-    font-weight: 500;
+    font-size: 10px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.85);
     margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Tabs & Containers */
@@ -683,7 +764,7 @@ uasort($profileSales, function($a, $b) {
                             <div class="sync-status disconnected"><span class="status-dot disconnected"></span> Telegram Config Required</div>
                         <?php endif; ?>
                     </div>
-                    <h2><?= ($langid == 'id') ? 'Antrean Webhook & Transaksi' : 'Webhook Queue & Transactions' ?></h2>
+                    <h2>MikhPay Billing Manager</h2>
                     <div class="dash-welcome-badges">
                         <span class="welcome-badge"><i class="fa fa-clock-o"></i> <?= ($langid == 'id') ? 'Antrean' : 'Queue' ?>: <?= count($pendingTransactions) ?></span>
                         <span class="welcome-badge"><i class="fa fa-check-circle"></i> <?= ($langid == 'id') ? 'Sukses' : 'Success' ?>: <?= $successCount ?></span>
@@ -691,8 +772,8 @@ uasort($profileSales, function($a, $b) {
                     </div>
                 </div>
                 <div class="dash-welcome-time">
-                    <div class="time-big" style="font-size: 24px;"><i class="fa fa-exchange"></i></div>
-                    <div class="time-date">MikhPay v2.0</div>
+                    <i class="fa fa-credit-card"></i>
+                    <div class="time-date">v2.0</div>
                 </div>
             </div>
         </div>
