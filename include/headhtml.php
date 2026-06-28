@@ -45,6 +45,55 @@ error_reporting(0);
 
 		<!-- Modern CSS Overrides (Dynamic Dark/Light Mode) -->
 		<link rel="stylesheet" href="css/modern-override.css?t=<?= time() ?>">
+		<?php
+		if (!class_exists('\App\Models\AppSettings')) {
+			include_once(__DIR__ . '/autoload.php');
+		}
+		$dbSettings = new \App\Models\AppSettings();
+		$portal_accent_color = $dbSettings->get('portal_accent_color', '#3c50e0');
+		
+		// Convert hex to rgb for rgba fallbacks
+		$hex = str_replace('#', '', $portal_accent_color);
+		if (strlen($hex) == 3) {
+			$r = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
+			$g = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
+			$b = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));
+		} else {
+			$r = hexdec(substr($hex, 0, 2));
+			$g = hexdec(substr($hex, 2, 2));
+			$b = hexdec(substr($hex, 4, 2));
+		}
+		$primary_glow = "rgba($r, $g, $b, 0.12)";
+		$primary_glow_light = "rgba($r, $g, $b, 0.08)";
+		$border_hover = "rgba($r, $g, $b, 0.4)";
+		$border_hover_light = "rgba($r, $g, $b, 0.2)";
+		?>
+		<style>
+		:root {
+			--primary: <?= $portal_accent_color ?> !important;
+			--primary-dim: <?= $portal_accent_color ?> !important;
+			--primary-glow: <?= $primary_glow ?> !important;
+			--primary-hover: <?= $portal_accent_color ?> !important;
+			--primary-hover-text: <?= $portal_accent_color ?> !important;
+			--border-hover: <?= $border_hover ?> !important;
+		}
+		body.theme-dark {
+			--primary: <?= $portal_accent_color ?> !important;
+			--primary-dim: <?= $portal_accent_color ?> !important;
+			--primary-glow: <?= $primary_glow ?> !important;
+			--primary-hover: <?= $portal_accent_color ?> !important;
+			--primary-hover-text: <?= $portal_accent_color ?> !important;
+			--border-hover: <?= $border_hover ?> !important;
+		}
+		body.theme-light, body.theme-blue, body.theme-green, body.theme-pink {
+			--primary: <?= $portal_accent_color ?> !important;
+			--primary-dim: <?= $portal_accent_color ?> !important;
+			--primary-glow: <?= $primary_glow_light ?> !important;
+			--primary-hover: <?= $portal_accent_color ?> !important;
+			--primary-hover-text: <?= $portal_accent_color ?> !important;
+			--border-hover: <?= $border_hover_light ?> !important;
+		}
+		</style>
 	</head>
 	<body class="theme-<?= $theme; ?>">
 		<div class="wrapper">
