@@ -121,10 +121,16 @@ if (!isset($_SESSION["mikhmon"])) {
                                     </div>
                                 </div>
 
-                                <div style="display: flex; gap: 12px; font-size: 12px; font-weight: bold; justify-content: flex-start;">
-                                  <span class="connect pointer" id="<?= $value; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></span>
-                                  <a href="./admin.php?id=settings&session=<?= $value; ?>"><i class="fa fa-edit"></i> <?= $_edit ?></a>
-                                  <a href="javascript:void(0)" onclick="if(confirm('Are you sure to delete data <?= $value; ?>?')){loadpage('./admin.php?id=remove-session&session=<?= $value; ?>')}"><i class="fa fa-remove"></i> <?= $_delete ?></a>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 12px; font-weight: bold; text-align: center;">
+                                  <div>
+                                    <span class="connect pointer" id="<?= $value; ?>"><i class="fa fa-external-link"></i> <?= $_open ?></span>
+                                  </div>
+                                  <div>
+                                    <a href="./admin.php?id=settings&session=<?= $value; ?>"><i class="fa fa-edit"></i> <?= $_edit ?></a>
+                                  </div>
+                                  <div>
+                                    <a href="javascript:void(0)" onclick="if(confirm('Are you sure to delete data <?= $value; ?>?')){loadpage('./admin.php?id=remove-session&session=<?= $value; ?>')}"><i class="fa fa-remove"></i> <?= $_delete ?></a>
+                                  </div>
                                 </div>
                               </div>
                             </div>
