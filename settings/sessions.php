@@ -64,14 +64,14 @@ if (!isset($_SESSION["mikhmon"])) {
 
 <div class="row">
 	<div class="col-12">
-  	<div class="card">
+  	<div class="card" style="box-shadow: var(--shadow-card); border-radius: var(--radius); border: 1px solid var(--border-color);">
   		<div class="card-header">
   			<h3 class="card-title"><i class="fa fa-gear"></i> <?= $_admin_settings ?> &nbsp; | &nbsp;&nbsp;<i onclick="location.reload();" class="fa fa-refresh pointer " title="Reload data"></i></h3>
   		</div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-6">
-            <div class="card">
+      <div class="card-body" style="padding: 24px !important;">
+        <div class="settings-row-flex">
+          <div class="settings-col-flex">
+            <div class="card" style="box-shadow: var(--shadow-card); border-radius: var(--radius); border: 1px solid var(--border-color); margin: 0 !important;">
               <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-server"></i> <?= $_router_list ?></h3>
               </div>
@@ -138,19 +138,34 @@ if (!isset($_SESSION["mikhmon"])) {
                     </div>
               <?php
               }
-          ?>
+              ?>
               </div>
             </div>
           </div>
         </div>
-			    <div class="col-6">
-          <form autocomplete="off" method="post" action="">
-            <div class="card">
+        <div class="settings-col-flex">
+          <form autocomplete="off" method="post" action="" style="display: flex; flex-direction: column; flex: 1;">
+            <div class="card" style="box-shadow: var(--shadow-card); border-radius: var(--radius); border: 1px solid var(--border-color); margin: 0 !important; height: 100%; display: flex; flex-direction: column;">
               <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-user-circle"></i> <?= $_admin ?></h3>
               </div>
-            <div class="card-body">
+            <div class="card-body" style="padding: 24px !important; flex: 1;">
             <style>
+            .settings-row-flex {
+                display: flex !important;
+                gap: 24px !important;
+                width: 100% !important;
+                flex-wrap: wrap !important;
+                box-sizing: border-box !important;
+            }
+            .settings-col-flex {
+                flex: 1 1 calc(50% - 12px) !important;
+                min-width: 320px !important;
+                box-sizing: border-box !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 20px !important;
+            }
             .form-group-floating {
                 position: relative;
                 margin-bottom: 16px;
