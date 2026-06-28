@@ -27,5 +27,4 @@ Thumbs.db
 
 # Ignore example configuration templates and utility scripts
 /include/config.php.example
-/.env.php.example
 /replace.ps1
