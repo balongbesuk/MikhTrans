@@ -287,32 +287,32 @@ if (!isset($_SESSION["mikhmon"])) {
 #r_1 .box.box-bordered {
     background: var(--bg-card) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: var(--radius) !important;
-    padding: 24px !important;
+    border-radius: 20px !important;
+    padding: 28px !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     box-sizing: border-box;
     height: 100% !important;
-    box-shadow: var(--shadow-card) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
     flex: 1 !important;
 }
 #r_1 .box.box-bordered:hover {
     border-color: var(--border-hover) !important;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.05) !important;
-    transform: translateY(-1px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-3px);
 }
 
 #r_1 .box-group {
     display: flex !important;
     align-items: flex-start !important;
-    gap: 14px !important;
+    gap: 18px !important;
     height: 100% !important;
 }
 
 #r_1 .box-group-icon {
-    font-size: 18px !important;
-    width: 44px !important;
-    height: 44px !important;
-    border-radius: 50% !important;
+    font-size: 20px !important;
+    width: 52px !important;
+    height: 52px !important;
+    border-radius: 16px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -320,10 +320,15 @@ if (!isset($_SESSION["mikhmon"])) {
     margin: 0 !important;
     float: none !important;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
-.icon-indigo { background: rgba(60, 80, 224, 0.1) !important; color: var(--primary) !important; }
-.icon-cyan { background: rgba(33, 150, 83, 0.1) !important; color: #219653 !important; }
-.icon-violet { background: rgba(245, 158, 11, 0.1) !important; color: #ffa70b !important; }
+#r_1 .box.box-bordered:hover .box-group-icon {
+    transform: scale(1.08);
+}
+.icon-indigo { background: rgba(60, 80, 224, 0.12) !important; color: var(--primary) !important; }
+.icon-cyan { background: rgba(16, 185, 129, 0.12) !important; color: #10b981 !important; }
+.icon-violet { background: rgba(245, 158, 11, 0.12) !important; color: #f59e0b !important; }
+.icon-emerald { background: rgba(16, 185, 129, 0.12) !important; color: #10b981 !important; }
 
 #r_1 .box-group-area {
     flex: 1;
@@ -336,13 +341,13 @@ if (!isset($_SESSION["mikhmon"])) {
 .stat-title {
     font-size: 11px !important;
     font-weight: 700 !important;
-    color: #6b7280 !important;
+    color: var(--text-muted) !important;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 4px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
 }
 .stat-main-val {
-    font-size: 20px !important;
+    font-size: 22px !important;
     font-weight: 800 !important;
     color: var(--text-bright) !important;
     margin-bottom: 3px;
@@ -351,7 +356,7 @@ if (!isset($_SESSION["mikhmon"])) {
 }
 .stat-sub-val {
     font-size: 11px !important;
-    color: #6b7280 !important;
+    color: var(--text-muted) !important;
     font-weight: 500;
 }
 
@@ -361,14 +366,14 @@ if (!isset($_SESSION["mikhmon"])) {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-main);
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     font-weight: 600;
 }
 .metric-bar {
     width: 100%;
-    height: 5px;
+    height: 7px;
     background: var(--border-color);
     border-radius: 10px;
     overflow: hidden;
@@ -376,8 +381,9 @@ if (!isset($_SESSION["mikhmon"])) {
 .metric-bar-fill {
     height: 100%;
     border-radius: 10px;
-    background: linear-gradient(90deg, #6366f1, #818cf8);
+    background: linear-gradient(90deg, var(--primary), var(--primary));
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 .metric-bar-fill.bg-emerald {
     background: linear-gradient(90deg, #10b981, #34d399);
@@ -691,7 +697,7 @@ if (!isset($_SESSION["mikhmon"])) {
                   </div>
                   <div class="metric-bar"><div class="metric-bar-fill" style="width: <?= is_numeric($cpu_load) ? $cpu_load : 0 ?>%;"></div></div>
                 </div>
-                <div class="sys-metric" style="margin-top: 8px;">
+                <div class="sys-metric" style="margin-top: 10px;">
                   <div class="metric-info">
                     <span>RAM <strong id="memVal" data-val="<?= $mem_pct ?>"><?= $mem_pct ?><?= is_numeric($mem_pct) ? '%' : '' ?></strong></span>
                     <canvas id="memorySparkline" width="60" height="14"></canvas>
@@ -709,11 +715,11 @@ if (!isset($_SESSION["mikhmon"])) {
               <div class="box-group-icon icon-violet"><i class="fa fa-hdd-o"></i></div>
               <div class="box-group-area">
                 <div class="stat-title">Storage & Memory</div>
-                <div class="stat-main-val"><?= $free_mem_bytes ?> <span style="font-size:12px;color:#6b7280;font-weight:600;">free RAM</span></div>
-                <div class="sys-metric" style="margin-top: 6px;">
+                <div class="stat-main-val"><?= $free_mem_bytes ?> <span style="font-size:13px;color:var(--text-muted);font-weight:600;">free RAM</span></div>
+                <div class="sys-metric" style="margin-top: 8px;">
                   <div class="metric-info">
                     <span>HDD <?= $hdd_pct ?><?= is_numeric($hdd_pct) ? '%' : '' ?></span>
-                    <span style="color:#6b7280;"><?= $free_hdd_bytes ?> free</span>
+                    <span style="color:var(--text-muted);"><?= $free_hdd_bytes ?> free</span>
                   </div>
                   <div class="metric-bar"><div class="metric-bar-fill bg-amber" style="width: <?= is_numeric($hdd_pct) ? $hdd_pct : 0 ?>%;"></div></div>
                 </div>
@@ -722,7 +728,7 @@ if (!isset($_SESSION["mikhmon"])) {
           </div>
         </div>
       </div>
-      <!-- Card 4: Income (Moved from Sidebar) -->
+      <!-- Card 3: Income -->
       <div id="r_4" class="<?= $col_class ?>" <?= $lreport; ?>>
         <div class="box bmh-75 box-bordered" style="height: 100%;">
           <div class="box-group">
@@ -733,16 +739,16 @@ if (!isset($_SESSION["mikhmon"])) {
                 <?php 
                 if ($_SESSION[$session.'sdate'] == $_SESSION[$session.'idhr']){
                 ?>
-                  <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+                  <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
                     <!-- Today -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">
-                      <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);"><?= $_today ?></span>
-                      <span style="font-size: 12px; font-weight: 700; color: var(--text-bright);"><?= $currency ?> <?= $_SESSION[$session.'dincome'] ?> <span style="font-size: 10px; font-weight: 600; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 1px 5px; border-radius: 10px; margin-left: 4px;"><?= $_SESSION[$session.'totalHr'] ?> vcr</span></span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+                      <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);"><?= $_today ?></span>
+                      <span style="font-size: 14px; font-weight: 800; color: var(--text-bright);"><?= $currency ?> <?= $_SESSION[$session.'dincome'] ?> <span style="font-size: 10px; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.12); padding: 2px 8px; border-radius: 10px; margin-left: 4px;"><?= $_SESSION[$session.'totalHr'] ?> vcr</span></span>
                     </div>
                     <!-- This Month -->
                     <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 2px;">
-                      <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);"><?= $_this_month ?></span>
-                      <span style="font-size: 12px; font-weight: 700; color: var(--primary);"><?= $currency ?> <?= $_SESSION[$session.'mincome'] ?> <span style="font-size: 10px; font-weight: 600; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 1px 5px; border-radius: 10px; margin-left: 4px;"><?= $_SESSION[$session.'totalBl'] ?> vcr</span></span>
+                      <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);"><?= $_this_month ?></span>
+                      <span style="font-size: 14px; font-weight: 800; color: var(--primary);"><?= $currency ?> <?= $_SESSION[$session.'mincome'] ?> <span style="font-size: 10px; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.12); padding: 2px 8px; border-radius: 10px; margin-left: 4px;"><?= $_SESSION[$session.'totalBl'] ?> vcr</span></span>
                     </div>
                   </div>
                 <?php 
