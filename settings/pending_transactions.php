@@ -930,12 +930,18 @@ uasort($profileSales, function($a, $b) {
                                             $stVal = isset($ht['status']) ? $ht['status'] : 'pending';
                                             $badgeClass = 'pending';
                                             $badgeLabel = 'Pending';
+                                            
+                                            $txTime = isset($ht['paid_at']) ? $ht['paid_at'] : (isset($ht['created_at']) ? $ht['created_at'] : $ht['file_time']);
+                                            
                                             if ($stVal === 'settlement' || $stVal === 'capture') {
                                                 $badgeClass = 'success';
                                                 $badgeLabel = 'Lunas';
                                             } elseif ($stVal === 'failed') {
                                                 $badgeClass = 'failed';
                                                 $badgeLabel = 'Gagal';
+                                            } elseif ($stVal === 'pending' && (time() - $txTime > 300)) {
+                                                $badgeClass = 'failed';
+                                                $badgeLabel = 'Expired';
                                             }
                                             ?>
                                             <tr data-status="<?= $badgeClass ?>">
