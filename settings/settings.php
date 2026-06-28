@@ -113,16 +113,30 @@ if (!isset($_SESSION["mikhmon"])) {
 <form autocomplete="off" method="post" action="" name="settings">  
 <div class="row">
 	<div class="col-12">
-  		<div class="card" >
+  		<div class="card" style="box-shadow: var(--shadow-card); border-radius: var(--radius); border: 1px solid var(--border-color);">
   			<div class="card-header">
   				<h3 class="card-title"><i class="fa fa-gear"></i> <?= $_session_settings ?> &nbsp; | &nbsp;&nbsp;<i onclick="location.reload();" class="fa fa-refresh pointer " title="Reload data"></i></h3>
   			</div>
-        <div class="card-body">
-    	   <div class="row">
-			     <div class="col-6">
-            <div class="col-12">
-              <div class="card">
+        <div class="card-body" style="padding: 24px !important;">
+    	   <div class="settings-row-flex">
+			     <div class="settings-col-flex">
+              <div class="card" style="border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin: 0 !important; overflow: hidden;">
                 <style>
+                .settings-row-flex {
+                    display: flex !important;
+                    gap: 24px !important;
+                    width: 100% !important;
+                    flex-wrap: wrap !important;
+                    box-sizing: border-box !important;
+                }
+                .settings-col-flex {
+                    flex: 1 1 calc(50% - 12px) !important;
+                    min-width: 320px !important;
+                    box-sizing: border-box !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    gap: 20px !important;
+                }
                 .form-group-floating {
                     position: relative;
                     margin-bottom: 16px;
@@ -182,11 +196,11 @@ if (!isset($_SESSION["mikhmon"])) {
                     background: var(--primary-hover, #007bb0) !important;
                 }
                 </style>
-                <div class="card-header">
+                <div class="card-header" style="border-bottom: 1px solid var(--border-color); background: transparent;">
                   <h3 class="card-title"><?= $_session ?></h3>
                 </div>
-                <div class="card-body">
-                  <div class="form-group-floating">
+                <div class="card-body" style="padding: 20px !important;">
+                  <div class="form-group-floating" style="margin-bottom: 0 !important;">
                     <input class="form-control" id="sessname" type="text" name="sessname" placeholder=" " value="<?php if (explode("-",$session)[0] == "new") {
                                                                                                                           echo "";
                                                                                                                         } else {
@@ -196,14 +210,12 @@ if (!isset($_SESSION["mikhmon"])) {
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="col-12">
-				      <div class="card">
-        	     <div class="card-header">
+				      <div class="card" style="border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin: 0 !important; overflow: hidden;">
+        	     <div class="card-header" style="border-bottom: 1px solid var(--border-color); background: transparent;">
             	   <h3 class="card-title">MikroTik <?= $_SESSION["connect"]; ?></h3>
         	     </div>
-        	     <div class="card-body">
-                 <div style="padding: 10px 0;">
+        	     <div class="card-body" style="padding: 20px !important;">
+                 <div style="padding: 0;">
                    <div class="form-group-floating">
                      <input class="form-control" id="ipmik" type="text" name="ipmik" placeholder=" " value="<?= $iphost; ?>" required="1"/>
                      <label for="ipmik">IP MikroTik / IP Cloud</label>
@@ -239,16 +251,14 @@ if (!isset($_SESSION["mikhmon"])) {
     </div>  	
     <div id="ping">
     </div>	
-	</div>
 </div>
-<div class="col-6">
-<div class="col-12">
-	<div class="card">
-        <div class="card-header">
+<div class="settings-col-flex">
+	<div class="card" style="border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin: 0 !important; overflow: hidden;">
+        <div class="card-header" style="border-bottom: 1px solid var(--border-color); background: transparent;">
             <h3 class="card-title">Mikhmon Data</h3>
         </div>
-    <div class="card-body">    
-      <div style="padding: 10px 0;">
+    <div class="card-body" style="padding: 20px !important;">    
+      <div style="padding: 0;">
         <div class="form-group-floating">
           <input class="form-control" type="text" name="hotspotname" placeholder=" " value="<?= $hotspotname; ?>" required="1" id="hotspotname"/>
           <label for="hotspotname"><?= $_hotspot_name ?></label>
@@ -295,13 +305,13 @@ if (!isset($_SESSION["mikhmon"])) {
           </div>
         </div>
 
-        <div class="form-group-floating">
+        <div class="form-group-floating" style="margin-bottom: 16px;">
           <input class="form-control" type="number" min="1" max="99" name="iface" placeholder=" " value="<?= $iface; ?>" required="1" id="iface"/>
           <label for="iface"><?= $_traffic_interface ?></label>
         </div>
 
         <?php if (!empty($livereport)): ?>
-        <div style="margin-bottom: 16px;">
+        <div style="margin-bottom: 0;">
           <label style="font-size: 12px; color: var(--text-muted, #73818f); display: block; margin-bottom: 6px; font-weight: 600; text-align: left;"><?= $_live_report ?></label>
           <select class="form-control" name="livereport" style="height: 48px !important; border-radius: 8px !important; border: 1px solid var(--border-color, #c1c1c1) !important; background: var(--card-bg, #fff) !important; color: var(--text-main, #3E3E3E) !important; padding: 0 16px !important; width: 100% !important;">
             <option value="<?= $livereport; ?>"><?= ucfirst($livereport); ?></option>
@@ -312,6 +322,7 @@ if (!isset($_SESSION["mikhmon"])) {
         <?php endif; ?>
       </div>
     </div>
+</div>
 </div>
 </div>
 </div>
