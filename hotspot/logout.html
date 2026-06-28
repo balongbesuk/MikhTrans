@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wifi - Logout</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<style>
+    .container p {
+        color: rgb(75, 75, 75);
+    }
+
+    .container td {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .container td {
+        padding: 5px 15px 5px 15px;
+        color: rgb(34, 34, 34);
+        ;
+    }
+</style>
+<script>
+    function openLogin() {
+        if (window.name != 'hotspot_logout') return true;
+        open('$(link-login)', '_blank', '');
+        window.close();
+        return false;
+    }
+</script>
+
+<body>
+    <div class="container">
+        <!-- menu nav -->
+        <div class="row menu">
+            <div class="col-12 col-md-9 col-lg-12 mx-auto">
+                <!-- logo top left -->
+                <img class="logo-brand" src="img/icon/logo.png">
+                <!-- menu top -->
+                <ul class="nav justify-content-end poppins">
+                    <li class="nav-item">
+                        <a class="nav-link text-black" href="login.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-black" href="voucher.html">Voucher</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-black" href="kontak.html">Kontak</a>
+                    </li>
+                </ul>
+                <!-- /menu top -->
+            </div>
+        </div>
+        <!-- /menu nav -->
+
+        <!-- hero-login -->
+        <div class="row hero-login">
+            <div class="col-12 col-md-9 col-lg-12 mx-auto">
+                <div class="row m-0 p-0">
+                    <div class="col-12 mt-3 base shadow">
+                        <div class="row align-items-center">
+
+                            <!-- banner-image -->
+                            <div class="col-12 col-lg m-0 p-0">
+                                <img class="brand-banner w-100 d-block d-lg-none" src="img/500x200.jpg">
+                                <img class="brand-banner w-100 d-none d-lg-block" src="img/500x500.jpg">
+                            </div>
+                            <!-- /banner-image -->
+
+                            <!-- form -->
+                            <div class="col-12 col-lg-5 mt-4">
+                                <div class="row text-center">
+                                    <div class="col ">
+                                        <img class="logo-form" src="img/icon/logo.png">
+                                    </div>
+                                </div>
+                                <div class="row pt-3 pb-5 pb-lg-4 text-center">
+                                    <div class="col-12 pl-3 mx-auto poppins">
+                                        <form action="$(link-login)" name="login" onSubmit="return openLogin()">
+                                            <h5 class="text-danger font-weight-bold">TERPUTUS</h5>
+                                            <h6>Terima kasi sudah menggunakan layanan
+                                                kami.</h6>
+                                            <hr width="80%">
+                                            <table class="mx-auto poppins">
+                                                <tr>
+                                                    <td>Ip</td>
+                                                    <td>$(ip)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Mac</td>
+                                                    <td>$(mac)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Download</td>
+                                                    <td>$(bytes-out-nice)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Upload</td>
+                                                    <td>$(bytes-in-nice)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Duriasi</td>
+                                                    <td>$(uptime)</td>
+                                                </tr>
+                                                $(if session-time-left)
+                                                <tr>
+                                                    <td>Sisa Waktu</td>
+                                                    <td>$(session-time-left)</td>
+                                                </tr>
+                                                $(endif)
+                                            </table>
+                                            <hr width="80%">
+                                            <h6>Tekan login untuk akses internet.</h6>
+                                            <button
+                                                class="btn btn-primary mt-3 mt-lg-4 font-weight-bold pl-3 pr-3">LOGIN</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /form -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /hero login -->
+    </div>
+
+
+</body>
+<script src="js/jquery-3.5.1.slim.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+</html>

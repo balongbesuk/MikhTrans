@@ -21,7 +21,6 @@ Thumbs.db
 /logs/error-*.log.php
 
 # Ignore hotspot local directory
-/hotspot/
 
 # Ignore PHP transaction files
 /voucher/trans-*.php

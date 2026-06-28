@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wifi - Status</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<style>
+    .container p {
+        color: rgb(75, 75, 75);
+    }
+
+	.container .logo-form {
+        width: 100%;
+    }
+
+    .container td {
+        padding: 5px 15px 5px 15px;
+        color: rgb(34, 34, 34);
+        ;
+    }
+</style>
+
+<!-- script mikrotik -->
+<script>
+    function openLogout() {
+        if (window.name != 'hotspot_status') return true;
+        open('$(link-logout)', 'hotspot_logout',
+            'toolbar=0,location=0,directories=0,status=0,menubars=0,resizable=1,width=280,height=250');
+        window.close();
+        return false;
+    }
+</script>
+<!-- script mikrotik -->
+
+<body>
+    <div class="container">
+
+        <!-- menu nav -->
+        <div class="row menu">
+            <div class="col-12 col-md-9 col-lg-12 mx-auto">
+                <!-- logo top left -->
+                <img class="logo-brand" src="img/icon/logo.png">
+                <!-- menu top -->
+                <ul class="nav justify-content-end poppins">
+                    <li class="nav-item">
+                        <a class="nav-link text-black" href="voucher.html">Voucher</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-black" href="kontak.html">Kontak</a>
+                    </li>
+                </ul>
+                <!-- /menu top -->
+            </div>
+        </div>
+        <!-- /menu nav -->
+
+        <!-- hero-login -->
+        <div class="row hero-login">
+            <div class="col-12 col-md-9 col-lg-12 mx-auto">
+                <div class="row m-0 p-0">
+                    <div class="col-12 mt-3 base shadow">
+                        <div class="row align-items-center">
+
+                            <!-- banner-image -->
+                            <div class="col-12 col-lg m-0 p-0">
+                                <img class="brand-banner w-100 d-block d-lg-none" src="img/500x200.jpg">
+                                <img class="brand-banner w-100 d-none d-lg-block" src="img/500x500.jpg">
+                            </div>
+                            <!-- /banner-image -->
+
+                            <!-- form -->
+                            <div class="col-12 col-lg-5 mt-4">
+                                <div class="row text-center">
+                                    <div class="col ">
+                                        <img class="logo-form" src="img/icon/logo.png">
+                                    </div>
+                                </div>
+                                <div class="row pt-3 pb-5 pb-lg-4 text-center">
+                                    <form action="$(link-logout)" name="logout" onSubmit="return openLogout()">
+                                        <div class="col-11 pl-3 mx-auto poppins">
+                                            <h5 class="text-success font-weight-bold">TERHUBUNG</h5>
+
+                                            <h6 id="noTrial">Selamat datang, gunakan akses internet dengan bijak.</h6>
+
+
+                                            <h6 class="d-none" id="trial">Anda menggunakan internet gratis, gunakan
+                                                voucher
+                                                untuk internet ulimited.</h6>
+
+                                            <hr width="80%">
+                                            <table class="mx-auto poppins">
+                                                <tr>
+                                                    <td>User</td>
+                                                    <td>$(username)</td>
+                                                </tr>
+												<tr>
+                                                    <td>Ip</td>
+                                                    <td>$(ip)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Mac</td>
+                                                    <td>$(mac)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Download</td>
+                                                    <td>$(bytes-out-nice)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Upload</td>
+                                                    <td>$(bytes-in-nice)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Durasi</td>
+                                                    <td>$(uptime)</td>
+                                                </tr>
+                                                $(if session-time-left)
+                                                <tr>
+                                                    <td>Sisa Waktu</td>
+                                                    <td>$(session-time-left)</td>
+                                                </tr>
+                                                $(endif)
+                                            </table>
+                                            <hr width="80%">
+                                            <h6>Tekan logout untuk menghentikan akses internet.</h6>
+                                            <button
+                                                class="btn btn-danger mt-3 mt-lg-4 font-weight-bold pl-3 pr-3">LOGOUT</button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                            <!-- /form -->
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /hero login -->
+
+
+    </div>
+
+
+</body>
+
+
+<script src="js/jquery-3.5.1.slim.min.js"></script>
+$(if login-by == 'trial')
+<script>
+    $(document).ready(function () {
+        $("#trial").removeClass("d-none");
+        $("#noTrial").hide();
+    });
+</script>
+$(endif)
+
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+</html>
