@@ -25,3 +25,7 @@ Thumbs.db
 # Ignore PHP transaction files
 /voucher/trans-*.php
 
+# Ignore example configuration templates and utility scripts
+/include/config.php.example
+/.env.php.example
+/replace.ps1
