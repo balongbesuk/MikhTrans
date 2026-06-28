@@ -327,14 +327,18 @@ body {
 
 .sidenav .dropdown-container {
     background: var(--dropdown-bg) !important;
-    margin: 2px 10px !important;
-    border-radius: 10px !important;
-    padding: 4px 0 !important;
+    margin: 4px 12px !important;
+    border-radius: 12px !important;
+    padding: 6px 0 !important;
 }
 .sidenav .dropdown-container a {
-    margin: 1px 6px !important;
-    padding: 7px 12px 7px 28px !important;
-    font-size: 12px !important;
+    margin: 2px 8px !important;
+    padding: 8px 14px 8px 36px !important;
+    font-size: 12.5px !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
 }
 
 .fa-caret-down, .fa-caret-left {

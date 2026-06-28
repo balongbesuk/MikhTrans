@@ -219,11 +219,11 @@ if($idleto != "disable"){
     <i class="fa fa-caret-down"></i>
   </div>
   <div class="dropdown-container <?= ($id == 'pending-transactions') ? 'menu-open' : ''; ?>">
-    <a href="./admin.php?id=pending-transactions&tab=tab-pending" class="<?= ($id == 'pending-transactions' && ($_GET['tab'] == 'tab-pending' || empty($_GET['tab']))) ? 'active' : ''; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-clock-o"></i> <?= ($langid == 'id') ? 'Antrean Tertunda' : 'Pending Queue' ?></a>
-    <a href="./admin.php?id=pending-transactions&tab=tab-analytics" class="<?= ($id == 'pending-transactions' && $_GET['tab'] == 'tab-analytics') ? 'active' : ''; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-line-chart"></i> <?= ($langid == 'id') ? 'Analitik Penjualan' : 'Sales Analytics' ?></a>
-    <a href="./admin.php?id=pending-transactions&tab=tab-history" class="<?= ($id == 'pending-transactions' && $_GET['tab'] == 'tab-history') ? 'active' : ''; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-history"></i> <?= ($langid == 'id') ? 'Riwayat Transaksi' : 'Transaction History' ?></a>
-    <a href="./admin.php?id=pending-transactions&tab=tab-logs" class="<?= ($id == 'pending-transactions' && $_GET['tab'] == 'tab-logs') ? 'active' : ''; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-terminal"></i> Log Aktivitas</a>
-    <a href="./admin.php?id=pending-transactions&tab=tab-settings" class="<?= ($id == 'pending-transactions' && $_GET['tab'] == 'tab-settings') ? 'active' : ''; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-sliders"></i> <?= ($langid == 'id') ? 'Pengaturan & Backup' : 'Settings & Backup' ?></a>
+    <a href="./admin.php?id=pending-transactions&tab=tab-pending" class="<?= ($id == 'pending-transactions' && ($_GET['tab'] == 'tab-pending' || empty($_GET['tab']))) ? 'active' : ''; ?>"><i class="fa fa-clock-o"></i> <?= ($langid == 'id') ? 'Antrean Tertunda' : 'Pending Queue' ?></a>
+    <a href="./admin.php?id=pending-transactions&tab=tab-analytics" class="<?= ($id == 'pending-transactions' && $_GET['tab'] == 'tab-analytics') ? 'active' : ''; ?>"><i class="fa fa-line-chart"></i> <?= ($langid == 'id') ? 'Analitik Penjualan' : 'Sales Analytics' ?></a>
+    <a href="./admin.php?id=pending-transactions&tab=tab-history" class="<?= ($id == 'pending-transactions' && $_GET['tab'] == 'tab-history') ? 'active' : ''; ?>"><i class="fa fa-history"></i> <?= ($langid == 'id') ? 'Riwayat Transaksi' : 'Transaction History' ?></a>
+    <a href="./admin.php?id=pending-transactions&tab=tab-logs" class="<?= ($id == 'pending-transactions' && $_GET['tab'] == 'tab-logs') ? 'active' : ''; ?>"><i class="fa fa-terminal"></i> Log Aktivitas</a>
+    <a href="./admin.php?id=pending-transactions&tab=tab-settings" class="<?= ($id == 'pending-transactions' && $_GET['tab'] == 'tab-settings') ? 'active' : ''; ?>"><i class="fa fa-sliders"></i> <?= ($langid == 'id') ? 'Pengaturan & Backup' : 'Settings & Backup' ?></a>
   </div>
   <a href="./admin.php?id=settings&router=new-<?= rand(1111,9999) ?>" class="menu <?= $snsettings ?>"><i class="fa fa-plus"></i> <?= $_add_router ?></a>
   <a href="./admin.php?id=about" class="menu <?= $sabout; ?>"><i class="fa fa-info-circle"></i> <?= $_about ?></a>
@@ -302,18 +302,17 @@ include('./info.php');
     <i class="fa fa-caret-down"></i>
   </div>
   <div class="dropdown-container <?= $umenu; ?>">
-    <a href="./?hotspot=users&profile=all&session=<?= $session; ?>" class="<?= $susersl; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-list "></i> <?= $_user_list ?> </a>
-    <a href="./?hotspot-user=add&session=<?= $session; ?>" class="<?= $sadduser; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user-plus "></i> <?= $_add_user ?> </a>
-    <a href="./?hotspot-user=generate&session=<?= $session; ?>" class="<?= $sgenuser; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user-plus"></i> <?= $_generate ?> </a>        
+    <a href="./?hotspot=users&profile=all&session=<?= $session; ?>" class="<?= $susersl; ?>"><i class="fa fa-list "></i> <?= $_user_list ?> </a>
+    <a href="./?hotspot-user=add&session=<?= $session; ?>" class="<?= $sadduser; ?>"><i class="fa fa-user-plus "></i> <?= $_add_user ?> </a>
+    <a href="./?hotspot-user=generate&session=<?= $session; ?>" class="<?= $sgenuser; ?>"><i class="fa fa-user-plus"></i> <?= $_generate ?> </a>        
   </div>
   <!--profile-->
   <div class="dropdown-btn <?= $suserprof; ?>"><i class=" fa fa-pie-chart"></i>  <?= $_user_profile ?>
     <i class="fa fa-caret-down"></i>
   </div>
   <div class="dropdown-container <?= $upmenu; ?>">
-    <a href="./?hotspot=user-profiles&session=<?= $session; ?>" class=" <?= $suserprofiles; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-list "></i> <?= $_user_profile_list ?> </a>
-    <a href="./?user-profile=add&session=<?= $session; ?>" class=" <?= $sadduserprof; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-plus-square "></i> <?= $_add_user_profile ?> </a>
-
+    <a href="./?hotspot=user-profiles&session=<?= $session; ?>" class="<?= $suserprofiles; ?>"><i class="fa fa-list "></i> <?= $_user_profile_list ?> </a>
+    <a href="./?user-profile=add&session=<?= $session; ?>" class="<?= $sadduserprof; ?>"><i class="fa fa-plus-square "></i> <?= $_add_user_profile ?> </a>
   </div>
   <!--active-->
   <a href="./?hotspot=active&session=<?= $session; ?>" class="menu <?= $sactive; ?>"><i class=" fa fa-wifi"></i> <?= $_hotspot_active ?></a>
@@ -333,17 +332,17 @@ include('./info.php');
     <i class="fa fa-caret-down"></i>
   </div>
   <div class="dropdown-container <?= $lmenu; ?>">
-    <a href="./?hotspot=log&session=<?= $session; ?>" class="<?= $slog; ?>"> <i class="fa fa-wifi "></i> <?= $_hotspot_log ?> </a>
-    <a href="./?report=userlog&idbl=<?= strtolower(date("M")) . date("Y"); ?>&session=<?= $session; ?>" class=" <?= $sulog; ?>"> <i class="fa fa-users "></i> <?= $_user_log ?> </a>
+    <a href="./?hotspot=log&session=<?= $session; ?>" class="<?= $slog; ?>"><i class="fa fa-wifi "></i> <?= $_hotspot_log ?> </a>
+    <a href="./?report=userlog&idbl=<?= strtolower(date("M")) . date("Y"); ?>&session=<?= $session; ?>" class="<?= $sulog; ?>"><i class="fa fa-users "></i> <?= $_user_log ?> </a>
   </div>
   <!--system-->
   <div class="dropdown-btn <?= $sysmenu; ?>"><i class=" fa fa-gear"></i> <?= $_system ?>
     <i class="fa fa-caret-down"></i>
   </div>
   <div class="dropdown-container <?= $schmenu; ?>">
-    <a href="./?system=scheduler&session=<?= $session; ?>" class="<?= $ssch; ?>"> <i class="fa fa-clock-o "></i> <?= $_system_scheduler ?> </a>
-    <a href="./admin.php?id=reboot&session=<?= $session; ?>" class=""> <i class="fa fa-power-off "></i> <?= $_system_reboot ?> </a>            
-    <a href="./admin.php?id=shutdown&session=<?= $session; ?>" class=""> <i class="fa fa-power-off "></i> <?= $_system_off ?> </a> 
+    <a href="./?system=scheduler&session=<?= $session; ?>" class="<?= $ssch; ?>"><i class="fa fa-clock-o "></i> <?= $_system_scheduler ?> </a>
+    <a href="./admin.php?id=reboot&session=<?= $session; ?>" class=""><i class="fa fa-power-off "></i> <?= $_system_reboot ?> </a>            
+    <a href="./admin.php?id=shutdown&session=<?= $session; ?>" class=""><i class="fa fa-power-off "></i> <?= $_system_off ?> </a> 
   </div>
   <!--dhcp leases-->
   <a href="./?hotspot=dhcp-leases&session=<?= $session; ?>" class="menu <?= $slease; ?>"><i class=" fa fa-sitemap"></i> <?= $_dhcp_leases ?></a>
@@ -356,10 +355,10 @@ include('./info.php');
     <i class="fa fa-caret-down"></i>
   </div>
   <div class="dropdown-container <?= $settmenu; ?>">
-  <a href="./admin.php?id=settings&session=<?= $session; ?>" class="menu "> <i class="fa fa-gear "></i> <?= $_session_settings ?> </a>
-  <a href="./admin.php?id=sessions" class="menu "> <i class="fa fa-gear "></i> <?= $_admin_settings ?> </a>
-  <a href="./?hotspot=uplogo&session=<?= $session; ?>" class="menu <?= $uplogo; ?>"> <i class="fa fa-upload "></i> <?= $_upload_logo ?> </a>
-  <a href="./?hotspot=template-editor&template=default&session=<?= $session; ?>" class="menu <?= $teditor; ?>"> <i class="fa fa-edit "></i> <?= $_template_editor ?> </a>          
+    <a href="./admin.php?id=settings&session=<?= $session; ?>" class="menu "><i class="fa fa-gear "></i> <?= $_session_settings ?> </a>
+    <a href="./admin.php?id=sessions" class="menu "><i class="fa fa-gear "></i> <?= $_admin_settings ?> </a>
+    <a href="./?hotspot=uplogo&session=<?= $session; ?>" class="menu <?= $uplogo; ?>"><i class="fa fa-upload "></i> <?= $_upload_logo ?> </a>
+    <a href="./?hotspot=template-editor&template=default&session=<?= $session; ?>" class="menu <?= $teditor; ?>"><i class="fa fa-edit "></i> <?= $_template_editor ?> </a>          
   </div>
   <!--about-->
   <a href="./?hotspot=about&session=<?= $session; ?>" class="menu <?= $sabout; ?>"><i class="fa fa-info-circle"></i> <?= $_about ?></a>
