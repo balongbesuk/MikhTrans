@@ -519,25 +519,30 @@ if (!isset($_SESSION["mikhmon"])) {
 #r_4 .box.box-bordered {
     background: var(--bg-card) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: var(--radius) !important;
-    box-shadow: var(--shadow-card) !important;
-    padding: 24px !important;
-    transition: all 0.3s ease;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+    padding: 28px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #r_4 .box.box-bordered:hover {
-    border-color: rgba(33, 150, 83, 0.3) !important;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.05) !important;
-    transform: translateY(-1px);
+    border-color: var(--border-hover) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-3px);
 }
-#r_4 .box-group { display: flex !important; align-items: center !important; }
+#r_4 .box-group { display: flex !important; align-items: flex-start !important; gap: 18px !important; }
 #r_4 .box-group-icon {
-    font-size: 18px !important;
+    font-size: 20px !important;
     color: #10b981 !important;
     background: rgba(16, 185, 129, 0.12) !important;
-    width: 44px !important; height: 44px !important;
-    border-radius: 50% !important;
+    width: 52px !important; height: 52px !important;
+    border-radius: 16px !important;
     display: flex !important; align-items: center !important; justify-content: center !important;
-    float: none !important; margin-right: 14px !important; flex-shrink: 0;
+    float: none !important; margin: 0 !important; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+#r_4 .box.box-bordered:hover .box-group-icon {
+    transform: scale(1.08);
 }
 #reloadLreport {
     font-size: 13px !important; line-height: 1.7 !important; color: var(--text-main) !important;
