@@ -59,11 +59,15 @@ Semua pembaruan penting pada modifikasi MikhPay ini akan dicatat di dokumen ini.
 - **Pemicu On-Login Script MikroTik (Prefiks `vc-`)**: Menambahkan prefiks `vc-` pada komentar transaksi voucher QRIS agar skrip `On-Login` di profil MikroTik mendeteksinya sebagai voucher resmi, mencatat riwayat penjualan harian di Mikhmon, dan mengaktifkan scheduler pembatasan masa aktif secara otomatis.
 - **Penyelarasan Zona Waktu Dasbor & API**: Menyetel zona waktu default PHP ke `Asia/Jakarta` (WIB) pada berkas dasbor admin, callback QRIS, dan cron retry agar jam pencatatan lunas pada dasbor web sinkron dengan jam lokal pada log MikroTik.
 - **Kunci Posisi Scroll pada Auto-Refresh Tabel**: Menambahkan logika penyimpanan dan pemulihan posisi scroll peramban (*window*) serta elemen kontainer tabel (*.overflow*) di dalam fungsi AJAX `safeLoad()`. Perbaikan ini mencegah layar dan tabel melompat kembali ke atas secara mengganggu setiap kali daftar pengguna aktif (Hotspot Active) diperbarui secara otomatis.
+- **Optimalisasi Tampilan Mobile & Layout Responsif**: Memperbaiki tata letak responsive tabel transaksi dan tombol aksi pada form tambah & generate user agar tidak bertumpuk/overlap, serta memulihkan tinggi dropdown filter select profile & comment yang gepeng/tipis di browser mobile WebKit.
+- **Redesain Kartu Readme Sidebar**: Merombak tampilan readme sidebar di menu Add & Edit Profile menggunakan kartu modern bergaya premium dengan padding, bayangan, dan info box bertanda ikon informasi yang konsisten.
+- **Form Kontrol Aksesibilitas**: Memperbaiki label & input ID mismatches di form tambah & generate user untuk menyelesaikan peringatan Chrome DevTools serta meningkatkan performa auto-fill peramban.
 
 ### Keamanan
 - **Proteksi Berkas Transaksi via PHP Encapsulation**: Mengubah ekstensi penyimpanan berkas transaksi dari `.json` menjadi `.php` (`trans-*.php`) yang dilindungi header `403 Forbidden` di baris pertama. Ini mencegah unduhan langsung berkas transaksi berisi kode voucher secara ilegal pada web server Nginx/Apache.
 - **Pencegahan Directory Listing Nginx**: Menambahkan berkas `index.php` berproteksi 403 di dalam direktori sensitif (`voucher/`, `data/`, dan `logs/`) untuk menutup celah keamanan perayapan folder (*folder traversal*).
 - **HTTP Security Headers di .htaccess**: Menambahkan header keamanan standar industri (`X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, dan `X-XSS-Protection: 1; mode=block`) untuk mencegah serangan Clickjacking, MIME sniffing, dan Cross-Site Scripting (XSS).
+- **Sanitasi Output Cegah Stored XSS**: Mengimplementasikan fungsi sanitasi `htmlspecialchars()` dan `urlencode()` secara ketat pada variabel-variabel dinamis keluaran MikroTik API dan database di halaman daftar user (`users.php`), detail user (`userbyname.php`), daftar profile (`userprofile.php`), detail edit profile (`userprofilebyname.php`), serta form pengaturan sesi (`settings.php`) guna menutup celah injeksi script (Stored XSS).
 
 
 ## [MikhPay v2.0] - 2026-06-25
