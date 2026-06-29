@@ -1,5 +1,9 @@
 # MikhPay - Modernized with REST API & QRIS Mandiri
 
+<p align="center">
+  <img src="img/logo.png" alt="MikhPay Logo" width="160" style="border-radius: 24px;" />
+</p>
+
 MikhPay (Mikrotik Hotspot Monitor & Transaction System) adalah aplikasi web berbasis PHP untuk mengelola dan memantau Hotspot MikroTik, khususnya untuk pembuatan voucher otomatis. Versi ini telah dimodernisasi dengan penambahan **REST API** untuk integrasi eksternal, **Portal Pembelian Voucher Mandiri** terintegrasi dengan **Sistem QRIS Dinamis Mandiri** (tanpa potongan payment gateway pihak ketiga), serta sistem **Pengerasan Keamanan (Security Hardening)** kelas enterprise.
 
 Aplikasi ini dikembangkan dan dimodifikasi dari kode sumber asli [Mikhmon v3 oleh Laksamadi Guko](https://github.com/laksa19/mikhmonv3).
@@ -74,6 +78,20 @@ Kredensial MikroTik, nama sesi, IP, user, password, dan dnsname diatur secara ot
 *   **Portal Mandiri Pelanggan**: `http://localhost/` (Otomatis diarahkan ke `frontpage.php`)
 *   **REST API**: `http://localhost/api.php`
 *   **Notification Webhook**: `http://localhost/notification.php`
+
+---
+
+## 📱 Aplikasi Android MikhPay-Forwarder (Alternatif Lebih Praktis)
+
+Sebagai alternatif pengganti MacroDroid yang lebih mudah dikonfigurasi dan ramah baterai, Anda dapat menggunakan aplikasi Android bawaan **MikhPay-Forwarder** yang berada di dalam repositori ini pada folder [android-app/](android-app/).
+
+### Fitur Aplikasi Android:
+- **Konfigurasi Instan**: Hanya perlu mengisi URL Webhook (`https://yourdomain.com/qris_verify.php`) dan Token API Anda.
+- **Sistem Latar Belakang Tangguh**: Menggunakan *NotificationListenerService* bawaan Android yang berjalan 24/7 di latar belakang dengan konsumsi daya sangat rendah.
+- **Auto-Parsing Nominal**: Membaca otomatis nominal pembayaran dari notifikasi (seperti GoPay Merchant, Dana, OVO, Shopee Partner, dll.) menggunakan pola regex pintar.
+- **Test Webhook**: Tombol uji koneksi langsung ke server Anda untuk memverifikasi kecocokan data.
+
+*Panduan detail kompilasi dan cara penggunaan dapat Anda lihat di [README.md Aplikasi Android](android-app/README.md).*
 
 ---
 

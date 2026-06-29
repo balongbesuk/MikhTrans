@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Outer WiFi/Glow Ring -->
+    <path
+        android:fillColor="#10b981"
+        android:pathData="M54,20c-18.8,0-34,15.2-34,34c0,7.1,2.2,13.7,5.9,19.2l4.3-4.3c-2.7-4.4-4.2-9.5-4.2-14.9c0-15.5,12.5-28,28-28s28,12.5,28,28c0,5.4-1.5,10.5-4.2,14.9l4.3,4.3C85.8,67.7,88,61.1,88,54C88,35.2,72.8,20,54,20z" />
+        
+    <!-- QR Code / Payment Frame -->
+    <path
+        android:strokeColor="#10b981"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M38,42 L38,38 L42,38 M66,38 L70,38 L70,42 M38,66 L38,70 L42,70 M70,66 L70,70 L66,70" />
+
+    <!-- Center QR / Shield & Checkmark -->
+    <path
+        android:fillColor="#10b981"
+        android:pathData="M54,34c-6.6,0-12,5.4-12,12v8c0,6.6,5.4,12,12,12s12-5.4,12-12v-8C66,39.4,60.6,34,54,34z M51,57.2l-4.2-4.2c-0.6-0.6-0.6-1.5,0-2.1s1.5-0.6,2.1,0l2.1,2.1l5.2-5.2c0.6-0.6,1.5-0.6,2.1,0s0.6,1.5,0,2.1L51,57.2z" />
+</vector>

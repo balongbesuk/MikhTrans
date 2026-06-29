@@ -1,0 +1,21 @@
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/.idea/modules.xml
+/.idea/deploymentTargetDropDown.xml
+/build
+.DS_Store
+/captures
+.externalNativeBuild
+.cxx
+
+# Local Keystore
+mikhpay.jks
+generate_keystore.ps1
+
+# Compiled Binaries (APKs)
+*.apk
+/app/release/
+/release/
