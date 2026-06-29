@@ -91,17 +91,19 @@ for ($i = 0; $i < $TotalReg; $i++) {
 	$pmon = $monexpired['name'];
 	$chkpmon = $monexpired['disabled'];
 	if(empty($pmon) || $chkpmon == "true"){$moncolor = "text-orange";}else{$moncolor = "text-green";}
+	$s_pname = htmlspecialchars($pname, ENT_QUOTES, 'UTF-8');
+	$js_pname = addslashes($pname);
+	$s_psharedu = htmlspecialchars($psharedu, ENT_QUOTES, 'UTF-8');
+	$s_pratelimit = htmlspecialchars($pratelimit, ENT_QUOTES, 'UTF-8');
+
 	echo "<tr>";
 	?>
-  <td style='text-align:center;'><i class='fa fa-minus-square text-danger pointer' onclick="if(confirm('Are you sure to delete profile (<?= $pname; ?>)?')){loadpage('./?remove-user-profile=<?= $pid; ?>&pname=<?= $pname ?>&session=<?= $session; ?>')}else{}" title='Remove <?= $pname; ?>'></i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+  <td style='text-align:center;'><i class='fa fa-minus-square text-danger pointer' onclick="if(confirm('Are you sure to delete profile (<?= $js_pname; ?>)?')){loadpage('./?remove-user-profile=<?= $pid; ?>&pname=<?= urlencode($pname) ?>&session=<?= $session; ?>')}else{}" title='Remove <?= $s_pname; ?>'></i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
   <?php
-	echo "<a title='Open User by profile " . $pname . "'  href='./?hotspot=users&profile=" . $pname . "&session=" . $session . "'><i class='fa fa-users'></i></a></td>";
-	echo "<td><a title='Open User Profile " . $pname . "' href='./?user-profile=" . $pid . "&session=" . $session . "'><i class='fa fa-edit'></i> <i class='fa fa-ci fa-circle ".$moncolor."'></i> $pname</a></td>";
-//$profiledetalis = $ARRAY[$i];echo "<td>" . $profiledetalis['name'];echo "</td>";
-	echo "<td>" . $psharedu;
-	echo "</td>";
-	echo "<td>" . $pratelimit;
-	echo "</td>";
+	echo "<a title='Open User by profile " . $s_pname . "'  href='./?hotspot=users&profile=" . urlencode($pname) . "&session=" . $session . "'><i class='fa fa-users'></i></a></td>";
+	echo "<td><a title='Open User Profile " . $s_pname . "' href='./?user-profile=" . $pid . "&session=" . $session . "'><i class='fa fa-edit'></i> <i class='fa fa-ci fa-circle ".$moncolor."'></i> " . $s_pname . "</a></td>";
+	echo "<td>" . $s_psharedu . "</td>";
+	echo "<td>" . $s_pratelimit . "</td>";
 
 	echo "<td>";
 	$getexpmode = explode(",", $ponlogin);
@@ -122,7 +124,7 @@ for ($i = 0; $i < $TotalReg; $i++) {
 	echo "<td>";
 // get validity
 	$getvalid = explode(",", $ponlogin);
-	echo $getvalid[3];
+	echo htmlspecialchars($getvalid[3], ENT_QUOTES, 'UTF-8');
 
 	echo "</td>";
 
@@ -134,9 +136,9 @@ for ($i = 0; $i < $TotalReg; $i++) {
 		echo "";
 	} else {
 		if ($currency == in_array($currency, $cekindo['indo'])) {
-			echo number_format((float)$price, 0, ",", ".");
+			echo htmlspecialchars(number_format((float)$price, 0, ",", "."), ENT_QUOTES, 'UTF-8');
 		} else {
-			echo number_format((float)$price, 2);
+			echo htmlspecialchars(number_format((float)$price, 2), ENT_QUOTES, 'UTF-8');
 		}
 	}
 
@@ -149,9 +151,9 @@ for ($i = 0; $i < $TotalReg; $i++) {
 		echo "";
 	} else {
 		if ($currency == in_array($currency, $cekindo['indo'])) {
-			echo number_format((float)$price, 0, ",", ".");
+			echo htmlspecialchars(number_format((float)$price, 0, ",", "."), ENT_QUOTES, 'UTF-8');
 		} else {
-			echo number_format((float)$price, 2);
+			echo htmlspecialchars(number_format((float)$price, 2), ENT_QUOTES, 'UTF-8');
 		}
 	}
 
@@ -159,7 +161,7 @@ for ($i = 0; $i < $TotalReg; $i++) {
 	echo "<td>";
 
 	$getgracep = explode(",", $ponlogin);
-	echo $getgracep[6];
+	echo htmlspecialchars($getgracep[6], ENT_QUOTES, 'UTF-8');
 	echo "</td>";
 	echo "</tr>";
 }

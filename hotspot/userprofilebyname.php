@@ -200,8 +200,18 @@ if (!isset($_SESSION["mikhmon"])) {
         ".id" => "$monid"));
     }
 
-    echo "<script>window.location='./?user-profile=" . $pid . "&session=" . $session . "'</script>";
-  }
+  // Sanitize variables for HTML attributes
+  $s_pname = htmlspecialchars($pname, ENT_QUOTES, 'UTF-8');
+  $s_ppool = htmlspecialchars($ppool, ENT_QUOTES, 'UTF-8');
+  $s_psharedu = htmlspecialchars($psharedu, ENT_QUOTES, 'UTF-8');
+  $s_pratelimit = htmlspecialchars($pratelimit, ENT_QUOTES, 'UTF-8');
+  $s_getexpmode = htmlspecialchars($getexpmode, ENT_QUOTES, 'UTF-8');
+  $s_getexpmodet = htmlspecialchars($getexpmodet, ENT_QUOTES, 'UTF-8');
+  $s_getvalid = htmlspecialchars($getvalid, ENT_QUOTES, 'UTF-8');
+  $s_getprice = htmlspecialchars($getprice, ENT_QUOTES, 'UTF-8');
+  $s_getsprice = htmlspecialchars($getsprice, ENT_QUOTES, 'UTF-8');
+  $s_getlocku = htmlspecialchars($getlocku, ENT_QUOTES, 'UTF-8');
+  $s_sparent = htmlspecialchars($sparent, ENT_QUOTES, 'UTF-8');
 }
 ?>
 <div class="row">
@@ -218,33 +228,33 @@ if (!isset($_SESSION["mikhmon"])) {
   </div>
 <table class="table">
   <tr>
-    <td><?= $_name ?> <i class="fa fa-ci fa-circle <?= $moncolor ?>"></i></td><td><input class="form-control" type="text" onchange="remSpace();" autocomplete="off" name="name" value="<?= $pname; ?>" required="1" autofocus></td>
+    <td><?= $_name ?> <i class="fa fa-ci fa-circle <?= $moncolor ?>"></i></td><td><input class="form-control" type="text" onchange="remSpace();" autocomplete="off" name="name" value="<?= $s_pname; ?>" required="1" autofocus></td>
   </tr>
   <tr>
     <td class="align-middle">Address Pool</td>
     <td>
     <select class="form-control " name="ppool">
-      <option><?= $ppool; ?></option>
+      <option><?= $s_ppool; ?></option>
       <option>none</option>
         <?php $TotalReg = count($getpool);
         for ($i = 0; $i < $TotalReg; $i++) {
 
-          echo "<option>" . $getpool[$i]['name'] . "</option>";
+          echo "<option>" . htmlspecialchars($getpool[$i]['name'], ENT_QUOTES, 'UTF-8') . "</option>";
         }
         ?>
     </select>
     </td>
   </tr>
   <tr>
-    <td>Shared Users</td><td><input class="form-control" type="text" size="4" autocomplete="off" name="sharedusers" value="<?= $psharedu; ?>" required="1"></td>
+    <td>Shared Users</td><td><input class="form-control" type="text" size="4" autocomplete="off" name="sharedusers" value="<?= $s_psharedu; ?>" required="1"></td>
   </tr>
   <tr>
-    <td>Rate limit [up/down]</td><td><input class="form-control" type="text" name="ratelimit" autocomplete="off" value="<?= $pratelimit; ?>" placeholder="Example : 512k/1M" ></td>
+    <td>Rate limit [up/down]</td><td><input class="form-control" type="text" name="ratelimit" autocomplete="off" value="<?= $s_pratelimit; ?>" placeholder="Example : 512k/1M" ></td>
   </tr>
   <tr>
     <td><?= $_expired_mode ?></td><td>
       <select class="form-control" onchange="RequiredV();" id="expmode" name="expmode" required="1">
-        <option value="<?= $getexpmode; ?>"><?= $getexpmodet; ?></option>
+        <option value="<?= $s_getexpmode; ?>"><?= $s_getexpmodet; ?></option>
         <option value="0">None</option>
         <option value="rem">Remove</option>
         <option value="ntf">Notice</option>
@@ -254,18 +264,18 @@ if (!isset($_SESSION["mikhmon"])) {
     </td>
   </tr>
   <tr id="validity" <?php if ($getexpmodet == "None") {echo 'style="display:none;"';}?>>
-    <td><?= $_validity ?></td><td><input class="form-control" type="text" id="validi" size="4" autocomplete="off" name="validity" value="<?= $getvalid; ?>" required="1"></td>
+    <td><?= $_validity ?></td><td><input class="form-control" type="text" id="validi" size="4" autocomplete="off" name="validity" value="<?= $s_getvalid; ?>" required="1"></td>
   </tr>
   <tr>
-    <td><?= $_price." ". $currency; ?></td><td><input class="form-control" type="text" min="0" name="price" value="<?= $getprice; ?>" ></td>
+    <td><?= $_price." ". $currency; ?></td><td><input class="form-control" type="text" min="0" name="price" value="<?= $s_getprice; ?>" ></td>
   </tr>
   <tr>
-    <td class="align-middle"><?= $_selling_price.' '.$currency; ?></td><td><input class="form-control" type="text" size="10" min="0" name="sprice" value="<?= $getsprice; ?>" ></td>
+    <td class="align-middle"><?= $_selling_price.' '.$currency; ?></td><td><input class="form-control" type="text" size="10" min="0" name="sprice" value="<?= $s_getsprice; ?>" ></td>
   </tr>
   <tr>
     <td><?= $_lock_user ?></td><td>
       <select class="form-control" id="lockunlock" name="lockunlock" required="1">
-        <option value="<?= $getlocku; ?>"><?= $getlocku; ?></option>
+        <option value="<?= $s_getlocku; ?>"><?= $s_getlocku; ?></option>
         <option value="Enable">Enable</option>
         <option value="Disable">Disable</option>
       </select>
@@ -275,12 +285,12 @@ if (!isset($_SESSION["mikhmon"])) {
     <td class="align-middle">Parent Queue</td>
     <td>
     <select class="form-control " name="parent">
-      <option><?= $sparent; ?></option>
+      <option><?= $s_sparent; ?></option>
       <option>none</option>
         <?php $TotalReg = count($getallqueue);
         for ($i = 0; $i < $TotalReg; $i++) {
 
-          echo "<option>" . $getallqueue[$i]['name'] . "</option>";
+          echo "<option>" . htmlspecialchars($getallqueue[$i]['name'], ENT_QUOTES, 'UTF-8') . "</option>";
         }
         ?>
     </select>
