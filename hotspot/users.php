@@ -285,40 +285,52 @@ for ($i = 0; $i < $TotalReg; $i++) {
     $udatalimit = ' ' . formatBytes($udatalimit, 2);
   }
 
+  $s_uname = htmlspecialchars($uname, ENT_QUOTES, 'UTF-8');
+  $js_uname = addslashes($uname);
+  $s_userver = htmlspecialchars($userver, ENT_QUOTES, 'UTF-8');
+  $s_uprofile = htmlspecialchars($uprofile, ENT_QUOTES, 'UTF-8');
+  $s_umacadd = htmlspecialchars($umacadd, ENT_QUOTES, 'UTF-8');
+  $s_uuptime = htmlspecialchars($uuptime, ENT_QUOTES, 'UTF-8');
+  $s_ubytesi = htmlspecialchars($ubytesi, ENT_QUOTES, 'UTF-8');
+  $s_ubyteso = htmlspecialchars($ubyteso, ENT_QUOTES, 'UTF-8');
+  $s_ucomment = htmlspecialchars($ucomment, ENT_QUOTES, 'UTF-8');
+  $s_udatalimit = htmlspecialchars($udatalimit, ENT_QUOTES, 'UTF-8');
+  $s_utimelimit = htmlspecialchars($utimelimit, ENT_QUOTES, 'UTF-8');
+
   echo "<tr>";
   ?>
-  <td style='text-align:center;'>  <i class='fa fa-minus-square text-danger pointer' onclick="if(confirm('Are you sure to delete username (<?= $uname; ?>)?')){loadpage('./?remove-hotspot-user=<?= $uid; ?>&session=<?= $session; ?>')}else{}" title='Remove <?= $uname; ?>'></i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+  <td style='text-align:center;'>  <i class='fa fa-minus-square text-danger pointer' onclick="if(confirm('Are you sure to delete username (<?= $js_uname; ?>)?')){loadpage('./?remove-hotspot-user=<?= $uid; ?>&session=<?= $session; ?>')}else{}" title='Remove <?= $s_uname; ?>'></i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
   <?php
   if ($udisabled == "true") {
     $uriprocess = "'./?enable-hotspot-user=" . $uid . "&session=" . $session."'";
-    echo '<span class="text-warning pointer" title="Enable User ' . $uname . '"  onclick="loadpage('.$uriprocess.')"><i class="fa fa-lock "></i></span></td>';
+    echo '<span class="text-warning pointer" title="Enable User ' . $s_uname . '"  onclick="loadpage('.$uriprocess.')"><i class="fa fa-lock "></i></span></td>';
   } else {
     $uriprocess = "'./?disable-hotspot-user=" . $uid . "&session=" . $session."'";
-    echo '<span class="pointer" title="Disable User ' . $uname . '"  onclick="loadpage('.$uriprocess.')"><i class="fa fa-unlock "></i></span></td>';
+    echo '<span class="pointer" title="Disable User ' . $s_uname . '"  onclick="loadpage('.$uriprocess.')"><i class="fa fa-unlock "></i></span></td>';
   }
-  echo "<td>" . $userver . "</td>";
+  echo "<td>" . $s_userver . "</td>";
   if ($uname == $upass) {
     $usermode = "vc";
   } else {
     $usermode = "up";
   }
-  $popup = "javascript:window.open('./voucher/print.php?user=" . $usermode . "-" . $uname . "&qr=no&session=" . $session . "','_blank','width=320,height=550').print();";
-  $popupQR = "javascript:window.open('./voucher/print.php?user=" . $usermode . "-" . $uname . "&qr=yes&session=" . $session . "','_blank','width=320,height=550').print();";
-  echo "<td><a title='Open User " . $uname . "' href=./?hotspot-user=" . $uid . "&session=" . $session . "><i class='fa fa-edit'></i> " . $uname . " </a>";
-  echo '</td><td class"text-center"><a title="Print ' . $uname . '" href="' . $popup . '"><i class="fa fa-print"></i></a> &nbsp <a title="Print ' . $uname . '" href="' . $popupQR . '"><i class="fa fa-qrcode"></i> </a></td>';
-  echo "<td>" . $uprofile . "</td>";
-  echo "<td style=' text-align:left'>" . $umacadd . "</td>";
-  echo "<td style=' text-align:right'>" . $uuptime . "</td>";
-  echo "<td style=' text-align:right'>" . $ubytesi . "</td>";
-  echo "<td style=' text-align:right'>" . $ubyteso . "</td>";
+  $popup = "javascript:window.open('./voucher/print.php?user=" . $usermode . "-" . urlencode($uname) . "&qr=no&session=" . $session . "','_blank','width=320,height=550').print();";
+  $popupQR = "javascript:window.open('./voucher/print.php?user=" . $usermode . "-" . urlencode($uname) . "&qr=yes&session=" . $session . "','_blank','width=320,height=550').print();";
+  echo "<td><a title='Open User " . $s_uname . "' href=./?hotspot-user=" . $uid . "&session=" . $session . "><i class='fa fa-edit'></i> " . $s_uname . " </a>";
+  echo '</td><td class="text-center"><a title="Print ' . $s_uname . '" href="' . $popup . '"><i class="fa fa-print"></i></a> &nbsp <a title="Print ' . $s_uname . '" href="' . $popupQR . '"><i class="fa fa-qrcode"></i> </a></td>';
+  echo "<td>" . $s_uprofile . "</td>";
+  echo "<td style=' text-align:left'>" . $s_umacadd . "</td>";
+  echo "<td style=' text-align:right'>" . $s_uuptime . "</td>";
+  echo "<td style=' text-align:right'>" . $s_ubytesi . "</td>";
+  echo "<td style=' text-align:right'>" . $s_ubyteso . "</td>";
   echo "<td>";
   if ($uname == "default-trial") {
   } else if (substr($ucomment,0,3) == "vc-" || substr($ucomment,0,3) == "up-") {
-    echo "<a href=./?hotspot=users&comment=" . $ucomment . "&session=" . $session . " title='Filter by " . $ucomment . "'><i class='fa fa-search'></i> ". $ucomment." ". $udatalimit ." ".$utimelimit . "</a>";
+    echo "<a href=./?hotspot=users&comment=" . urlencode($ucomment) . "&session=" . $session . " title='Filter by " . $s_ucomment . "'><i class='fa fa-search'></i> ". $s_ucomment." ". $s_udatalimit ." ".$s_utimelimit . "</a>";
   } else if ($utimelimit == ' expired') {
-    echo "<a href=./?hotspot=users&profile=all&exp=1&session=" . $session . " title='Filter by expired'><i class='fa fa-search'></i> " . $ucomment." ". $udatalimit ." ".$utimelimit . "</a>";
+    echo "<a href=./?hotspot=users&profile=all&exp=1&session=" . $session . " title='Filter by expired'><i class='fa fa-search'></i> " . $s_ucomment." ". $s_udatalimit ." ".$s_utimelimit . "</a>";
   }else{
-    echo $ucomment.' ';
+    echo $s_ucomment.' ';
   }
   echo  "</td>";
 
