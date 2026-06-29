@@ -1,8 +1,8 @@
-# MikhPay - Modernized with REST API & QRIS Mandiri
-
 <p align="center">
-  <img src="img/logo.png" alt="MikhPay Logo" width="160" style="border-radius: 24px;" />
+  <img src="img/logo.png" alt="MikhPay Logo" width="100%" style="border-radius: 24px;" />
 </p>
+
+# MikhPay - Modernized with REST API & QRIS Mandiri
 
 MikhPay (Mikrotik Hotspot Monitor & Transaction System) adalah aplikasi web berbasis PHP untuk mengelola dan memantau Hotspot MikroTik, khususnya untuk pembuatan voucher otomatis. Versi ini telah dimodernisasi dengan penambahan **REST API** untuk integrasi eksternal, **Portal Pembelian Voucher Mandiri** terintegrasi dengan **Sistem QRIS Dinamis Mandiri** (tanpa potongan payment gateway pihak ketiga), serta sistem **Pengerasan Keamanan (Security Hardening)** kelas enterprise.
 
