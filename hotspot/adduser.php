@@ -341,7 +341,7 @@ if (!isset($_SESSION["mikhmon"])) {
           <div class="form-row-grid">
             <div class="form-field-group">
               <label for="server">Hotspot Server</label>
-              <select class="form-control" name="server" required="1">
+              <select class="form-control" id="server" name="server" required="1">
                 <option>all</option>
                 <?php $TotalReg = count($srvlist);
                 for ($i = 0; $i < $TotalReg; $i++) {
@@ -352,7 +352,7 @@ if (!isset($_SESSION["mikhmon"])) {
             </div>
             
             <div class="form-field-group">
-              <label for="profile">User Profile</label>
+              <label for="uprof">User Profile</label>
               <select class="form-control" onchange="GetVP();" id="uprof" name="profile" required="1">
                 <?php $TotalReg = count($getprofile);
                 for ($i = 0; $i < $TotalReg; $i++) {
@@ -366,11 +366,11 @@ if (!isset($_SESSION["mikhmon"])) {
           <div class="form-row-grid">
             <div class="form-field-group">
               <label for="name"><?= $_name ?></label>
-              <input class="form-control" type="text" autocomplete="off" name="name" value="" required="1" autofocus placeholder="Masukkan username">
+              <input class="form-control" id="name" type="text" autocomplete="off" name="name" value="" required="1" autofocus placeholder="Masukkan username">
             </div>
             
             <div class="form-field-group">
-              <label for="pass"><?= $_password ?></label>
+              <label for="passUser"><?= $_password ?></label>
               <div class="modern-password-wrapper">
                 <input class="form-control" id="passUser" type="password" name="pass" autocomplete="new-password" value="" required="1" placeholder="Masukkan password">
                 <button type="button" class="password-toggle-btn" onclick="PassUser(this)">
@@ -385,13 +385,13 @@ if (!isset($_SESSION["mikhmon"])) {
           <div class="form-row-grid">
             <div class="form-field-group">
               <label for="timelimit"><?= $_time_limit ?></label>
-              <input class="form-control" type="text" autocomplete="off" name="timelimit" value="" placeholder="Contoh: 30d, 12h, 4w3d">
+              <input class="form-control" id="timelimit" type="text" autocomplete="off" name="timelimit" value="" placeholder="Contoh: 30d, 12h, 4w3d">
             </div>
             
             <div class="form-field-group">
               <label for="datalimit"><?= $_data_limit ?></label>
               <div class="modern-data-limit-wrapper">
-                <input class="form-control" type="number" min="0" max="9999" name="datalimit" value="<?= $udatalimit; ?>" placeholder="0">
+                <input class="form-control" id="datalimit" type="number" min="0" max="9999" name="datalimit" value="<?= $udatalimit; ?>" placeholder="0">
                 <select class="form-control data-unit-select" name="mbgb" required="1">
                   <option value=1048576>MB</option>
                   <option value=1073741824>GB</option>

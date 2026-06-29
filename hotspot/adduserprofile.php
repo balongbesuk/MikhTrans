@@ -218,25 +218,26 @@ if (!isset($_SESSION["mikhmon"])) {
 </div>
 </div>
 <div class="col-4">
-  <div class="card">
+  <div class="card" style="box-shadow: var(--shadow-card); border-radius: var(--radius); border: 1px solid var(--border-color); margin: 0 !important;">
     <div class="card-header">
       <h3><i class="fa fa-book"></i> <?= $_readme ?></h3>
     </div>
-    <div class="card-body">
-<table class="table">
-    <tr>
-    <td colspan="2">
-      <p style="padding:0px 5px;">
-        <?= $_details_user_profile ?>
-      </p>
-      <p style="padding:0px 5px;">
-        <?= $_format_validity ?>
-      </p>
-    </td>
-  </tr>
-</table>
-</div>
-</div>
+    <div class="card-body" style="padding: 24px !important;">
+      <div class="readme-info-alert">
+        <div class="readme-info-alert-icon"><i class="fa fa-info-circle"></i></div>
+        <div class="readme-info-alert-content">
+          <p style="margin: 0 !important; font-size: 13px !important; line-height: 1.5 !important; color: var(--text-main) !important;"><?= $_details_user_profile ?></p>
+        </div>
+      </div>
+      
+      <div class="readme-info-alert" style="background: rgba(16, 185, 129, 0.05) !important; border-color: rgba(16, 185, 129, 0.15) !important;">
+        <div class="readme-info-alert-icon" style="color: #10b981 !important;"><i class="fa fa-check-circle"></i></div>
+        <div class="readme-info-alert-content">
+          <p style="margin: 0 !important; font-size: 13px !important; line-height: 1.5 !important; color: var(--text-main) !important;"><?= $_format_validity ?></p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 <script type="text/javascript">

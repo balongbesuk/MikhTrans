@@ -88,7 +88,7 @@ if (!isset($_SESSION["mikhmon"])) {
     border-radius: 8px !important;
     background: var(--bg-card, #ffffff) !important;
     color: var(--text-main) !important;
-    padding: 0 12px !important;
+    padding: 8px 12px !important;
     font-size: 13px !important;
     outline: none !important;
     transition: all 0.2s ease !important;
@@ -164,7 +164,7 @@ if (!isset($_SESSION["mikhmon"])) {
             <small id="loader" style="display: none;" ><i><i class='fa fa-circle-o-notch fa-spin'></i> <?= $_processing ?> </i></small>
         </h3>
         
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <div class="gen-actions-wrapper" style="display: flex; gap: 8px; flex-wrap: wrap;">
           <a href="./?hotspot-user=add&session=<?= $session; ?>" class="btn-modern-filter-action btn-accent"><i class="fa fa-user-plus"></i> <?= $_add ?></a>
           <a href="./?hotspot-user=generate&session=<?= $session; ?>" class="btn-modern-filter-action btn-accent"><i class="fa fa-users"></i> <?= $_generate ?></a>
           <a href="<?= str_replace("=users", "=export-users", $url); ?>&export=script" class="btn-modern-filter-action btn-secondary" title="Script"><i class="fa fa-download"></i> Script</a>

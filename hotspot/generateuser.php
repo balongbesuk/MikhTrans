@@ -503,7 +503,7 @@ if (!isset($_SESSION["mikhmon"])) {
       <div class="card-body" style="padding: 28px !important;">
         <form autocomplete="off" method="post" action="">
           
-          <div style="margin-bottom: 24px; display: flex; gap: 8px; flex-wrap: wrap;">
+          <div class="gen-actions-wrapper" style="margin-bottom: 24px; display: flex; gap: 8px; flex-wrap: wrap;">
             <?php if ($_SESSION['ubp'] != "") {
               echo "    <a class='btn-modern-action btn-close' href='./?hotspot=users&profile=" . $_SESSION['ubp'] . "&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close."</a>";
             } elseif ($_SESSION['vcr'] = "active") {
@@ -525,12 +525,12 @@ if (!isset($_SESSION["mikhmon"])) {
           <div class="form-row-grid">
             <div class="form-field-group">
               <label for="qty"><?= $_qty ?></label>
-              <input class="form-control" type="number" name="qty" min="1" max="500" value="1" required="1" placeholder="Jumlah voucher">
+              <input class="form-control" id="qty" type="number" name="qty" min="1" max="500" value="1" required="1" placeholder="Jumlah voucher">
             </div>
             
             <div class="form-field-group">
               <label for="server">Hotspot Server</label>
-              <select class="form-control" name="server" required="1">
+              <select class="form-control" id="server" name="server" required="1">
                 <option>all</option>
                 <?php $TotalReg = count($srvlist);
                 for ($i = 0; $i < $TotalReg; $i++) {
@@ -567,12 +567,12 @@ if (!isset($_SESSION["mikhmon"])) {
           <div class="form-row-grid">
             <div class="form-field-group">
               <label for="prefix"><?= $_prefix ?></label>
-              <input class="form-control" type="text" size="6" maxlength="6" autocomplete="off" name="prefix" value="" placeholder="Awalan username (Opsional)">
+              <input class="form-control" id="prefix" type="text" size="6" maxlength="6" autocomplete="off" name="prefix" value="" placeholder="Awalan username (Opsional)">
             </div>
             
             <div class="form-field-group">
               <label for="char"><?= $_character ?></label>
-              <select class="form-control" name="char" required="1">
+              <select class="form-control" id="char" name="char" required="1">
                 <option id="lower" style="display:block;" value="lower"><?= $_random ?> abcd</option>
                 <option id="upper" style="display:block;" value="upper"><?= $_random ?> ABCD</option>
                 <option id="upplow" style="display:block;" value="upplow"><?= $_random ?> aBcD</option>
@@ -589,7 +589,7 @@ if (!isset($_SESSION["mikhmon"])) {
 
           <div class="form-row-grid">
             <div class="form-field-group">
-              <label for="profile"><?= $_profile ?></label>
+              <label for="uprof"><?= $_profile ?></label>
               <select class="form-control" onchange="GetVP();" id="uprof" name="profile" required="1">
                 <?php if ($genprof != "") {
                   echo "<option>" . $genprof . "</option>";
@@ -604,7 +604,7 @@ if (!isset($_SESSION["mikhmon"])) {
             
             <div class="form-field-group">
               <label for="timelimit"><?= $_time_limit ?></label>
-              <input class="form-control" type="text" size="4" autocomplete="off" name="timelimit" value="" placeholder="Contoh: 30d, 12h">
+              <input class="form-control" id="timelimit" type="text" size="4" autocomplete="off" name="timelimit" value="" placeholder="Contoh: 30d, 12h">
             </div>
           </div>
 
@@ -612,7 +612,7 @@ if (!isset($_SESSION["mikhmon"])) {
             <div class="form-field-group">
               <label for="datalimit"><?= $_data_limit ?></label>
               <div class="modern-data-limit-wrapper">
-                <input class="form-control" type="number" min="0" max="9999" name="datalimit" value="<?= $udatalimit; ?>" placeholder="0">
+                <input class="form-control" id="datalimit" type="number" min="0" max="9999" name="datalimit" value="<?= $udatalimit; ?>" placeholder="0">
                 <select class="form-control data-unit-select" name="mbgb" required="1">
                   <option value=1048576>MB</option>
                   <option value=1073741824>GB</option>
@@ -621,7 +621,7 @@ if (!isset($_SESSION["mikhmon"])) {
             </div>
             
             <div class="form-field-group">
-              <label for="adcomment"><?= $_comment ?></label>
+              <label for="comment"><?= $_comment ?></label>
               <input class="form-control" type="text" title="No special characters" id="comment" autocomplete="off" name="adcomment" value="" placeholder="Komentar opsional">
             </div>
           </div>

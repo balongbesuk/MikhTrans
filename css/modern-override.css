@@ -758,13 +758,13 @@ select optgroup {
 }
 
 /* ─── Form-Layout Tables (tables used as forms) ─── */
-.card .table td,
-.card-body .table td {
+.card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern):not(.table-hover) td,
+.card-body .table:not(.table-bordered):not(#dataTable):not(.card-table-modern):not(.table-hover) td {
     background-color: transparent !important;
     border-bottom: 1px solid var(--border-color) !important;
     color: var(--text-main) !important;
 }
-.card .table td:first-child {
+.card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern):not(.table-hover) td:first-child {
     color: var(--text-muted) !important;
     font-weight: 600 !important;
     font-size: 12px !important;
@@ -1335,25 +1335,25 @@ span, p, div, label, small, b, strong, i, em {
 
 /* 3. Form-Layout Stacking (Tables inside form cards) */
 @media (max-width: 500px) {
-    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern) td, 
-    .card-body .table:not(.table-bordered):not(#dataTable):not(.card-table-modern) td {
+    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern):not(.table-hover) td, 
+    .card-body .table:not(.table-bordered):not(#dataTable):not(.card-table-modern):not(.table-hover) td {
         display: block !important;
         width: 100% !important;
         border-bottom: none !important;
         box-sizing: border-box !important;
     }
-    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern) tr {
+    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern):not(.table-hover) tr {
         display: block !important;
         border-bottom: 1px solid var(--border-color) !important;
         padding-bottom: 8px !important;
     }
-    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern) td:first-child {
+    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern):not(.table-hover) td:first-child {
         width: 100% !important;
         padding-bottom: 4px !important;
         padding-top: 8px !important;
         font-weight: 700 !important;
     }
-    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern) td:last-child {
+    .card .table:not(.table-bordered):not(#dataTable):not(.card-table-modern):not(.table-hover) td:last-child {
         padding-top: 0 !important;
     }
 }
@@ -1367,6 +1367,9 @@ span, p, div, label, small, b, strong, i, em {
         width: 100% !important;
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch !important;
+        white-space: nowrap !important;
+    }
+    .overflow table {
         white-space: nowrap !important;
     }
 }
@@ -1487,5 +1490,107 @@ select.dropd:hover {
     0% { transform: scale(0.8); opacity: 0.5; }
     50% { transform: scale(1.2); opacity: 1; }
     100% { transform: scale(0.8); opacity: 0.5; }
+}
+
+/* 7. Hotspot User Form Pages Mobile Fixes (Add & Generate User) */
+@media (max-width: 768px) {
+    .gen-col-left, 
+    .gen-col-right {
+        min-width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+}
+
+/* 8. Hotspot Users List Filter Row & Header Mobile Fixes */
+@media (max-width: 600px) {
+    .filter-row-flex {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+    .filter-inputs-group {
+        flex-direction: column !important;
+        min-width: 100% !important;
+        width: 100% !important;
+        gap: 8px !important;
+    }
+    .filter-control-modern {
+        width: 100% !important;
+        flex: none !important;
+    }
+    .filter-actions-group {
+        width: 100% !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
+    }
+    .filter-actions-group button,
+    .filter-actions-group a {
+        flex: 1 1 auto !important;
+    }
+    
+    .header-actions-wrapper {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+    .gen-actions-wrapper {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        width: 100% !important;
+        gap: 8px !important;
+    }
+    .gen-actions-wrapper > a,
+    .gen-actions-wrapper > button {
+        flex: 1 1 calc(50% - 4px) !important;
+        text-align: center !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+    
+    .form-actions-footer {
+        justify-content: space-between !important;
+        gap: 8px !important;
+    }
+    .form-actions-footer a,
+    .form-actions-footer button {
+        flex: 1 1 50% !important;
+        text-align: center !important;
+    }
+}
+
+/* 9. Readme Info Alert Boxes */
+.readme-info-alert {
+    background: var(--primary-glow) !important;
+    border: 1px solid rgba(99, 102, 241, 0.15) !important;
+    border-radius: 14px !important;
+    padding: 16px 20px !important;
+    display: flex !important;
+    gap: 14px !important;
+    margin-bottom: 16px !important;
+    box-sizing: border-box;
+}
+
+.readme-info-alert-icon {
+    font-size: 20px !important;
+    color: var(--primary) !important;
+    margin-top: 2px !important;
+}
+
+.readme-info-alert-content {
+    text-align: left !important;
+}
+
+.readme-info-alert-content h4 {
+    margin: 0 0 6px 0 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: var(--primary) !important;
+}
+
+.readme-info-alert-content p {
+    margin: 0 !important;
+    font-size: 12.5px !important;
+    color: var(--text-main) !important;
+    line-height: 1.6 !important;
 }
 

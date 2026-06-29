@@ -1222,7 +1222,14 @@ uasort($profileSales, function($a, $b) {
                         border-bottom: 1px solid var(--border-color) !important;
                         padding-bottom: 12px !important;
                         margin-bottom: 24px !important;
-                        flex-wrap: wrap !important;
+                        flex-wrap: nowrap !important;
+                        overflow-x: auto !important;
+                        white-space: nowrap !important;
+                        -webkit-overflow-scrolling: touch !important;
+                        scrollbar-width: none !important; /* Hide scrollbar for Firefox */
+                    }
+                    .settings-subtabs-nav::-webkit-scrollbar {
+                        display: none !important; /* Hide scrollbar for Chrome/Safari/Opera */
                     }
                     .subtab-btn {
                         background: transparent !important;
@@ -1237,6 +1244,8 @@ uasort($profileSales, function($a, $b) {
                         display: inline-flex !important;
                         align-items: center !important;
                         gap: 8px !important;
+                        flex-shrink: 0 !important;
+                        white-space: nowrap !important;
                     }
                     .subtab-btn:hover {
                         background: var(--primary-glow) !important;
