@@ -1,3 +1,7 @@
+<p align="center">
+<img width="300" height="600" alt="image" src="https://github.com/user-attachments/assets/c231ce2d-e0c2-4197-a0d8-6a63db087fda" />
+</p>
+
 # MikhPay-Forwarder (Android App)
 
 A lightweight, open-source Android application designed to listen for incoming payment notifications on your server phone and automatically forward them via webhook to your MikhPay system (`qris_verify.php`).
