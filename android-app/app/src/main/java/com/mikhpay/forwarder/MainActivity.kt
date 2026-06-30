@@ -56,6 +56,13 @@ class MainActivity : AppCompatActivity() {
         btnSimulateNotif = findViewById(R.id.btn_simulate_notif)
         btnClearLogs = findViewById(R.id.btn_clear_logs)
 
+        // Request POST_NOTIFICATIONS runtime permission on Android 13+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                androidx.core.app.ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
+
         // Load Saved Configuration
         val sharedPref = getSharedPreferences("MikhPaySettings", Context.MODE_PRIVATE)
         val savedUrl = sharedPref.getString("webhook_url", "")
