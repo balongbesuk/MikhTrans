@@ -71,3 +71,43 @@ Buka terminal di dalam direktori folder `android-app/` lalu jalankan perintah:
 .\gradlew.bat assembleRelease
 ```
 Hasil berkas APK siap pasang akan tersimpan di dalam folder `/app/release/` atau `/app/build/outputs/apk/release/`.
+
+---
+
+## 📥 Panduan Instalasi APK di HP Android
+
+Karena aplikasi ini dikompilasi secara mandiri (*self-signed*) dan di-host di luar Google Play Store, silakan ikuti panduan berikut agar proses instalasi berjalan lancar:
+
+1. **Kirim Berkas APK ke HP**: Pindahkan berkas `app-release.apk` hasil kompilasi dari komputer ke HP Android Anda (bisa melalui kabel data USB, Google Drive, atau dikirim lewat WhatsApp).
+2. **Izinkan Instalasi dari Sumber Tidak Dikenal**:
+   * Buka berkas APK tersebut di HP. Jika muncul peringatan keamanan, klik **Settings / Pengaturan**.
+   * Aktifkan opsi **"Allow from this source"** (Izinkan dari sumber ini) untuk aplikasi pengelola berkas (File Manager) atau WhatsApp yang Anda gunakan untuk membuka berkas.
+3. **Peringatan Google Play Protect (Penting)**:
+   * Google Play Protect akan memunculkan dialog peringatan karena aplikasi ini belum didaftarkan secara berbayar di Google Play Store (berwarna merah/kuning).
+   * **PENTING**: Klik tulisan **"Install Anyway"** (Tetap Instal). Jangan mengklik tombol *OK* karena itu akan membatalkan proses instalasi aplikasi.
+4. **Buka Aplikasi**: Lakukan izin Notifikasi dan Akses Penyadap Notifikasi sesuai langkah konfigurasi di atas.
+
+---
+
+## 🛠️ Masalah & Solusi (Troubleshooting / Q&A)
+
+#### Q: Notifikasi tiruan dari tombol "Simulasi Notifikasi" tidak muncul di layar atas HP saya.
+* **Solusi 1 (Izin Notifikasi Diblokir)**: Masuk ke **Pengaturan HP > Aplikasi > Kelola Aplikasi > MikhPay Forwarder**. Ketuk menu **Notifications** (Notifikasi), lalu pastikan statusnya aktif (**Allowed/Izinkan**). Pada Android 13+, Anda wajib mengklik "Allow" pada popup izin saat aplikasi pertama kali dijalankan.
+* **Solusi 2 (Sistem Operasi HP Menahan)**: Di beberapa perangkat dengan antarmuka kustom (seperti MIUI/HyperOS Xiaomi, Oppo, Vivo), pastikan Anda memberikan izin akses layar kunci dan notifikasi mengambang (*floating notifications*) untuk aplikasi MikhPay di menu perizinan aplikasi.
+
+#### Q: Notifikasi simulasi muncul, tapi log di bawah tetap kosong ("Belum ada riwayat").
+* **Solusi 1 (Belum Klik Save)**: Pastikan Anda sudah mengklik tombol hijau **Save Settings** terlebih dahulu sebelum menekan tombol simulasi.
+* **Solusi 2 (Whitelist Tidak Sesuai)**: Pastikan nama paket **`com.mikhpay.forwarder`** sudah terdaftar pada kolom *Target Apps Whitelist*. Jika tidak terdaftar, layanan listener akan mengabaikan notifikasi simulasi tersebut karena dianggap bukan berasal dari aplikasi yang disetujui.
+
+#### Q: Mengapa setelah HP didiamkan beberapa jam, aplikasi berhenti meneruskan notifikasi otomatis?
+* **Solusi**: Sistem Android memiliki fitur manajemen daya baterai yang agresif. Anda harus menonaktifkan optimasi baterai untuk aplikasi MikhPay:
+  1. Ketuk tombol merah **"Disable Battery Optimization"** di aplikasi MikhPay dan pilih **Allow**.
+  2. Buka **App Info MikhPay > Penghemat Baterai (Battery Saver)**, ganti setelannya dari *Pintar/Smart* menjadi **"Tidak Dibatasi" (No Restrictions / Unrestricted)**.
+
+#### Q: Log Riwayat menunjukkan status "FAILED: Gagal koneksi ke server".
+* **Solusi 1 (Jaringan Berbeda)**: Jika Webhook URL Anda menggunakan IP lokal (misalnya `http://192.168.1.100/qris_verify.php`), pastikan HP Android Anda terhubung ke jaringan Wi-Fi yang sama dengan komputer/server tempat database MikhPay berada. HP tidak akan bisa mengakses server lokal jika menggunakan kuota data seluler.
+* **Solusi 2 (Salah Ketik URL)**: Periksa kembali penulisan URL Webhook. Pastikan tidak ada spasi di ujung teks, dan gunakan awalan protokol yang benar (`http://` atau `https://`).
+
+#### Q: Angka nominal transaksi tidak terbaca dari notifikasi pembayaran e-wallet.
+* **Solusi**: Struktur pesan notifikasi aplikasi e-wallet mungkin telah diperbarui. Silakan gunakan kolom **Custom Parsing Regex (Opsional)** untuk merancang pola pencarian nominal yang sesuai dengan format teks notifikasi terbaru Anda.
+
